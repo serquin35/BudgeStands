@@ -761,13 +761,34 @@ export default function PresustandPage() {
                     </div>
                   )}
                 </CardContent>
-                <CardFooter className="flex justify-end border-t border-[#27272a]/50 py-3 bg-[#09090b]/40">
+                <CardFooter className="flex justify-between items-center border-t border-[#27272a]/50 py-3 bg-[#09090b]/40">
+                  {generating ? (
+                    <div className="flex-1 mr-4">
+                      <div className="flex items-center justify-between text-xs text-indigo-400 mb-1.5">
+                        <span className="font-medium animate-pulse">{loadingMessages[loadingMsgIdx]}</span>
+                        <span>{Math.round(((loadingMsgIdx + 1) / loadingMessages.length) * 100)}%</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-[#27272a] rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-500 ease-out"
+                          style={{ width: `${((loadingMsgIdx + 1) / loadingMessages.length) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex-1" />
+                  )}
                   <Button
                     type="submit"
-                    className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-xs shadow-lg shadow-indigo-500/15"
+                    disabled={generating}
+                    className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-xs shadow-lg shadow-indigo-500/15 disabled:opacity-50 disabled:cursor-not-allowed transition-all shrink-0"
                   >
-                    <Sparkles className="h-4 w-4 mr-2" />
-                    <span>Generar con Jarvis IA</span>
+                    {generating ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Sparkles className="h-4 w-4 mr-2" />
+                    )}
+                    <span>{generating ? "Procesando..." : "Generar con Jarvis IA"}</span>
                   </Button>
                 </CardFooter>
               </form>
