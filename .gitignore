@@ -1,0 +1,47 @@
+# ===== ARCHIVOS SENSIBLES (NO SUBIR NUNCA) =====
+DatosImportantes.txt
+.env
+.env.local
+.env*.local
+*.env
+
+# ===== DIRECTORIOS PERSONALES / INTERNOS =====
+.agent/
+docusJulian/
+stand\ budget/
+
+# ===== NEXT.JS =====
+stand/.next/
+stand/out/
+stand/build/
+stand/.vercel
+
+# ===== NODE =====
+stand/node_modules/
+node_modules/
+
+# ===== LOGS =====
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ===== SISTEMA OPERATIVO =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== EDITORES =====
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ===== SUPABASE LOCAL =====
+.supabase/
+
+# ===== TYPESCRIPT =====
+*.tsbuildinfo
+stand/next-env.d.ts
