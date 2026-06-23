@@ -354,7 +354,15 @@ export default function PresustandPage() {
 
       setGenerating(false)
       setActiveTab("historial")
-      handleViewDetails(data.presupuestoId)
+      if (data.presupuestoId) {
+        handleViewDetails(data.presupuestoId)
+      } else {
+        // n8n insertó el presupuesto silenciosamente, no sabemos el ID, mostramos alerta y limpiamos vista
+        setActivePresId(null)
+        setActivePres(null)
+        setActivePresLineas([])
+        alert("¡Jarvis ha procesado el presupuesto!\nSe mostrará en la lista del historial. (Puedes recargar si no aparece inmediatamente)")
+      }
     } catch (err: any) {
       console.error(err)
       setGenerationError(err.message || "Ocurrió un error con Jarvis IA")
@@ -435,7 +443,7 @@ export default function PresustandPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-full overflow-hidden">
       {/* Header section */}
       <div>
         <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-[#fafafa] to-[#a1a1aa]">
@@ -447,10 +455,10 @@ export default function PresustandPage() {
       </div>
 
       {/* Navigation tabs */}
-      <div className="flex gap-2 border-b border-[#27272a]/70 pb-px">
+      <div className="flex flex-wrap gap-1 sm:gap-2 border-b border-[#27272a]/70 pb-px">
         <button
           onClick={() => { setActiveTab("rapida"); setActivePresId(null); }}
-          className={`px-4 py-2 text-xs font-semibold border-b-2 transition-all duration-200 ${
+          className={`px-3 sm:px-4 py-2 text-[10px] sm:text-xs font-semibold border-b-2 transition-all duration-200 ${
             activeTab === "rapida" 
               ? "border-indigo-500 text-indigo-400" 
               : "border-transparent text-[#71717a] hover:text-[#fafafa]"
@@ -463,7 +471,7 @@ export default function PresustandPage() {
         </button>
         <button
           onClick={() => { setActiveTab("ia"); setActivePresId(null); }}
-          className={`px-4 py-2 text-xs font-semibold border-b-2 transition-all duration-200 ${
+          className={`px-3 sm:px-4 py-2 text-[10px] sm:text-xs font-semibold border-b-2 transition-all duration-200 ${
             activeTab === "ia" 
               ? "border-indigo-500 text-indigo-400" 
               : "border-transparent text-[#71717a] hover:text-[#fafafa]"
@@ -476,7 +484,7 @@ export default function PresustandPage() {
         </button>
         <button
           onClick={() => { setActiveTab("historial"); }}
-          className={`px-4 py-2 text-xs font-semibold border-b-2 transition-all duration-200 ${
+          className={`px-3 sm:px-4 py-2 text-[10px] sm:text-xs font-semibold border-b-2 transition-all duration-200 ${
             activeTab === "historial" 
               ? "border-indigo-500 text-indigo-400" 
               : "border-transparent text-[#71717a] hover:text-[#fafafa]"
@@ -499,10 +507,10 @@ export default function PresustandPage() {
           <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 tracking-wide">
             PROCESANDO PROPUESTA CON IA
           </h2>
-          <div className="text-sm font-medium text-[#e4e4e7] mt-3 h-6 max-w-md transition-all duration-300">
+          <div className="text-base font-semibold text-white mt-4 h-6 max-w-md transition-all duration-300 drop-shadow-md">
             {loadingMessages[loadingMsgIdx]}
           </div>
-          <p className="text-[10px] text-[#71717a] mt-2 max-w-xs leading-relaxed uppercase tracking-wider">
+          <p className="text-xs font-medium text-zinc-300 mt-3 max-w-sm leading-relaxed uppercase tracking-wider drop-shadow-sm">
             No cierres esta pestaña. Jarvis está cruzando tarifas de catálogos y estimando despieces de materiales en tiempo real.
           </p>
         </div>
@@ -517,8 +525,8 @@ export default function PresustandPage() {
           {activeTab === "rapida" && (
             <Card className="border-[#27272a]/70 bg-[#09090b]/40">
               <CardHeader>
-                <CardTitle className="text-base text-[#fafafa] flex items-center gap-2">
-                  <Calculator className="h-5 w-5 text-indigo-400" />
+                <CardTitle className="text-base text-[#fafafa] flex items-center gap-2 flex-wrap">
+                  <Calculator className="h-5 w-5 text-indigo-400 shrink-0" />
                   <span>Método 1: Estimación por Superficie (m²)</span>
                 </CardTitle>
                 <CardDescription className="text-xs text-[#a1a1aa]">
@@ -648,8 +656,8 @@ export default function PresustandPage() {
           {activeTab === "ia" && (
             <Card className="border-[#27272a]/70 bg-[#09090b]/40">
               <CardHeader>
-                <CardTitle className="text-base text-[#fafafa] flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-indigo-400" />
+                <CardTitle className="text-base text-[#fafafa] flex items-center gap-2 flex-wrap">
+                  <Sparkles className="h-5 w-5 text-indigo-400 shrink-0" />
                   <span>Método 2: Inteligencia Artificial (Jarvis AI)</span>
                 </CardTitle>
                 <CardDescription className="text-xs text-[#a1a1aa]">
@@ -820,23 +828,23 @@ export default function PresustandPage() {
                         <div
                           key={item.id}
                           onClick={() => handleViewDetails(item.id)}
-                          className={`p-4 flex items-center justify-between cursor-pointer hover:bg-[#18181b]/30 transition-colors ${
+                          className={`p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-[#18181b]/30 transition-colors ${
                             isActive ? "bg-indigo-500/5 border-l-4 border-l-indigo-500" : ""
                           }`}
                         >
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-bold text-xs text-indigo-400">{item.numero_presupuesto}</span>
+                          <div className="space-y-1 min-w-0 flex-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-bold text-xs text-indigo-400 shrink-0">{item.numero_presupuesto}</span>
                               {getStatusBadge(item.estado_presupuesto)}
                             </div>
-                            <div className="text-xs font-semibold text-[#fafafa] truncate max-w-[200px]">
+                            <div className="text-xs font-semibold text-[#fafafa] truncate w-full">
                               {item.clientes?.nombre_comercial || "Cliente"} - {item.nombre_feria}
                             </div>
-                            <div className="text-[10px] text-[#71717a]">
+                            <div className="text-[10px] text-[#71717a] truncate">
                               {item.m2_superficie} m² | {item.tipo_stand.replace("_", " ")}
                             </div>
                           </div>
-                          <div className="text-right flex items-center gap-3">
+                          <div className="text-right flex items-center gap-2 sm:gap-3 shrink-0">
                             <div className="space-y-1">
                               <div className="font-bold text-xs text-[#fafafa]">
                                 {item.total_presupuesto.toLocaleString("es-ES")} €
@@ -845,7 +853,7 @@ export default function PresustandPage() {
                                 {new Date(item.created_at).toLocaleDateString("es-ES")}
                               </div>
                             </div>
-                            <ChevronRight className="h-4 w-4 text-[#71717a]" />
+                            <ChevronRight className="h-4 w-4 text-[#71717a] hidden sm:block" />
                           </div>
                         </div>
                       )
@@ -867,7 +875,7 @@ export default function PresustandPage() {
               </Card>
             ) : activePres ? (
               <Card className="border-[#27272a]/70 bg-[#09090b]/40">
-                <CardHeader className="border-b border-[#27272a]/50 pb-4">
+                <CardHeader className="border-b border-[#27272a]/50 pb-4 p-6 lg:p-8">
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="flex items-center gap-2">
@@ -901,7 +909,7 @@ export default function PresustandPage() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-6 pt-6">
+                <CardContent className="space-y-6 pt-6 p-6 lg:p-8">
                   
                   {/* Stand Physical specs */}
                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">

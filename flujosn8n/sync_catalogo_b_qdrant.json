@@ -1,0 +1,275 @@
+{
+  "name": "Sync Catálogo B → Qdrant (elementos_catalogo_b)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sync-catalogo-b",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "wb-001",
+      "name": "Webhook Sync B",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 400],
+      "webhookId": "sync-catalogo-b-v1",
+      "notes": "POST body: { id_empresa: 'uuid' } — llamado desde el botón Sincronizar de la UI"
+    },
+    {
+      "parameters": {
+        "operation": "createCollection",
+        "collectionName": "elementos_catalogo_b",
+        "vectors": "{\"size\": 1536, \"distance\": \"Cosine\"}",
+        "shardNumber": 1,
+        "replicationFactor": 1,
+        "writeConsistencyFactor": 1,
+        "requestOptions": {}
+      },
+      "id": "wb-002",
+      "name": "Crear Colección B",
+      "type": "n8n-nodes-qdrant.qdrant",
+      "typeVersion": 1,
+      "position": [420, 400],
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "qdrantRestApi": {
+          "id": "YE1Kgy7tOBsjsUq7",
+          "name": "Qdrant account"
+        }
+      },
+      "notes": "onError continueRegularOutput → no falla si la colección ya existe"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$vars.SUPABASE_URL}}/rest/v1/catalogo_elementos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$vars.SUPABASE_ANON_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$vars.SUPABASE_ANON_KEY}}" }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "select", "value": "id,codigo_sku,nombre_elemento,id_categoria_matriz,descripcion_comercial,ancho_estandar_mm,fondo_estandar_mm,alto_estandar_mm,unidad_medida_bloque,precio_venta_unidad,imagen_referencia_url" },
+            { "name": "estado_elemento", "value": "eq.true" },
+            { "name": "id_empresa", "value": "=eq.{{$json.body.id_empresa}}" },
+            { "name": "order", "value": "nombre_elemento.asc" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "wb-003",
+      "name": "Supabase GET Catálogo B",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [640, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Supabase devuelve el array directamente como $json\nconst data = $input.first().json;\nif (!Array.isArray(data) || data.length === 0) {\n  throw new Error('No hay elementos activos en catálogo B para sincronizar');\n}\nconsole.log(`Elementos a sincronizar: ${data.length}`);\nreturn data.map(item => ({ json: item }));"
+      },
+      "id": "wb-004",
+      "name": "Split Elementos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [860, 400]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "wb-005",
+      "name": "Loop Elementos",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [1080, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\n\n// Construir el texto que se va a vectorizar\n// Combina nombre + descripción para máxima cobertura semántica\nconst textoVectorizar = [\n  item.nombre_elemento,\n  item.descripcion_comercial,\n  item.unidad_medida_bloque ? `Unidad: ${item.unidad_medida_bloque}` : '',\n  item.precio_venta_unidad ? `Precio: ${item.precio_venta_unidad}€` : ''\n].filter(Boolean).join('. ');\n\nreturn [{ json: { ...item, texto_a_vectorizar: textoVectorizar } }];"
+      },
+      "id": "wb-006",
+      "name": "Construir Texto Embed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1080, 600]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/embeddings",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$vars.OPENAI_API_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'text-embedding-3-small', input: $json.texto_a_vectorizar, dimensions: 1536 }) }}",
+        "options": {}
+      },
+      "id": "wb-007",
+      "name": "OpenAI Embedding",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1300, 600]
+    },
+    {
+      "parameters": {
+        "jsCode": "const embeddingResponse = $input.first().json;\nconst elemento = $('Construir Texto Embed').first().json;\n\nconst vector = embeddingResponse.data?.[0]?.embedding;\nif (!vector) throw new Error(`Error obteniendo embedding para: ${elemento.nombre_elemento}`);\n\n// Construir punto Qdrant con UUID de Supabase como ID\nconst punto = {\n  id: elemento.id,\n  vector: vector,\n  payload: {\n    id_supabase: elemento.id,\n    codigo_sku: elemento.codigo_sku || '',\n    nombre_elemento: elemento.nombre_elemento,\n    descripcion_comercial: elemento.descripcion_comercial,\n    id_categoria_matriz: elemento.id_categoria_matriz,\n    unidad_medida_bloque: elemento.unidad_medida_bloque,\n    precio_venta_unidad: parseFloat(elemento.precio_venta_unidad) || 0,\n    dimensiones_mm: {\n      ancho: elemento.ancho_estandar_mm || 0,\n      fondo: elemento.fondo_estandar_mm || 0,\n      alto: elemento.alto_estandar_mm || 0\n    },\n    imagen_url: elemento.imagen_referencia_url || '',\n    activo: true,\n    coleccion: 'elementos_catalogo_b',\n    fecha_indexacion: new Date().toISOString()\n  }\n};\n\nreturn [{ json: { punto, id_supabase: elemento.id, nombre: elemento.nombre_elemento } }];"
+      },
+      "id": "wb-008",
+      "name": "Construir Punto Qdrant",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1520, 600]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://qdrant.cheosdesign.info/collections/elementos_catalogo_b/points?wait=true",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "qdrantApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ points: [$json.punto] }) }}",
+        "options": {}
+      },
+      "id": "wb-009",
+      "name": "Qdrant Upsert B",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1740, 600],
+      "credentials": {
+        "qdrantApi": {
+          "id": "td8SN9eZP0Os48rh",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{$vars.SUPABASE_URL}}/rest/v1/catalogo_elementos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$vars.SUPABASE_ANON_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$vars.SUPABASE_ANON_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=minimal" }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "id", "value": "=eq.{{$('Construir Punto Qdrant').first().json.id_supabase}}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ indexado_qdrant: true, qdrant_point_id: $('Construir Punto Qdrant').first().json.id_supabase }) }}",
+        "options": {}
+      },
+      "id": "wb-010",
+      "name": "Supabase PATCH indexado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1960, 600]
+    },
+    {
+      "parameters": {},
+      "id": "wb-011",
+      "name": "Volver al Loop",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [2180, 600]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Resumen final al terminar el loop\nconst total = $('Split Elementos').all().length;\nreturn [{\n  json: {\n    success: true,\n    coleccion: 'elementos_catalogo_b',\n    elementos_indexados: total,\n    mensaje: `Sincronización completada: ${total} elementos indexados en Qdrant`,\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "wb-012",
+      "name": "Resumen Final",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [{ "name": "Content-Type", "value": "application/json" }]
+          }
+        }
+      },
+      "id": "wb-013",
+      "name": "Respond Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1520, 400]
+    }
+  ],
+  "connections": {
+    "Webhook Sync B": {
+      "main": [[{ "node": "Crear Colección B", "type": "main", "index": 0 }]]
+    },
+    "Crear Colección B": {
+      "main": [[{ "node": "Supabase GET Catálogo B", "type": "main", "index": 0 }]]
+    },
+    "Supabase GET Catálogo B": {
+      "main": [[{ "node": "Split Elementos", "type": "main", "index": 0 }]]
+    },
+    "Split Elementos": {
+      "main": [[{ "node": "Loop Elementos", "type": "main", "index": 0 }]]
+    },
+    "Loop Elementos": {
+      "main": [
+        [{ "node": "Resumen Final", "type": "main", "index": 0 }],
+        [{ "node": "Construir Texto Embed", "type": "main", "index": 0 }]
+      ]
+    },
+    "Construir Texto Embed": {
+      "main": [[{ "node": "OpenAI Embedding", "type": "main", "index": 0 }]]
+    },
+    "OpenAI Embedding": {
+      "main": [[{ "node": "Construir Punto Qdrant", "type": "main", "index": 0 }]]
+    },
+    "Construir Punto Qdrant": {
+      "main": [[{ "node": "Qdrant Upsert B", "type": "main", "index": 0 }]]
+    },
+    "Qdrant Upsert B": {
+      "main": [[{ "node": "Supabase PATCH indexado", "type": "main", "index": 0 }]]
+    },
+    "Supabase PATCH indexado": {
+      "main": [[{ "node": "Volver al Loop", "type": "main", "index": 0 }]]
+    },
+    "Volver al Loop": {
+      "main": [[{ "node": "Loop Elementos", "type": "main", "index": 0 }]]
+    },
+    "Resumen Final": {
+      "main": [[{ "node": "Respond Webhook", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  },
+  "tags": [{ "name": "qdrant" }, { "name": "sync" }, { "name": "catalogo-b" }]
+}

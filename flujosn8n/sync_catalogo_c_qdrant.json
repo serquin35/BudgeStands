@@ -1,0 +1,269 @@
+{
+  "name": "Sync Catálogo C → Qdrant (servicios_despiece_c)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sync-catalogo-c",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "wc-001",
+      "name": "Webhook Sync C",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 400],
+      "webhookId": "sync-catalogo-c-v1"
+    },
+    {
+      "parameters": {
+        "operation": "createCollection",
+        "collectionName": "servicios_despiece_c",
+        "vectors": "{\"size\": 1536, \"distance\": \"Cosine\"}",
+        "shardNumber": 1,
+        "replicationFactor": 1,
+        "writeConsistencyFactor": 1,
+        "requestOptions": {}
+      },
+      "id": "wc-002",
+      "name": "Crear Colección C",
+      "type": "n8n-nodes-qdrant.qdrant",
+      "typeVersion": 1,
+      "position": [420, 400],
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "qdrantRestApi": {
+          "id": "YE1Kgy7tOBsjsUq7",
+          "name": "Qdrant account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$vars.SUPABASE_URL}}/rest/v1/tarifas_servicios",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$vars.SUPABASE_ANON_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$vars.SUPABASE_ANON_KEY}}" }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "select", "value": "id,id_proveedor,id_categoria_matriz,id_subcategoria_matriz,nombre_tecnico,descripcion_compra,medida_ancho_mm,medida_fondo_mm,medida_alto_mm,unidad_medida,precio_coste_unidad_medida,unidad_tiempo,precio_unidad_tiempo,aplica_coeficiente_desperdicio,coeficiente_desperdicio,requiere_homologacion_previa,incremento_urgencia_porcentaje" },
+            { "name": "estado_tarifa", "value": "eq.activa" },
+            { "name": "id_empresa", "value": "=eq.{{$json.body.id_empresa}}" },
+            { "name": "order", "value": "id_categoria_matriz.asc,nombre_tecnico.asc" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "wc-003",
+      "name": "Supabase GET Catálogo C",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [640, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nif (!Array.isArray(data) || data.length === 0) {\n  throw new Error('No hay tarifas activas en catálogo C para sincronizar');\n}\nconsole.log(`Tarifas a sincronizar: ${data.length}`);\nreturn data.map(item => ({ json: item }));"
+      },
+      "id": "wc-004",
+      "name": "Split Tarifas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [860, 400]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "wc-005",
+      "name": "Loop Tarifas",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [1080, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\n\n// Base C: texto más técnico que incluye dimensiones y unidades\n// El agente busca aquí cuando necesita precio de materia prima específica\nconst partes = [\n  item.nombre_tecnico,\n  item.descripcion_compra\n];\n\nif (item.medida_ancho_mm > 0 || item.medida_alto_mm > 0) {\n  partes.push(`Dimensiones: ${item.medida_ancho_mm}x${item.medida_fondo_mm}x${item.medida_alto_mm}mm`);\n}\n\nif (item.unidad_medida) {\n  partes.push(`Unidad de compra: ${item.unidad_medida}`);\n}\n\nif (item.precio_coste_unidad_medida > 0) {\n  partes.push(`Coste: ${item.precio_coste_unidad_medida}€/${item.unidad_medida}`);\n}\n\nif (item.aplica_coeficiente_desperdicio) {\n  partes.push(`Aplica coeficiente de merma: ${item.coeficiente_desperdicio}`);\n}\n\nif (item.requiere_homologacion_previa) {\n  partes.push('Requiere homologación CAE previa');\n}\n\nconst textoVectorizar = partes.filter(Boolean).join('. ');\n\nreturn [{ json: { ...item, texto_a_vectorizar: textoVectorizar } }];"
+      },
+      "id": "wc-006",
+      "name": "Construir Texto Embed C",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1080, 600]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/embeddings",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$vars.OPENAI_API_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'text-embedding-3-small', input: $json.texto_a_vectorizar, dimensions: 1536 }) }}",
+        "options": {}
+      },
+      "id": "wc-007",
+      "name": "OpenAI Embedding C",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1300, 600]
+    },
+    {
+      "parameters": {
+        "jsCode": "const embeddingResponse = $input.first().json;\nconst tarifa = $('Construir Texto Embed C').first().json;\n\nconst vector = embeddingResponse.data?.[0]?.embedding;\nif (!vector) throw new Error(`Error embedding: ${tarifa.nombre_tecnico}`);\n\nconst punto = {\n  id: tarifa.id,\n  vector: vector,\n  payload: {\n    id_supabase: tarifa.id,\n    nombre_tecnico: tarifa.nombre_tecnico,\n    descripcion_compra: tarifa.descripcion_compra,\n    id_categoria_matriz: tarifa.id_categoria_matriz,\n    id_subcategoria_matriz: tarifa.id_subcategoria_matriz || null,\n    id_proveedor: tarifa.id_proveedor || null,\n    // Dimensiones en mm\n    medida_ancho_mm: tarifa.medida_ancho_mm || 0,\n    medida_fondo_mm: tarifa.medida_fondo_mm || 0,\n    medida_alto_mm: tarifa.medida_alto_mm || 0,\n    // Precios y unidades\n    unidad_medida: tarifa.unidad_medida || '',\n    precio_coste_unidad_medida: parseFloat(tarifa.precio_coste_unidad_medida) || 0,\n    unidad_tiempo: tarifa.unidad_tiempo || null,\n    precio_unidad_tiempo: parseFloat(tarifa.precio_unidad_tiempo) || 0,\n    // Flags críticos para el agente\n    aplica_coeficiente_desperdicio: tarifa.aplica_coeficiente_desperdicio || false,\n    coeficiente_desperdicio: parseFloat(tarifa.coeficiente_desperdicio) || 1.0,\n    requiere_homologacion_previa: tarifa.requiere_homologacion_previa || false,\n    incremento_urgencia_porcentaje: parseFloat(tarifa.incremento_urgencia_porcentaje) || 0,\n    activo: true,\n    coleccion: 'servicios_despiece_c',\n    fecha_indexacion: new Date().toISOString()\n  }\n};\n\nreturn [{ json: { punto, id_supabase: tarifa.id, nombre: tarifa.nombre_tecnico } }];"
+      },
+      "id": "wc-008",
+      "name": "Construir Punto Qdrant C",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1520, 600]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://qdrant.cheosdesign.info/collections/servicios_despiece_c/points?wait=true",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "qdrantApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ points: [$json.punto] }) }}",
+        "options": {}
+      },
+      "id": "wc-009",
+      "name": "Qdrant Upsert C",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1740, 600],
+      "credentials": {
+        "qdrantApi": {
+          "id": "td8SN9eZP0Os48rh",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{$vars.SUPABASE_URL}}/rest/v1/tarifas_servicios",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$vars.SUPABASE_ANON_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$vars.SUPABASE_ANON_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=minimal" }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "id", "value": "=eq.{{$('Construir Punto Qdrant C').first().json.id_supabase}}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ indexado_qdrant: true, qdrant_point_id: $('Construir Punto Qdrant C').first().json.id_supabase }) }}",
+        "options": {}
+      },
+      "id": "wc-010",
+      "name": "Supabase PATCH indexado C",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1960, 600]
+    },
+    {
+      "parameters": {},
+      "id": "wc-011",
+      "name": "Volver al Loop C",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [2180, 600]
+    },
+    {
+      "parameters": {
+        "jsCode": "const total = $('Split Tarifas').all().length;\nreturn [{\n  json: {\n    success: true,\n    coleccion: 'servicios_despiece_c',\n    tarifas_indexadas: total,\n    mensaje: `Sincronización completada: ${total} tarifas de despiece indexadas en Qdrant`,\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "wc-012",
+      "name": "Resumen Final C",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [{ "name": "Content-Type", "value": "application/json" }]
+          }
+        }
+      },
+      "id": "wc-013",
+      "name": "Respond Webhook C",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1520, 400]
+    }
+  ],
+  "connections": {
+    "Webhook Sync C": {
+      "main": [[{ "node": "Crear Colección C", "type": "main", "index": 0 }]]
+    },
+    "Crear Colección C": {
+      "main": [[{ "node": "Supabase GET Catálogo C", "type": "main", "index": 0 }]]
+    },
+    "Supabase GET Catálogo C": {
+      "main": [[{ "node": "Split Tarifas", "type": "main", "index": 0 }]]
+    },
+    "Split Tarifas": {
+      "main": [[{ "node": "Loop Tarifas", "type": "main", "index": 0 }]]
+    },
+    "Loop Tarifas": {
+      "main": [
+        [{ "node": "Resumen Final C", "type": "main", "index": 0 }],
+        [{ "node": "Construir Texto Embed C", "type": "main", "index": 0 }]
+      ]
+    },
+    "Construir Texto Embed C": {
+      "main": [[{ "node": "OpenAI Embedding C", "type": "main", "index": 0 }]]
+    },
+    "OpenAI Embedding C": {
+      "main": [[{ "node": "Construir Punto Qdrant C", "type": "main", "index": 0 }]]
+    },
+    "Construir Punto Qdrant C": {
+      "main": [[{ "node": "Qdrant Upsert C", "type": "main", "index": 0 }]]
+    },
+    "Qdrant Upsert C": {
+      "main": [[{ "node": "Supabase PATCH indexado C", "type": "main", "index": 0 }]]
+    },
+    "Supabase PATCH indexado C": {
+      "main": [[{ "node": "Volver al Loop C", "type": "main", "index": 0 }]]
+    },
+    "Volver al Loop C": {
+      "main": [[{ "node": "Loop Tarifas", "type": "main", "index": 0 }]]
+    },
+    "Resumen Final C": {
+      "main": [[{ "node": "Respond Webhook C", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "qdrant" }, { "name": "sync" }, { "name": "catalogo-c" }]
+}

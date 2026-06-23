@@ -46,25 +46,26 @@ export async function POST(request: NextRequest) {
 
     console.log("Enviando petición a n8n Jarvis...")
     
+    // El payload que espera el Webhook de Jarvis según su nodo Switch
+    const n8nPayload = {
+      type: imageUrl ? "image" : "texto",
+      content: imageUrl || promptText || "",
+      feria: nombreFeria,
+      m2: Number(m2),
+      altura: Number(altura || 2.50),
+      tipo_stand: tipoStand || "modular",
+      estilo: estiloStand || "moderno",
+      cliente: clienteId,
+      presupuesto_max: 0 // opcional
+    }
+
     // Llamar a n8n Jarvis
     const n8nResponse = await fetch("https://n8n.cheosdesign.info/webhook/stand-budget-agent", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        userId: user.id,
-        empresaId: dbUser.id_empresa,
-        clienteId,
-        numeroPresupuesto,
-        nombreFeria,
-        m2: Number(m2),
-        altura: Number(altura || 2.50),
-        tipoStand: tipoStand || "modular",
-        estiloStand: estiloStand || "moderno",
-        promptText,
-        imageUrl: imageUrl || ""
-      })
+      body: JSON.stringify(n8nPayload)
     })
 
     if (!n8nResponse.ok) {
@@ -74,101 +75,81 @@ export async function POST(request: NextRequest) {
     const aiResult = await n8nResponse.json()
     console.log("Respuesta de n8n recibida exitosamente:", aiResult)
 
-    // Nota: El webhook de n8n puede insertar directamente en la base de datos,
-    // o bien devolvernos el presupuesto estructurado para insertarlo nosotros.
-    // Asumiremos que el webhook nos devuelve un objeto presupuesto con:
-    // { subtotal_construccion, subtotal_servicios_feria, subtotal_diseno_grafica, subtotal_transporte_mo, base_imponible, importe_iva, total_presupuesto, partidas: [...] }
-    
-    // Si n8n ya hizo la inserción en la base de datos por su cuenta, nos devolverá el id del presupuesto.
-    if (aiResult.id || aiResult.presupuestoId) {
-      return NextResponse.json({ 
-        success: true, 
-        presupuestoId: aiResult.id || aiResult.presupuestoId 
-      })
+    let parsedOutput = aiResult.output;
+    if (typeof parsedOutput === 'string') {
+      try {
+        parsedOutput = JSON.parse(parsedOutput);
+      } catch (e) {
+        console.warn("No se pudo parsear el output como JSON, se usará como texto", e);
+      }
     }
 
-    // Si no lo insertó, lo insertamos nosotros en base a lo que nos devolvió
-    const subtotalConstruccion = Number(aiResult.subtotal_construccion || m2 * 350)
-    const subtotalServicios = Number(aiResult.subtotal_servicios_feria || m2 * 80)
-    const subtotalDiseno = Number(aiResult.subtotal_diseno_grafica || 2500)
-    const subtotalTransporte = Number(aiResult.subtotal_transporte_mo || m2 * 120)
+    // Insertar el presupuesto en Supabase directamente desde Next.js
+    // Esto es mucho más robusto que depender de la IA de n8n para hacer la inserción HTTP
     
-    const baseImponible = subtotalConstruccion + subtotalServicios + subtotalDiseno + subtotalTransporte
+    // Fallbacks en caso de que la IA no devuelva el JSON perfecto
+    const subConstruccion = Number(parsedOutput?.subtotal_construccion || 0)
+    const subServicios = Number(parsedOutput?.subtotal_servicios || 0)
+    const subDiseno = Number(parsedOutput?.subtotal_diseno || 0)
+    const subTransporte = Number(parsedOutput?.subtotal_transporte || 0)
+    
+    const baseImponible = subConstruccion + subServicios + subDiseno + subTransporte
     const importeIva = baseImponible * 0.21
-    const totalPresupuesto = baseImponible + importeIva
+    const total = baseImponible + importeIva
 
-    console.log("Insertando cabecera de presupuesto en Supabase...")
-    const { data: insertedPres, error: insertError } = await supabase
+    // Guardar presupuesto cabecera
+    const { data: presCabecera, error: presError } = await supabase
       .from("presupuestos_cabecera")
-      .insert([
-        {
-          id_empresa: dbUser.id_empresa,
-          id_cliente: clienteId,
-          id_usuario_creador: user.id,
-          numero_presupuesto: numeroPresupuesto,
-          nombre_feria: nombreFeria,
-          m2_superficie: Number(m2),
-          altura_stand_m: Number(altura || 2.50),
-          tipo_stand: tipoStand || "modular",
-          estilo_stand: estiloStand || "moderno",
-          metodo_presupuestacion: "metodo_2_bloques",
-          input_ia_tipo: imageUrl ? "imagen" : "texto",
-          input_ia_contenido: promptText || imageUrl || "",
-          subtotal_construccion: subtotalConstruccion,
-          subtotal_servicios_feria: subtotalServicios,
-          subtotal_diseno_grafica: subtotalDiseno,
-          subtotal_transporte_mo: subtotalTransporte,
-          base_imponible: baseImponible,
-          importe_iva: importeIva,
-          total_presupuesto: totalPresupuesto,
-          estado_presupuesto: "en_espera",
-          imagen_stand_url: aiResult.imagen_stand_url || imageUrl || ""
-        }
-      ])
+      .insert({
+        id_empresa: dbUser.id_empresa,
+        id_usuario_creador: user.id,
+        id_cliente: clienteId,
+        numero_presupuesto: numeroPresupuesto,
+        nombre_feria: nombreFeria,
+        m2_superficie: Number(m2),
+        altura_stand_m: Number(altura || 2.50),
+        tipo_stand: tipoStand || "modular",
+        estilo_stand: estiloStand || "moderno",
+        metodo_presupuestacion: "metodo_2_bloques",
+        input_ia_tipo: imageUrl ? "image" : "texto",
+        input_ia_contenido: promptText,
+        subtotal_construccion: subConstruccion,
+        subtotal_servicios_feria: subServicios,
+        subtotal_diseno_grafica: subDiseno,
+        subtotal_transporte_mo: subTransporte,
+        base_imponible: baseImponible,
+        importe_iva: importeIva,
+        total_presupuesto: total,
+        estado_presupuesto: "borrador",
+        notas_internas: typeof parsedOutput === 'object' ? parsedOutput.mensaje_cliente : parsedOutput
+      })
       .select()
       .single()
 
-    if (insertError) {
-      throw insertError
+    if (presError) {
+      console.error("Error al guardar presupuesto en BD:", presError)
+      throw new Error(`No se pudo guardar el presupuesto en la base de datos: ${presError.message || JSON.stringify(presError)}`)
     }
 
-    console.log("Presupuesto cabecera insertado con ID:", insertedPres.id)
-
-    // Insertar líneas de presupuesto si existen en el resultado de n8n
-    const partidas = aiResult.partidas || [
-      { categoria: "construccion", concepto: "Estructura de stand modular de aluminio", cantidad: m2, unidad: "m2", precio_unitario: 250, total: m2 * 250 },
-      { categoria: "construccion", concepto: "Moqueta ferial bucle", cantidad: m2, unidad: "m2", precio_unitario: 12, total: m2 * 12 },
-      { categoria: "iluminacion", concepto: "Focos LED carril 30W", cantidad: Math.ceil(m2 / 5), unidad: "ud", precio_unitario: 45, total: Math.ceil(m2 / 5) * 45 },
-      { categoria: "servicios_feria", concepto: "Conexión eléctrica 3kW recinto", cantidad: 1, unidad: "ud", precio_unitario: 220, total: 220 },
-      { categoria: "diseno", concepto: "Proyecto 3D y renders", cantidad: 1, unidad: "ud", precio_unitario: 850, total: 850 },
-      { categoria: "transporte", concepto: "Transporte y logística", cantidad: 1, unidad: "ud", precio_unitario: 1200, total: 1200 },
-      { categoria: "montaje", concepto: "Montaje y desmontaje stand", cantidad: 1, unidad: "ud", precio_unitario: 1800, total: 1800 }
-    ]
-
-    const lineasToInsert = partidas.map((p: any, idx: number) => ({
-      id_presupuesto: insertedPres.id,
-      orden: idx + 1,
-      origen_concepto: "ia_generado",
-      concepto_descripcion: p.concepto || "Concepto no especificado",
-      cantidad: Number(p.cantidad || 1),
-      unidad: p.unidad || "ud",
-      precio_unitario_venta: Number(p.precio_unitario || 0),
-      total_linea: Number(p.total || 0),
-      notas_linea: p.notas || ""
-    }))
-
-    console.log(`Insertando ${lineasToInsert.length} líneas de presupuesto...`)
-    const { error: lineasError } = await supabase
-      .from("presupuestos_lineas")
-      .insert(lineasToInsert)
-
-    if (lineasError) {
-      console.error("Error al insertar líneas de presupuesto:", lineasError)
+    // Disparar asíncronamente la generación de imagen en n8n
+    // Esto se ejecuta en segundo plano sin bloquear la respuesta a Next.js
+    if (!imageUrl) {
+      console.log("Disparando generación de imagen asíncrona...");
+      fetch("https://n8n.cheosdesign.info/webhook/generate-stand-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          presupuestoId: presCabecera.id,
+          prompt: `Photorealistic exhibition stand. Ultra realistic. 3D render. Trade show booth. Professional lighting. Architectural visualization. 8k. ${promptText || (typeof parsedOutput === 'object' ? parsedOutput.mensaje_cliente : '')}`
+        })
+      }).catch(err => console.error("Error al disparar webhook de imagen:", err));
     }
 
     return NextResponse.json({ 
       success: true, 
-      presupuestoId: insertedPres.id 
+      output: typeof parsedOutput === 'object' ? parsedOutput.mensaje_cliente : parsedOutput,
+      imagen_url: imageUrl || parsedOutput?.imagen_url || null,
+      presupuestoId: presCabecera.id
     })
   } catch (error: any) {
     console.error("Error en API generate-budget:", error)

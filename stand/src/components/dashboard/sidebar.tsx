@@ -12,7 +12,8 @@ import {
   LogOut, 
   Menu, 
   X,
-  User
+  User,
+  Briefcase
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -37,6 +38,11 @@ export default function Sidebar({ user, empresa, onSignOut }: SidebarProps) {
       name: "Dashboard",
       href: "/dashboard",
       icon: LayoutDashboard,
+    },
+    {
+      name: "Proyectos Kanban",
+      href: "/dashboard/proyectos",
+      icon: Briefcase,
     },
     {
       name: "Presustand IA",

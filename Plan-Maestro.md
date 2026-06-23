@@ -1189,6 +1189,20 @@ DURACIÓN ESTIMADA: 4-6 semanas
    - Conectar frontend con webhook n8n Agente Jarvis
 ```
 
+### Fase 1.5 — Sistema de Autenticación (Próximo Hito)
+
+```
+OBJETIVO: Proteger el acceso a The Titan con Supabase Auth y Google SSO
+DURACIÓN ESTIMADA: 1-2 semanas
+
+🔲 Por construir:
+   - Configurar Google OAuth en GCP y Supabase
+   - UI: Añadir botón "Continuar con Google" a /login
+   - Implementar Middleware de Next.js para proteger rutas de /dashboard
+   - Lógica de redirecciones (/login a /dashboard si autenticado, y viceversa)
+   - Vincular usuarios creados con la tabla auth.users y public.usuarios
+```
+
 ### Fase 2 — Gestión de Proyectos
 
 ```

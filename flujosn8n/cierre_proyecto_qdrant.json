@@ -1,0 +1,201 @@
+{
+  "name": "Cierre Proyecto → Qdrant (proyectos_historicos)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "proyecto-cerrado",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "wp-001",
+      "name": "Webhook Cierre Proyecto",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 400],
+      "webhookId": "proyecto-cerrado-v1",
+      "notes": "POST body: { id_proyecto: 'uuid' } — llamado desde la UI al cerrar un proyecto"
+    },
+    {
+      "parameters": {
+        "operation": "createCollection",
+        "collectionName": "proyectos_historicos",
+        "vectors": "{\"size\": 1536, \"distance\": \"Cosine\"}",
+        "shardNumber": 1,
+        "replicationFactor": 1,
+        "writeConsistencyFactor": 1,
+        "requestOptions": {}
+      },
+      "id": "wp-002",
+      "name": "Crear Colección Proyectos",
+      "type": "n8n-nodes-qdrant.qdrant",
+      "typeVersion": 1,
+      "position": [420, 400],
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "qdrantRestApi": {
+          "id": "YE1Kgy7tOBsjsUq7",
+          "name": "Qdrant account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$vars.SUPABASE_URL}}/rest/v1/proyectos_operaciones",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$vars.SUPABASE_ANON_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$vars.SUPABASE_ANON_KEY}}" }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,codigo_proyecto_interno,estado_proyecto,presupuestos_cabecera(id,numero_presupuesto,nombre_feria,recinto_ferial,fecha_inicio_feria,m2_superficie,altura_stand_m,tipo_stand,nivel_densidad,estilo_stand,total_presupuesto,metodo_presupuestacion,notas_internas,clientes(razon_social,nombre_comercial,sector_industrial,recinto_ferial_habitual)),cierres_proyectos(ingreso_total_real,gasto_total_real,margen_real_porcentaje,desviacion_beneficio_porcentaje,valoracion_cliente,lecciones_aprendidas,fecha_cierre_oficial)"
+            },
+            { "name": "id", "value": "=eq.{{$json.body.id_proyecto}}" },
+            { "name": "limit", "value": "1" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "wp-003",
+      "name": "Supabase GET Proyecto Completo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [640, 400],
+      "notes": "JOIN con presupuesto, cliente y cierre en una sola query usando Supabase embedded relationships"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst proyectoArr = Array.isArray(data) ? data : [data];\n\nif (proyectoArr.length === 0 || !proyectoArr[0].id) {\n  throw new Error(`Proyecto no encontrado: ${$('Webhook Cierre Proyecto').first().json.body.id_proyecto}`);\n}\n\nconst proyecto = proyectoArr[0];\nconst pres = proyecto.presupuestos_cabecera || {};\nconst cliente = pres.clientes || {};\nconst cierre = proyecto.cierres_proyectos || {};\n\n// Construir texto descriptivo rico para máxima cobertura semántica\n// Este texto es lo que busca el Agente Jarvis cuando busca proyectos similares\nconst partes = [\n  // Descripción principal del stand\n  `Stand ${pres.tipo_stand || 'personalizado'} de ${pres.m2_superficie || 0}m² nivel ${pres.nivel_densidad || 'medio'} para ${pres.nombre_feria || 'feria'}.`,\n  \n  // Datos físicos\n  `Superficie: ${pres.m2_superficie || 0}m². Altura: ${pres.altura_stand_m || 2.5}m. Estilo: ${pres.estilo_stand || 'moderno'}.`,\n  \n  // Recinto y cliente\n  pres.recinto_ferial ? `Recinto: ${pres.recinto_ferial}.` : '',\n  cliente.sector_industrial ? `Sector del cliente: ${cliente.sector_industrial}.` : '',\n  \n  // Método de presupuestación\n  pres.metodo_presupuestacion ? `Método de presupuestación: ${pres.metodo_presupuestacion}.` : '',\n  \n  // Datos económicos\n  pres.total_presupuesto ? `Presupuesto total: ${pres.total_presupuesto}€.` : '',\n  cierre.ingreso_total_real ? `Ingreso real: ${cierre.ingreso_total_real}€.` : '',\n  cierre.margen_real_porcentaje ? `Margen real: ${cierre.margen_real_porcentaje}%.` : '',\n  \n  // Rentabilidad vs estimado\n  cierre.desviacion_beneficio_porcentaje\n    ? `Desviación vs presupuesto: ${cierre.desviacion_beneficio_porcentaje > 0 ? '+' : ''}${cierre.desviacion_beneficio_porcentaje}%.`\n    : '',\n  \n  // Valoración del cliente\n  cierre.valoracion_cliente ? `Valoración del cliente: ${cierre.valoracion_cliente}/5.` : '',\n  \n  // Lecciones aprendidas (muy valioso para futuros presupuestos)\n  cierre.lecciones_aprendidas ? `Lecciones aprendidas: ${cierre.lecciones_aprendidas}` : '',\n  \n  // Notas del presupuesto original\n  pres.notas_internas ? `Notas del proyecto: ${pres.notas_internas}` : ''\n];\n\nconst textoVectorizar = partes.filter(p => p && p.trim() !== '').join(' ');\n\nreturn [{\n  json: {\n    id_proyecto: proyecto.id,\n    id_presupuesto: pres.id,\n    codigo_proyecto: proyecto.codigo_proyecto_interno,\n    nombre_feria: pres.nombre_feria,\n    recinto_ferial: pres.recinto_ferial,\n    tipo_stand: pres.tipo_stand,\n    nivel_densidad: pres.nivel_densidad,\n    m2: pres.m2_superficie,\n    altura: pres.altura_stand_m,\n    estilo: pres.estilo_stand,\n    sector_cliente: cliente.sector_industrial,\n    total_presupuesto: pres.total_presupuesto,\n    ingreso_real: cierre.ingreso_total_real,\n    margen_real: cierre.margen_real_porcentaje,\n    desviacion: cierre.desviacion_beneficio_porcentaje,\n    valoracion_cliente: cierre.valoracion_cliente,\n    fecha_feria: pres.fecha_inicio_feria,\n    fecha_cierre: cierre.fecha_cierre_oficial,\n    anio: pres.fecha_inicio_feria ? new Date(pres.fecha_inicio_feria).getFullYear() : new Date().getFullYear(),\n    texto_a_vectorizar: textoVectorizar\n  }\n}];"
+      },
+      "id": "wp-004",
+      "name": "Construir Texto Proyecto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [860, 400],
+      "notes": "Construye texto rico con todos los datos del proyecto para máxima cobertura semántica en Qdrant"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/embeddings",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$vars.OPENAI_API_KEY}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'text-embedding-3-small', input: $json.texto_a_vectorizar, dimensions: 1536 }) }}",
+        "options": {}
+      },
+      "id": "wp-005",
+      "name": "OpenAI Embedding Proyecto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1080, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const embeddingResponse = $input.first().json;\nconst proyecto = $('Construir Texto Proyecto').first().json;\n\nconst vector = embeddingResponse.data?.[0]?.embedding;\nif (!vector) throw new Error(`Error embedding proyecto: ${proyecto.codigo_proyecto}`);\n\n// Usamos el id_presupuesto como ID del punto Qdrant\n// (es el más estable y único del proyecto)\nconst puntoId = proyecto.id_presupuesto || proyecto.id_proyecto;\n\nconst punto = {\n  id: puntoId,\n  vector: vector,\n  payload: {\n    id_proyecto: proyecto.id_proyecto,\n    id_presupuesto: proyecto.id_presupuesto,\n    codigo_proyecto: proyecto.codigo_proyecto,\n    // Datos del evento\n    nombre_feria: proyecto.nombre_feria || '',\n    recinto_ferial: proyecto.recinto_ferial || '',\n    fecha_feria: proyecto.fecha_feria || null,\n    anio: proyecto.anio,\n    // Características físicas del stand\n    tipo_stand: proyecto.tipo_stand || '',\n    nivel_densidad: proyecto.nivel_densidad || '',\n    m2: parseFloat(proyecto.m2) || 0,\n    altura: parseFloat(proyecto.altura) || 2.5,\n    estilo: proyecto.estilo || '',\n    // Datos del cliente\n    sector_cliente: proyecto.sector_cliente || '',\n    // Datos económicos — muy útiles para calibrar presupuestos futuros\n    total_presupuesto: parseFloat(proyecto.total_presupuesto) || 0,\n    ingreso_real: parseFloat(proyecto.ingreso_real) || 0,\n    margen_real_porcentaje: parseFloat(proyecto.margen_real) || 0,\n    desviacion_porcentaje: parseFloat(proyecto.desviacion) || 0,\n    valoracion_cliente: proyecto.valoracion_cliente || null,\n    // Metadatos\n    fecha_cierre: proyecto.fecha_cierre || null,\n    activo: true,\n    coleccion: 'proyectos_historicos',\n    fecha_indexacion: new Date().toISOString()\n  }\n};\n\nreturn [{ json: { punto, codigo_proyecto: proyecto.codigo_proyecto, id_punto: puntoId } }];"
+      },
+      "id": "wp-006",
+      "name": "Construir Punto Proyecto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 400]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://qdrant.cheosdesign.info/collections/proyectos_historicos/points?wait=true",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "qdrantApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ points: [$json.punto] }) }}",
+        "options": {}
+      },
+      "id": "wp-007",
+      "name": "Qdrant Upsert Proyecto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1520, 400],
+      "credentials": {
+        "qdrantApi": {
+          "id": "td8SN9eZP0Os48rh",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const qdrantResponse = $input.first().json;\nconst proyectoData = $('Construir Punto Proyecto').first().json;\n\nconst exito = qdrantResponse.status === 'ok';\n\nreturn [{\n  json: {\n    success: exito,\n    coleccion: 'proyectos_historicos',\n    codigo_proyecto: proyectoData.codigo_proyecto,\n    id_punto_qdrant: proyectoData.id_punto,\n    mensaje: exito\n      ? `Proyecto ${proyectoData.codigo_proyecto} indexado en Qdrant. Jarvis aprenderá de este proyecto en futuras búsquedas.`\n      : `Error al indexar proyecto ${proyectoData.codigo_proyecto}`,\n    qdrant_status: qdrantResponse.status,\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "wp-008",
+      "name": "Formatear Respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1740, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [{ "name": "Content-Type", "value": "application/json" }]
+          }
+        }
+      },
+      "id": "wp-009",
+      "name": "Respond Webhook Proyecto",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1960, 400]
+    }
+  ],
+  "connections": {
+    "Webhook Cierre Proyecto": {
+      "main": [[{ "node": "Crear Colección Proyectos", "type": "main", "index": 0 }]]
+    },
+    "Crear Colección Proyectos": {
+      "main": [[{ "node": "Supabase GET Proyecto Completo", "type": "main", "index": 0 }]]
+    },
+    "Supabase GET Proyecto Completo": {
+      "main": [[{ "node": "Construir Texto Proyecto", "type": "main", "index": 0 }]]
+    },
+    "Construir Texto Proyecto": {
+      "main": [[{ "node": "OpenAI Embedding Proyecto", "type": "main", "index": 0 }]]
+    },
+    "OpenAI Embedding Proyecto": {
+      "main": [[{ "node": "Construir Punto Proyecto", "type": "main", "index": 0 }]]
+    },
+    "Construir Punto Proyecto": {
+      "main": [[{ "node": "Qdrant Upsert Proyecto", "type": "main", "index": 0 }]]
+    },
+    "Qdrant Upsert Proyecto": {
+      "main": [[{ "node": "Formatear Respuesta", "type": "main", "index": 0 }]]
+    },
+    "Formatear Respuesta": {
+      "main": [[{ "node": "Respond Webhook Proyecto", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "qdrant" }, { "name": "proyectos" }, { "name": "historicos" }]
+}
