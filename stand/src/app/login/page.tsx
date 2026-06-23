@@ -91,7 +91,7 @@ export default function LoginPage() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute top-1/4 left-1/3 w-[300px] h-[300px] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none" />
       
-      <div className="relative w-full max-w-[420px] mx-4 sm:mx-auto px-0 sm:px-6 z-10">
+      <div className="relative w-full max-w-[420px] mx-auto px-4 z-10">
         {/* Logo / Header */}
         <div className="flex flex-col items-center mb-8 text-center">
           <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 mb-3">
