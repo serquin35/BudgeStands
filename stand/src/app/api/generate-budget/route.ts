@@ -48,6 +48,7 @@ export async function POST(request: NextRequest) {
     
     // El payload que espera el Webhook de Jarvis según su nodo Switch
     const n8nPayload = {
+      id_empresa: dbUser.id_empresa,
       type: imageUrl ? "image" : "texto",
       content: imageUrl || promptText || "",
       feria: nombreFeria,
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
       tipo_stand: tipoStand || "modular",
       estilo: estiloStand || "moderno",
       cliente: clienteId,
-      presupuesto_max: 0 // opcional
+      presupuesto_max: 0
     }
 
     // Llamar a n8n Jarvis
