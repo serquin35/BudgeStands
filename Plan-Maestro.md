@@ -1165,7 +1165,7 @@ Porcentaje: valor.toFixed(2) + '%'
 
 ## 10. ROADMAP POR FASES
 
-### Fase 1 — MVP Core (Presustand IA) ← EMPEZAR AQUÍ
+### Fase 1 — MVP Core (Presustand IA)
 
 ```
 OBJETIVO: Sistema funcional de generación de presupuestos con IA
@@ -1175,8 +1175,6 @@ DURACIÓN ESTIMADA: 4-6 semanas
    - Workflows n8n (pipeline ingesta + agente Jarvis)
    - Schema Supabase (tablas completas)
    - Colecciones Qdrant definidas
-
-🔲 Por construir:
    - Setup Supabase proyecto + activar extensión pgvector
    - Ejecutar SQL completo en Supabase
    - UI: Login + layout dashboard básico
@@ -1189,13 +1187,13 @@ DURACIÓN ESTIMADA: 4-6 semanas
    - Conectar frontend con webhook n8n Agente Jarvis
 ```
 
-### Fase 1.5 — Sistema de Autenticación (Próximo Hito)
+### Fase 1.5 — Sistema de Autenticación
 
 ```
 OBJETIVO: Proteger el acceso a The Titan con Supabase Auth y Google SSO
 DURACIÓN ESTIMADA: 1-2 semanas
 
-🔲 Por construir:
+✅ Ya completado:
    - Configurar Google OAuth en GCP y Supabase
    - UI: Añadir botón "Continuar con Google" a /login
    - Implementar Middleware de Next.js para proteger rutas de /dashboard
@@ -1203,7 +1201,7 @@ DURACIÓN ESTIMADA: 1-2 semanas
    - Vincular usuarios creados con la tabla auth.users y public.usuarios
 ```
 
-### Fase 2 — Gestión de Proyectos
+### Fase 2 — Gestión de Proyectos ← EMPEZAR AQUÍ
 
 ```
 OBJETIVO: Control completo desde presupuesto aceptado hasta montaje

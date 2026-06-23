@@ -12,7 +12,7 @@
 
 DO $$
 DECLARE
-  v_empresa UUID := 'UUID-DE-TU-EMPRESA'; -- ← REEMPLAZAR
+  v_empresa UUID := 'd3e113f2-ee3f-46d2-9a21-4af1f46dc5f7'; -- The Titan
   -- IDs de categoría según categorias_matriz
   c_estructura    INT := 1;  -- Madera y Derivados
   c_metal         INT := 2;  -- Metal y Aluminio

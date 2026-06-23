@@ -78,6 +78,7 @@ export default function PresustandPage() {
   const [m2, setM2] = useState("")
   const [altura, setAltura] = useState("2.50")
   const [tipoStand, setTipoStand] = useState("modular")
+  const [nivelDensidad, setNivelDensidad] = useState("media_estandar")
   const [estiloStand, setEstiloStand] = useState("moderno")
   const [promptText, setPromptText] = useState("")
   const [imageUrl, setImageUrl] = useState("")
@@ -180,6 +181,11 @@ export default function PresustandPage() {
       serviciosM2 = 90
       disenoBase = 3500
       transporteM2 = 140
+    } else if (tipoStand === "retail_comercial") {
+      construccionM2 = 350
+      serviciosM2 = 65
+      disenoBase = 1800
+      transporteM2 = 90
     } else if (tipoStand === "hibrido") {
       construccionM2 = 450
       serviciosM2 = 75
@@ -598,6 +604,7 @@ export default function PresustandPage() {
                         <option value="modular">Modular</option>
                         <option value="carpinteria_diseno">Carpintería de Diseño</option>
                         <option value="hibrido">Híbrido (Estructura + Madera)</option>
+                        <option value="retail_comercial">Retail / Comercial</option>
                         <option value="doble_planta">Doble Planta</option>
                       </select>
                     </div>
@@ -732,42 +739,11 @@ export default function PresustandPage() {
                         <option value="modular">Modular</option>
                         <option value="carpinteria_diseno">Carpintería de Diseño</option>
                         <option value="hibrido">Híbrido (Estructura + Madera)</option>
+                        <option value="retail_comercial">Retail / Comercial</option>
                         <option value="doble_planta">Doble Planta</option>
                       </select>
                     </div>
                   </div>
-
-                  {/* AI inputs */}
-                  <div className="space-y-2">
-                    <Label htmlFor="promptText" className="text-xs">Prompt de diseño IA (Qué materiales, zonas o extras quieres incluir) *</Label>
-                    <textarea
-                      id="promptText"
-                      placeholder="Ej: Diseña un stand tecnológico con moqueta de velour negra, panelado retroiluminado con imagen corporativa, mostrador de recepción curvo y zona lounge con sofá y mesa. Añade un monitor de 55 pulgadas para reproducir videos."
-                      value={promptText}
-                      onChange={(e) => setPromptText(e.target.value)}
-                      required
-                      rows={4}
-                      className="w-full bg-[#09090b] border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa] p-3 rounded-md"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="imageUrl" className="text-xs">Imagen de referencia (URL opcional)</Label>
-                    <Input
-                      id="imageUrl"
-                      placeholder="https://ejemplo.com/render.jpg"
-                      value={imageUrl}
-                      onChange={(e) => setImageUrl(e.target.value)}
-                      className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
-                    />
-                  </div>
-
-                  {generationError && (
-                    <div className="p-3 rounded bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex gap-2 items-center">
-                      <AlertTriangle className="h-4 w-4 shrink-0" />
-                      <span>{generationError}</span>
-                    </div>
-                  )}
                 </CardContent>
                 <CardFooter className="flex justify-between items-center border-t border-[#27272a]/50 py-3 bg-[#09090b]/40">
                   {generating ? (

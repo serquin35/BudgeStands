@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { Search, Plus, Edit2, Loader2, Database, DollarSign, Tag, Layers } from "lucide-react"
+import { Search, Plus, Edit2, Loader2, Database, DollarSign, Tag, Layers, Wrench } from "lucide-react"
 
 // Types Base A
 interface TarifaMacro {
@@ -33,6 +33,26 @@ interface ElementoCatalogo {
   precio_venta_unidad: number
 }
 
+// Types Base C
+interface TarifaServicio {
+  id: string
+  id_categoria_matriz: number
+  id_subcategoria_matriz: number | null
+  nombre_tecnico: string
+  descripcion_compra: string
+  medida_ancho_mm: number
+  medida_fondo_mm: number
+  medida_alto_mm: number
+  unidad_medida: 'm2' | 'ml' | 'ud' | 'kg' | 'l'
+  precio_coste_unidad_medida: number
+  unidad_tiempo: 'hora' | 'dia_montaje' | 'dia_feria' | 'evento_completo' | null
+  precio_unidad_tiempo: number
+  rendimiento_mecanico_hora: number
+  aplica_coeficiente_desperdicio: boolean
+  coeficiente_desperdicio: number
+  estado_tarifa: 'activa' | 'inactiva'
+}
+
 interface CategoriaMatriz {
   id: number
   nombre_categoria: string
@@ -44,7 +64,7 @@ const nivelDensidadList = ["baja_minimalista", "media_estandar", "alta_espectacu
 export default function CatalogosPage() {
   const supabase = createClient()
   
-  const [activeCatalog, setActiveCatalog] = useState<"basea" | "baseb">("basea")
+  const [activeCatalog, setActiveCatalog] = useState<"basea" | "baseb" | "basec">("basea")
   const [loading, setLoading] = useState(true)
   
   // Data States
@@ -68,15 +88,20 @@ export default function CatalogosPage() {
     { id: 15, nombre_categoria: "Varios" }
   ])
   
+  // Data States Base C
+  const [servicios, setServicios] = useState<TarifaServicio[]>([])
+
   // Filter States
   const [searchSKU, setSearchSKU] = useState("")
   const [filterTipoProyecto, setFilterTipoProyecto] = useState("todos")
+  const [filterCategoriaC, setFilterCategoriaC] = useState("todos")
 
   // Sheet States
   const [isSheetOpen, setIsSheetOpen] = useState(false)
-  const [editingItemType, setEditingItemType] = useState<"basea" | "baseb">("basea")
+  const [editingItemType, setEditingItemType] = useState<"basea" | "baseb" | "basec">("basea")
   const [editingTarifa, setEditingTarifa] = useState<TarifaMacro | null>(null)
   const [editingElemento, setEditingElemento] = useState<ElementoCatalogo | null>(null)
+  const [editingServicio, setEditingServicio] = useState<TarifaServicio | null>(null)
   
   // Form State Base A
   const [formA, setFormA] = useState({
@@ -85,6 +110,24 @@ export default function CatalogosPage() {
     precio_venta_m2: 350,
     margen_beneficio_sugerido: 35.00,
     descripcion_incluido: "",
+  })
+
+  // Form State Base C
+  const [formC, setFormC] = useState({
+    id_categoria_matriz: 1,
+    nombre_tecnico: "",
+    descripcion_compra: "",
+    medida_ancho_mm: 0,
+    medida_fondo_mm: 0,
+    medida_alto_mm: 0,
+    unidad_medida: "ud" as TarifaServicio["unidad_medida"],
+    precio_coste_unidad_medida: 0,
+    unidad_tiempo: null as TarifaServicio["unidad_tiempo"],
+    precio_unidad_tiempo: 0,
+    rendimiento_mecanico_hora: 0,
+    aplica_coeficiente_desperdicio: false,
+    coeficiente_desperdicio: 1.000,
+    estado_tarifa: "activa" as TarifaServicio["estado_tarifa"],
   })
 
   // Form State Base B
@@ -132,6 +175,14 @@ export default function CatalogosPage() {
               .eq("id_empresa", dbUser.id_empresa)
               .order("codigo_sku")
             setElementos(dbElementos || [])
+
+            // Cargar Base C (Servicios/Despiece)
+            const { data: dbServicios } = await supabase
+              .from("tarifas_servicios")
+              .select("*")
+              .eq("id_empresa", dbUser.id_empresa)
+              .order("nombre_tecnico")
+            setServicios(dbServicios || [])
           }
         }
       } catch (err) {
@@ -151,6 +202,14 @@ export default function CatalogosPage() {
   const filteredElementos = elementos.filter(e => 
     e.nombre_elemento.toLowerCase().includes(searchSKU.toLowerCase()) || 
     e.codigo_sku.toLowerCase().includes(searchSKU.toLowerCase())
+  )
+
+  const filteredServicios = servicios.filter(s =>
+    filterCategoriaC === "todos" || s.id_categoria_matriz === Number(filterCategoriaC)
+  ).filter(s =>
+    !searchSKU ||
+    s.nombre_tecnico.toLowerCase().includes(searchSKU.toLowerCase()) ||
+    s.descripcion_compra.toLowerCase().includes(searchSKU.toLowerCase())
   )
 
   // Handlers Editar Base A
@@ -177,6 +236,53 @@ export default function CatalogosPage() {
       precio_venta_m2: 350,
       margen_beneficio_sugerido: 35.00,
       descripcion_incluido: "",
+    })
+    setFormError(null)
+    setIsSheetOpen(true)
+  }
+
+  // Handlers Editar Base C
+  const handleEditC = (serv: TarifaServicio) => {
+    setEditingItemType("basec")
+    setEditingServicio(serv)
+    setFormC({
+      id_categoria_matriz: serv.id_categoria_matriz,
+      nombre_tecnico: serv.nombre_tecnico,
+      descripcion_compra: serv.descripcion_compra,
+      medida_ancho_mm: serv.medida_ancho_mm,
+      medida_fondo_mm: serv.medida_fondo_mm,
+      medida_alto_mm: serv.medida_alto_mm,
+      unidad_medida: serv.unidad_medida,
+      precio_coste_unidad_medida: Number(serv.precio_coste_unidad_medida),
+      unidad_tiempo: serv.unidad_tiempo,
+      precio_unidad_tiempo: Number(serv.precio_unidad_tiempo),
+      rendimiento_mecanico_hora: Number(serv.rendimiento_mecanico_hora),
+      aplica_coeficiente_desperdicio: serv.aplica_coeficiente_desperdicio,
+      coeficiente_desperdicio: Number(serv.coeficiente_desperdicio),
+      estado_tarifa: serv.estado_tarifa,
+    })
+    setFormError(null)
+    setIsSheetOpen(true)
+  }
+
+  const handleAddNewC = () => {
+    setEditingItemType("basec")
+    setEditingServicio(null)
+    setFormC({
+      id_categoria_matriz: 1,
+      nombre_tecnico: "",
+      descripcion_compra: "",
+      medida_ancho_mm: 0,
+      medida_fondo_mm: 0,
+      medida_alto_mm: 0,
+      unidad_medida: "ud",
+      precio_coste_unidad_medida: 0,
+      unidad_tiempo: null,
+      precio_unidad_tiempo: 0,
+      rendimiento_mecanico_hora: 0,
+      aplica_coeficiente_desperdicio: false,
+      coeficiente_desperdicio: 1.000,
+      estado_tarifa: "activa",
     })
     setFormError(null)
     setIsSheetOpen(true)
@@ -252,6 +358,32 @@ export default function CatalogosPage() {
           if (error) throw error
           setTarifas(prev => [...prev, data])
         }
+      } else if (editingItemType === "basec") {
+        const payload = {
+          ...formC,
+          id_empresa: empresaId,
+        }
+
+        if (editingServicio) {
+          const { data, error } = await supabase
+            .from("tarifas_servicios")
+            .update(payload)
+            .eq("id", editingServicio.id)
+            .select()
+            .single()
+
+          if (error) throw error
+          setServicios(prev => prev.map(s => s.id === editingServicio.id ? data : s))
+        } else {
+          const { data, error } = await supabase
+            .from("tarifas_servicios")
+            .insert([payload])
+            .select()
+            .single()
+
+          if (error) throw error
+          setServicios(prev => [...prev, data])
+        }
       } else {
         const payload = {
           ...formB,
@@ -302,11 +434,11 @@ export default function CatalogosPage() {
         </div>
         
         <Button 
-          onClick={activeCatalog === "basea" ? handleAddNewA : handleAddNewB}
+          onClick={activeCatalog === "basea" ? handleAddNewA : activeCatalog === "baseb" ? handleAddNewB : handleAddNewC}
           className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-xs rounded-lg transition-all duration-200"
         >
           <Plus className="h-4 w-4 mr-2" />
-          <span>Añadir {activeCatalog === "basea" ? "Tarifa m²" : "Elemento"}</span>
+          <span>Añadir {activeCatalog === "basea" ? "Tarifa m²" : activeCatalog === "baseb" ? "Elemento" : "Tarifa Despiece"}</span>
         </Button>
       </div>
 
@@ -338,6 +470,19 @@ export default function CatalogosPage() {
             <span>Base B: Catálogo Elementos (Partidas)</span>
           </div>
         </button>
+        <button
+          onClick={() => setActiveCatalog("basec")}
+          className={`px-4 py-2 text-xs font-semibold border-b-2 transition-all duration-200 ${
+            activeCatalog === "basec" 
+              ? "border-indigo-500 text-indigo-400" 
+              : "border-transparent text-[#71717a] hover:text-[#fafafa]"
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <Wrench className="h-4 w-4" />
+            <span>Base C: Tarifas Despiece Técnico</span>
+          </div>
+        </button>
       </div>
 
       {/* Filters Card */}
@@ -355,6 +500,28 @@ export default function CatalogosPage() {
                 <option value="todos">Todos los tipos</option>
                 {tipoProyectoList.map(t => (
                   <option key={t} value={t} className="capitalize">{t.replace("_", " ")}</option>
+                ))}
+              </select>
+            </div>
+          ) : activeCatalog === "basec" ? (
+            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+              <div className="relative w-full sm:max-w-xs">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#71717a]" />
+                <Input 
+                  placeholder="Buscar por nombre técnico..."
+                  value={searchSKU}
+                  onChange={(e) => setSearchSKU(e.target.value)}
+                  className="pl-9 bg-[#09090b]/80 border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa]"
+                />
+              </div>
+              <select
+                value={filterCategoriaC}
+                onChange={(e) => setFilterCategoriaC(e.target.value)}
+                className="bg-[#09090b]/80 border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3 w-48"
+              >
+                <option value="todos">Todas las categorías</option>
+                {categorias.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.nombre_categoria}</option>
                 ))}
               </select>
             </div>
@@ -428,6 +595,96 @@ export default function CatalogosPage() {
             ))
           )}
         </div>
+      ) : activeCatalog === "basec" ? (
+        // Base C Render (Table)
+        <Card className="border-[#27272a]/70 bg-[#09090b]/40">
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-[#27272a]/70 text-[#a1a1aa] font-medium">
+                    <th className="py-3 px-4">Nombre Técnico</th>
+                    <th className="py-3 px-2">Categoría</th>
+                    <th className="py-3 px-2 text-right w-20">Coste/ud</th>
+                    <th className="py-3 px-2 text-center w-16">Ud.</th>
+                    <th className="py-3 px-2 text-right w-20">Coste/hora/día</th>
+                    <th className="py-3 px-2 text-center w-14">Desp.</th>
+                    <th className="py-3 px-2 text-center w-16">Estado</th>
+                    <th className="py-3 px-4 text-center w-12">Acción</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#27272a]/40">
+                  {filteredServicios.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="py-6 text-center text-[#71717a]">
+                        No hay tarifas de despiece registradas en Base C.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredServicios.map((serv) => {
+                      const catName = categorias.find(c => c.id === serv.id_categoria_matriz)?.nombre_categoria || "Varios"
+                      return (
+                        <tr key={serv.id} className="hover:bg-[#18181b]/30">
+                          <td className="py-3.5 px-4">
+                            <div className="font-medium text-[#fafafa]">{serv.nombre_tecnico}</div>
+                            <div className="text-[10px] text-[#71717a] font-normal mt-0.5 line-clamp-1">{serv.descripcion_compra}</div>
+                          </td>
+                          <td className="py-3.5 px-2">
+                            <span className="text-[10px] font-semibold text-zinc-400 bg-zinc-500/10 border border-zinc-500/20 px-1.5 py-0.5 rounded">
+                              {catName}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-2 text-right font-mono text-[#fafafa] font-semibold">
+                            {Number(serv.precio_coste_unidad_medida).toFixed(2)} €
+                          </td>
+                          <td className="py-3.5 px-2 text-center font-bold text-[#fafafa] uppercase text-[10px]">
+                            {serv.unidad_medida}
+                            {serv.unidad_tiempo && (
+                              <span className="block text-[9px] text-[#71717a] font-normal">{serv.unidad_tiempo.replace("_", " ")}</span>
+                            )}
+                          </td>
+                          <td className="py-3.5 px-2 text-right text-[#a1a1aa]">
+                            {serv.precio_unidad_tiempo > 0 ? (
+                              <span className="font-mono">{Number(serv.precio_unidad_tiempo).toFixed(2)} €</span>
+                            ) : (
+                              <span className="text-[#52525b]">—</span>
+                            )}
+                          </td>
+                          <td className="py-3.5 px-2 text-center">
+                            {serv.aplica_coeficiente_desperdicio ? (
+                              <span className="text-[10px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded">
+                                ×{Number(serv.coeficiente_desperdicio).toFixed(2)}
+                              </span>
+                            ) : (
+                              <span className="text-[#52525b]">—</span>
+                            )}
+                          </td>
+                          <td className="py-3.5 px-2 text-center">
+                            {serv.estado_tarifa === "activa" ? (
+                              <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">Activa</span>
+                            ) : (
+                              <span className="text-[10px] font-semibold text-zinc-400 bg-zinc-500/10 border border-zinc-500/20 px-1.5 py-0.5 rounded">Inactiva</span>
+                            )}
+                          </td>
+                          <td className="py-3.5 px-4 text-center">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEditC(serv)}
+                              className="h-7 w-7 text-[#71717a] hover:text-[#fafafa] hover:bg-[#18181b]"
+                            >
+                              <Edit2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </td>
+                        </tr>
+                      )
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
       ) : (
         // Base B Render (Table)
         <Card className="border-[#27272a]/70 bg-[#09090b]/40">
@@ -507,17 +764,196 @@ export default function CatalogosPage() {
             <SheetTitle className="text-[#fafafa]">
               {editingItemType === "basea" 
                 ? editingTarifa ? "Editar Tarifa m²" : "Nueva Tarifa m²" 
+                : editingItemType === "basec"
+                ? editingServicio ? "Editar Tarifa Despiece" : "Nueva Tarifa Despiece"
                 : editingElemento ? "Editar Elemento" : "Nuevo Elemento"}
             </SheetTitle>
             <SheetDescription className="text-[#a1a1aa]">
-              Ingresa los costes y especificaciones técnicas para los cálculos del sistema.
+              {editingItemType === "basec"
+                ? "Costes reales de materiales, MO y servicios para despiece técnico (Base C)."
+                : "Ingresa los costes y especificaciones técnicas para los cálculos del sistema."}
             </SheetDescription>
           </SheetHeader>
 
           <form onSubmit={handleSave} className="space-y-4 mt-4 px-6 pb-6">
             
-            {/* Form Base A */}
-            {editingItemType === "basea" ? (
+            {/* Form Base C */}
+            {editingItemType === "basec" ? (
+              <>
+                <div className="space-y-2">
+                  <Label className="text-xs">Nombre Técnico *</Label>
+                  <Input 
+                    value={formC.nombre_tecnico}
+                    onChange={(e) => setFormC(prev => ({ ...prev, nombre_tecnico: e.target.value }))}
+                    required
+                    placeholder="Ej: Tablero DM 19mm lacado blanco"
+                    className="bg-[#09090b] border-[#27272a] text-xs"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs">Descripción de Compra *</Label>
+                  <textarea
+                    value={formC.descripcion_compra}
+                    onChange={(e) => setFormC(prev => ({ ...prev, descripcion_compra: e.target.value }))}
+                    required
+                    rows={3}
+                    placeholder="Texto descriptivo que se vectorizará para búsquedas semánticas en Qdrant..."
+                    className="w-full bg-[#09090b] border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa] p-3 rounded-md"
+                  />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs">Categoría Matriz *</Label>
+                    <select
+                      value={formC.id_categoria_matriz}
+                      onChange={(e) => setFormC(prev => ({ ...prev, id_categoria_matriz: Number(e.target.value) }))}
+                      className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                    >
+                      {categorias.map(cat => (
+                        <option key={cat.id} value={cat.id}>{cat.nombre_categoria}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs">Unidad de Medida *</Label>
+                    <select
+                      value={formC.unidad_medida}
+                      onChange={(e) => setFormC(prev => ({ ...prev, unidad_medida: e.target.value as TarifaServicio["unidad_medida"] }))}
+                      className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                    >
+                      <option value="ud">Unidad (ud)</option>
+                      <option value="m2">Metro Cuadrado (m²)</option>
+                      <option value="ml">Metro Lineal (ml)</option>
+                      <option value="kg">Kilogramo (kg)</option>
+                      <option value="l">Litro (l)</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs">Coste por Unidad de Medida (€) *</Label>
+                    <Input 
+                      type="number"
+                      step="0.01"
+                      value={formC.precio_coste_unidad_medida}
+                      onChange={(e) => setFormC(prev => ({ ...prev, precio_coste_unidad_medida: Number(e.target.value) }))}
+                      required
+                      className="bg-[#09090b] border-[#27272a] text-xs"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs">Rendimiento Mecánico (ud/hora)</Label>
+                    <Input 
+                      type="number"
+                      step="0.01"
+                      value={formC.rendimiento_mecanico_hora}
+                      onChange={(e) => setFormC(prev => ({ ...prev, rendimiento_mecanico_hora: Number(e.target.value) }))}
+                      className="bg-[#09090b] border-[#27272a] text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="border-t border-[#27272a]/50 my-4 pt-4 space-y-4">
+                  <h4 className="text-xs font-bold text-[#fafafa] uppercase tracking-wider">Unidad de Tiempo (MO / Alquileres)</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-xs">Tipo de Tiempo</Label>
+                      <select
+                        value={formC.unidad_tiempo || ""}
+                        onChange={(e) => setFormC(prev => ({ ...prev, unidad_tiempo: (e.target.value || null) as TarifaServicio["unidad_tiempo"] }))}
+                        className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                      >
+                        <option value="">Sin tiempo asociado</option>
+                        <option value="hora">Por Hora</option>
+                        <option value="dia_montaje">Día de Montaje</option>
+                        <option value="dia_feria">Día de Feria</option>
+                        <option value="evento_completo">Evento Completo</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs">Precio por Unidad de Tiempo (€)</Label>
+                      <Input 
+                        type="number"
+                        step="0.01"
+                        value={formC.precio_unidad_tiempo}
+                        onChange={(e) => setFormC(prev => ({ ...prev, precio_unidad_tiempo: Number(e.target.value) }))}
+                        className="bg-[#09090b] border-[#27272a] text-xs"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t border-[#27272a]/50 my-4 pt-4 space-y-4">
+                  <h4 className="text-xs font-bold text-[#fafafa] uppercase tracking-wider">Parámetros de Producción</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-[#18181b]/40 border border-[#27272a]/30">
+                      <input
+                        type="checkbox"
+                        id="aplica_desp"
+                        checked={formC.aplica_coeficiente_desperdicio}
+                        onChange={(e) => setFormC(prev => ({ ...prev, aplica_coeficiente_desperdicio: e.target.checked }))}
+                        className="rounded border-[#27272a] bg-[#09090b] text-indigo-500 focus:ring-indigo-500"
+                      />
+                      <Label htmlFor="aplica_desp" className="text-xs">Aplica Coeficiente de Desperdicio</Label>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs">Coeficiente de Desperdicio</Label>
+                      <Input 
+                        type="number"
+                        step="0.001"
+                        value={formC.coeficiente_desperdicio}
+                        onChange={(e) => setFormC(prev => ({ ...prev, coeficiente_desperdicio: Number(e.target.value) }))}
+                        disabled={!formC.aplica_coeficiente_desperdicio}
+                        className="bg-[#09090b] border-[#27272a] text-xs"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-xs">Dimensiones (mm): Ancho</Label>
+                      <Input 
+                        type="number"
+                        value={formC.medida_ancho_mm}
+                        onChange={(e) => setFormC(prev => ({ ...prev, medida_ancho_mm: Number(e.target.value) }))}
+                        className="bg-[#09090b] border-[#27272a] text-xs"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs">Dimensiones (mm): Fondo</Label>
+                      <Input 
+                        type="number"
+                        value={formC.medida_fondo_mm}
+                        onChange={(e) => setFormC(prev => ({ ...prev, medida_fondo_mm: Number(e.target.value) }))}
+                        className="bg-[#09090b] border-[#27272a] text-xs"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-xs">Dimensiones (mm): Alto</Label>
+                      <Input 
+                        type="number"
+                        value={formC.medida_alto_mm}
+                        onChange={(e) => setFormC(prev => ({ ...prev, medida_alto_mm: Number(e.target.value) }))}
+                        className="bg-[#09090b] border-[#27272a] text-xs"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs">Estado</Label>
+                      <select
+                        value={formC.estado_tarifa}
+                        onChange={(e) => setFormC(prev => ({ ...prev, estado_tarifa: e.target.value as TarifaServicio["estado_tarifa"] }))}
+                        className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                      >
+                        <option value="activa">Activa</option>
+                        <option value="inactiva">Inactiva</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : /* Form Base A */
+            editingItemType === "basea" ? (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">

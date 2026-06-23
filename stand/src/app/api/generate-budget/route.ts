@@ -131,8 +131,68 @@ export async function POST(request: NextRequest) {
       throw new Error(`No se pudo guardar el presupuesto en la base de datos: ${presError.message || JSON.stringify(presError)}`)
     }
 
+    // Procesar partidas/líneas si vienen en la respuesta de Jarvis
+    const partidas = parsedOutput?.partidas || parsedOutput?.lineas || []
+    if (Array.isArray(partidas) && partidas.length > 0) {
+      const lineasPayload = partidas.map((p: any, idx: number) => ({
+        id_presupuesto: presCabecera.id,
+        orden: idx + 1,
+        id_categoria_matriz: p.id_categoria_matriz || null,
+        origen_concepto: (p.origen === "base_a" || p.origen === "base_b" || p.origen === "base_c")
+          ? `base_${p.origen.slice(-1)}` : "ia_generado",
+        concepto_descripcion: p.concepto || p.descripcion || p.nombre || "Concepto sin descripción",
+        cantidad: Number(p.cantidad || p.cant || 1),
+        unidad: p.unidad || "ud",
+        precio_unitario_venta: Number(p.precio_unitario || p.precio || p.precio_venta || 0),
+        descuento_linea_pct: Number(p.descuento || 0),
+        total_linea: Number(p.total || (Number(p.cantidad || p.cant || 1) * Number(p.precio_unitario || p.precio || 0))),
+        es_concepto_nuevo: p.origen === "ia_generado" || !p.origen,
+        notas_linea: p.notas || null,
+      }))
+
+      const { error: lineasError } = await supabase
+        .from("presupuestos_lineas")
+        .insert(lineasPayload)
+
+      if (lineasError) {
+        console.error("Error al insertar líneas del presupuesto:", lineasError)
+      } else {
+        console.log(`${lineasPayload.length} líneas insertadas correctamente`)
+      }
+    } else {
+      // Si no vienen partidas, insertar líneas macro de resumen
+      const lineasMacro = [
+        { concepto: `Construcción y estructura stand`, total: subConstruccion, catId: 1 },
+        { concepto: "Servicios técnicos feriales", total: subServicios, catId: 12 },
+        { concepto: "Diseño, gráfica y renders 3D", total: subDiseno, catId: 14 },
+        { concepto: "Transporte, logística y montaje", total: subTransporte, catId: 11 },
+      ].filter(l => l.total > 0)
+
+      if (lineasMacro.length > 0) {
+        const lineasPayload = lineasMacro.map((l, idx) => ({
+          id_presupuesto: presCabecera.id,
+          orden: idx + 1,
+          id_categoria_matriz: l.catId,
+          origen_concepto: "ia_generado",
+          concepto_descripcion: l.concepto,
+          cantidad: 1,
+          unidad: "ud",
+          precio_unitario_venta: l.total,
+          total_linea: l.total,
+          es_concepto_nuevo: false,
+        }))
+
+        const { error: lineasError } = await supabase
+          .from("presupuestos_lineas")
+          .insert(lineasPayload)
+
+        if (lineasError) {
+          console.error("Error al insertar líneas macro:", lineasError)
+        }
+      }
+    }
+
     // Disparar asíncronamente la generación de imagen en n8n
-    // Esto se ejecuta en segundo plano sin bloquear la respuesta a Next.js
     if (!imageUrl) {
       console.log("Disparando generación de imagen asíncrona...");
       fetch("https://n8n.cheosdesign.info/webhook/generate-stand-image", {
@@ -149,7 +209,8 @@ export async function POST(request: NextRequest) {
       success: true, 
       output: typeof parsedOutput === 'object' ? parsedOutput.mensaje_cliente : parsedOutput,
       imagen_url: imageUrl || parsedOutput?.imagen_url || null,
-      presupuestoId: presCabecera.id
+      presupuestoId: presCabecera.id,
+      lineasInsertadas: Array.isArray(partidas) ? partidas.length : 0
     })
   } catch (error: any) {
     console.error("Error en API generate-budget:", error)
