@@ -743,7 +743,38 @@ export default function PresustandPage() {
                         <option value="doble_planta">Doble Planta</option>
                       </select>
                     </div>
+                    </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="promptText" className="text-xs">Prompt de diseño IA (materiales, zonas o extras) *</Label>
+                    <textarea
+                      id="promptText"
+                      placeholder="Ej: Diseña un stand tecnológico con moqueta de velour negra, panelado retroiluminado con imagen corporativa, mostrador de recepción curvo y zona lounge con sofá y mesa."
+                      value={promptText}
+                      onChange={(e) => setPromptText(e.target.value)}
+                      required
+                      rows={4}
+                      className="w-full bg-[#09090b] border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa] p-3 rounded-md"
+                    />
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="imageUrl" className="text-xs">Imagen de referencia (URL opcional)</Label>
+                    <Input
+                      id="imageUrl"
+                      placeholder="https://ejemplo.com/render.jpg"
+                      value={imageUrl}
+                      onChange={(e) => setImageUrl(e.target.value)}
+                      className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                    />
+                  </div>
+
+                  {generationError && (
+                    <div className="p-3 rounded bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex gap-2 items-center">
+                      <AlertTriangle className="h-4 w-4 shrink-0" />
+                      <span>{generationError}</span>
+                    </div>
+                  )}
                 </CardContent>
                 <CardFooter className="flex justify-between items-center border-t border-[#27272a]/50 py-3 bg-[#09090b]/40">
                   {generating ? (
