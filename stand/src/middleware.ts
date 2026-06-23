@@ -34,8 +34,8 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname
 
-  // Permitir el acceso libre a la API y archivos estáticos (aunque ya están excluidos en el matcher)
-  if (pathname.startsWith('/api') || pathname.startsWith('/_next') || pathname === '/favicon.ico') {
+  // Permitir el acceso libre a la API, rutas de autenticación y archivos estáticos (aunque ya están excluidos en el matcher)
+  if (pathname.startsWith('/api') || pathname.startsWith('/_next') || pathname === '/favicon.ico' || pathname.startsWith('/auth')) {
     return supabaseResponse
   }
 
