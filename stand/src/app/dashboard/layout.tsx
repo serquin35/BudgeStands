@@ -2,6 +2,7 @@ import { redirect } from "next/navigation"
 import { createClient } from "@/utils/supabase/server"
 import Sidebar from "@/components/dashboard/sidebar"
 import { signOut } from "@/app/auth/actions"
+import Link from "next/link"
 
 export const dynamic = "force-dynamic"
 
@@ -66,10 +67,13 @@ export default async function DashboardLayout({
           </div>
           
           <div className="flex items-center gap-4">
-            <div className="text-right hidden sm:block">
+            <Link 
+              href="/dashboard/perfil" 
+              className="text-right hidden sm:block hover:opacity-85 hover:text-indigo-400 transition-all duration-200"
+            >
               <div className="text-xs font-semibold text-[#fafafa]">{userData.nombre_completo}</div>
               <div className="text-[10px] text-[#71717a] capitalize">{userData.rol}</div>
-            </div>
+            </Link>
           </div>
         </header>
 

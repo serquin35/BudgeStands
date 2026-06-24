@@ -6,6 +6,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog"
 import { 
   Sparkles, 
   Layers, 
@@ -18,7 +26,8 @@ import {
   Calendar,
   Clock,
   ArrowUpRight,
-  TrendingDown
+  TrendingDown,
+  Plus
 } from "lucide-react"
 
 interface Cliente {
@@ -67,6 +76,7 @@ const loadingMessages = [
 
 export default function PresustandPage() {
   const supabase = createClient()
+  const [empresaId, setEmpresaId] = useState<string | null>(null)
   const [clientes, setClientes] = useState<Cliente[]>([])
   const [presupuestos, setPresupuestos] = useState<Presupuesto[]>([])
   const [loadingData, setLoadingData] = useState(true)
@@ -101,6 +111,16 @@ export default function PresustandPage() {
   const [activePresLineas, setActivePresLineas] = useState<PresupuestoLinea[]>([])
   const [loadingLineas, setLoadingLineas] = useState(false)
 
+  // Dialog State for creating a client inline
+  const [isNewClientOpen, setIsNewClientOpen] = useState(false)
+  const [newClientNombreComercial, setNewClientNombreComercial] = useState("")
+  const [newClientRazonSocial, setNewClientRazonSocial] = useState("")
+  const [newClientCifNif, setNewClientCifNif] = useState("")
+  const [newClientEmail, setNewClientEmail] = useState("")
+  const [newClientTelefono, setNewClientTelefono] = useState("")
+  const [newClientSaving, setNewClientSaving] = useState(false)
+  const [newClientError, setNewClientError] = useState<string | null>(null)
+
   // Cargar datos iniciales
   useEffect(() => {
     async function loadData() {
@@ -114,6 +134,7 @@ export default function PresustandPage() {
             .single()
 
           if (dbUser) {
+            setEmpresaId(dbUser.id_empresa)
             // Cargar clientes
             const { data: dbClientes } = await supabase
               .from("clientes")
@@ -156,6 +177,57 @@ export default function PresustandPage() {
       .order("created_at", { ascending: false })
     
     setPresupuestos(dbPres || [])
+  }
+
+  const handleCreateNewClient = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!empresaId) return
+    setNewClientSaving(true)
+    setNewClientError(null)
+
+    try {
+      const payload = {
+        id_empresa: empresaId,
+        nombre_comercial: newClientNombreComercial.trim(),
+        razon_social: newClientRazonSocial.trim(),
+        cif_nif: newClientCifNif.trim(),
+        email_contacto: newClientEmail.trim() || null,
+        telefono_contacto: newClientTelefono.trim() || null,
+        estado_cliente: "activo",
+        forma_pago_habitual: "transferencia",
+        plazo_pago_dias: 30,
+        tarifa_asignada: "estandar",
+      }
+
+      if (!payload.nombre_comercial || !payload.razon_social || !payload.cif_nif) {
+        throw new Error("Por favor, rellena todos los campos obligatorios (*).")
+      }
+
+      const { data, error } = await supabase
+        .from("clientes")
+        .insert([payload])
+        .select("id, nombre_comercial")
+        .single()
+
+      if (error) throw error
+
+      if (data) {
+        setClientes((prev) => [...prev, data].sort((a, b) => a.nombre_comercial.localeCompare(b.nombre_comercial)))
+        setSelectedCliente(data.id)
+        
+        setNewClientNombreComercial("")
+        setNewClientRazonSocial("")
+        setNewClientCifNif("")
+        setNewClientEmail("")
+        setNewClientTelefono("")
+        setIsNewClientOpen(false)
+      }
+    } catch (err: any) {
+      console.error(err)
+      setNewClientError(err?.message || "Error al guardar el cliente")
+    } finally {
+      setNewClientSaving(false)
+    }
   }
 
   // Recalcular estimación rápida localmente
@@ -544,12 +616,22 @@ export default function PresustandPage() {
                 <div className="space-y-3">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="cliente" className="text-xs">Cliente *</Label>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="cliente" className="text-xs">Cliente *</Label>
+                        <button
+                          type="button"
+                          onClick={() => setIsNewClientOpen(true)}
+                          className="text-[10px] text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1 transition-colors"
+                        >
+                          <Plus className="h-3 w-3" />
+                          <span>Nuevo Cliente</span>
+                        </button>
+                      </div>
                       <select
                         id="cliente"
                         value={selectedCliente}
                         onChange={(e) => setSelectedCliente(e.target.value)}
-                        className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                        className="w-full bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                       >
                         <option value="">Selecciona un cliente</option>
                         {clientes.map(c => (
@@ -676,13 +758,23 @@ export default function PresustandPage() {
                   {/* Common inputs */}
                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="ia-cliente" className="text-xs">Cliente *</Label>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="ia-cliente" className="text-xs">Cliente *</Label>
+                        <button
+                          type="button"
+                          onClick={() => setIsNewClientOpen(true)}
+                          className="text-[10px] text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1 transition-colors"
+                        >
+                          <Plus className="h-3 w-3" />
+                          <span>Nuevo Cliente</span>
+                        </button>
+                      </div>
                       <select
                         id="ia-cliente"
                         value={selectedCliente}
                         onChange={(e) => setSelectedCliente(e.target.value)}
                         required
-                        className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                        className="w-full bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                       >
                         <option value="">Selecciona un cliente</option>
                         {clientes.map(c => (
@@ -1039,6 +1131,119 @@ export default function PresustandPage() {
           </div>
         )}
       </div>
+
+      {/* Dialog para crear nuevo cliente */}
+      <Dialog open={isNewClientOpen} onOpenChange={setIsNewClientOpen}>
+        <DialogContent className="bg-[#09090b] border border-[#27272a] text-[#fafafa] sm:max-w-md w-full p-6 rounded-xl shadow-2xl">
+          <DialogHeader className="space-y-1.5">
+            <DialogTitle className="text-lg font-bold text-[#fafafa] flex items-center gap-2">
+              <Plus className="h-5 w-5 text-indigo-400" />
+              <span>Nuevo Cliente CRM</span>
+            </DialogTitle>
+            <DialogDescription className="text-xs text-[#a1a1aa]">
+              Completa los datos del cliente. Se asociará automáticamente a tu empresa y se seleccionará al guardar.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleCreateNewClient} className="space-y-4 py-2">
+            <div className="space-y-3">
+              <div className="space-y-1">
+                <Label htmlFor="new-nombre" className="text-xs text-[#a1a1aa]">Nombre Comercial *</Label>
+                <Input
+                  id="new-nombre"
+                  placeholder="Ej: Stands Innovadores S.L."
+                  value={newClientNombreComercial}
+                  onChange={(e) => setNewClientNombreComercial(e.target.value)}
+                  required
+                  className="bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] focus:ring-indigo-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label htmlFor="new-razon" className="text-xs text-[#a1a1aa]">Razón Social *</Label>
+                  <Input
+                    id="new-razon"
+                    placeholder="Ej: Stands Innovadores S.L."
+                    value={newClientRazonSocial}
+                    onChange={(e) => setNewClientRazonSocial(e.target.value)}
+                    required
+                    className="bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] focus:ring-indigo-500"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="new-cif" className="text-xs text-[#a1a1aa]">CIF / NIF *</Label>
+                  <Input
+                    id="new-cif"
+                    placeholder="Ej: B12345678"
+                    value={newClientCifNif}
+                    onChange={(e) => setNewClientCifNif(e.target.value)}
+                    required
+                    className="bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] focus:ring-indigo-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label htmlFor="new-email" className="text-xs text-[#a1a1aa]">Email de Contacto</Label>
+                  <Input
+                    id="new-email"
+                    type="email"
+                    placeholder="ejemplo@correo.com"
+                    value={newClientEmail}
+                    onChange={(e) => setNewClientEmail(e.target.value)}
+                    className="bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] focus:ring-indigo-500"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="new-telefono" className="text-xs text-[#a1a1aa]">Teléfono</Label>
+                  <Input
+                    id="new-telefono"
+                    placeholder="+34 600 000 000"
+                    value={newClientTelefono}
+                    onChange={(e) => setNewClientTelefono(e.target.value)}
+                    className="bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] focus:ring-indigo-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {newClientError && (
+              <div className="p-2.5 rounded bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex gap-2 items-center">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                <span>{newClientError}</span>
+              </div>
+            )}
+
+            <DialogFooter className="flex justify-end gap-2 pt-2 border-t border-[#27272a]/50">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setIsNewClientOpen(false)}
+                disabled={newClientSaving}
+                className="text-xs text-[#a1a1aa] hover:text-[#fafafa] hover:bg-[#18181b]"
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                disabled={newClientSaving}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 h-9"
+              >
+                {newClientSaving ? (
+                  <>
+                    <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                    Guardando...
+                  </>
+                ) : (
+                  "Crear Cliente"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

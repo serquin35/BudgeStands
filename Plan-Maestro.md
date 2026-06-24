@@ -22,7 +22,8 @@
 7. [Módulos de la Aplicación](#7-módulos-de-la-aplicación)
 8. [Reglas de Negocio Críticas](#8-reglas-de-negocio-críticas)
 9. [Convenciones y Estándares de Código](#9-convenciones-y-estándares-de-código)
-10. [Roadmap por Fases](#10-roadmap-por-fases)
+10. [Estado Actual del Desarrollo](#10-estado-actual-del-desarrollo-actualizado-24-jun-2026)
+10-B. [Roadmap por Fases (Resumen)](#10-b-roadmap-por-fases-resumen-ejecutivo)
 11. [Variables de Entorno y Credenciales](#11-variables-de-entorno-y-credenciales)
 
 ---
@@ -1163,89 +1164,118 @@ Porcentaje: valor.toFixed(2) + '%'
 
 ---
 
-## 10. ROADMAP POR FASES
+## 10. ESTADO ACTUAL DEL DESARROLLO (Actualizado: 24-Jun-2026)
 
-### Fase 1 — MVP Core (Presustand IA)
+> Este apartado refleja el estado real construido en el proyecto. Consultar antes de planificar nuevas funcionalidades.
 
-```
-OBJETIVO: Sistema funcional de generación de presupuestos con IA
-DURACIÓN ESTIMADA: 4-6 semanas
+### ✅ MÓDULOS COMPLETADOS
 
-✅ Ya completado:
-   - Workflows n8n (pipeline ingesta + agente Jarvis)
-   - Schema Supabase (tablas completas)
-   - Colecciones Qdrant definidas
-   - Setup Supabase proyecto + activar extensión pgvector
-   - Ejecutar SQL completo en Supabase
-   - UI: Login + layout dashboard básico
-   - UI: Módulo Clientes (CRUD)
-   - UI: Módulo Presustand Método 1 (estimación rápida)
-   - UI: Módulo Presustand Modo IA (input texto/imagen)
-   - UI: Visualización del presupuesto generado
-   - UI: Exportar PDF del presupuesto
-   - Catálogos básicos: cargar Base A con datos reales
-   - Conectar frontend con webhook n8n Agente Jarvis
-```
+#### Frontend — `/stand/src/app/dashboard/`
 
-### Fase 1.5 — Sistema de Autenticación
+| Ruta | Módulo | Estado | Notas |
+|---|---|---|---|
+| `/dashboard` | Dashboard principal | ✅ Completo | KPIs, gráfica de facturación, alertas de hitos |
+| `/dashboard/clientes` | CRM Clientes | ✅ Completo | CRUD completo con todos los campos de la tabla |
+| `/dashboard/presustand` | Presustand (Presupuestador) | ✅ Completo | Métodos 1, 2 y 3 + Modo IA (texto/imagen/audio) |
+| `/dashboard/proyectos` | Kanban de Proyectos | ✅ Completo | Kanban drag & drop (desktop) + acordeón (móvil), conectado a Supabase con fallback a mock |
+| `/dashboard/catalogos` | Catálogos Técnicos | ✅ Completo | CRUD de Base A (tarifas m²), Base B (elementos), Base C (despiece) |
+| `/dashboard/proveedores` | Gestión Proveedores | ✅ Completo | CRUD de proveedores con categorías matriz |
+| `/login` | Autenticación | ✅ Completo | Login con email/contraseña + Google OAuth |
 
-```
-OBJETIVO: Proteger el acceso a The Titan con Supabase Auth y Google SSO
-DURACIÓN ESTIMADA: 1-2 semanas
+#### Infraestructura
 
-✅ Ya completado:
-   - Configurar Google OAuth en GCP y Supabase
-   - UI: Añadir botón "Continuar con Google" a /login
-   - Implementar Middleware de Next.js para proteger rutas de /dashboard
-   - Lógica de redirecciones (/login a /dashboard si autenticado, y viceversa)
-   - Vincular usuarios creados con la tabla auth.users y public.usuarios
-```
+| Componente | Estado | Notas |
+|---|---|---|
+| Supabase Auth | ✅ Configurado | JWT + Google OAuth via GCP |
+| Middleware de protección de rutas | ✅ Implementado | `stand/src/middleware.ts` |
+| Schema completo de Supabase | ✅ Ejecutado | Todas las tablas del §4 están creadas |
+| Seeds Base B (catalogo_elementos) | ✅ Disponibles | `seeds/seed_catalogo_elementos.sql` |
+| Seeds Base C (tarifas_servicios) | ✅ Disponibles | `seeds/seed_tarifas_servicios.sql` |
+| Workflows n8n Agente Jarvis | ✅ Creados | En `/flujosn8n/` + `/stand budget/n8n_stands_presupuestador.json` |
+| Workflow sync Qdrant Base B | ✅ Creado | `flujosn8n/sync_catalogo_b_qdrant.json` |
+| Workflow sync Qdrant Base C | ✅ Creado | `flujosn8n/sync_catalogo_c_qdrant.json` |
+| Workflow cierre proyecto → Qdrant | ✅ Creado | `flujosn8n/cierre_proyecto_qdrant.json` |
+| API route `/api/generate-budget` | ✅ Implementada | Proxy al webhook n8n |
 
-### Fase 2 — Gestión de Proyectos ← EMPEZAR AQUÍ
+### 🔲 PENDIENTE DE CONSTRUIR
+
+#### Fase 2 — Gestión de Proyectos (PRIORIDAD ACTUAL)
 
 ```
-OBJETIVO: Control completo desde presupuesto aceptado hasta montaje
-DURACIÓN ESTIMADA: 3-4 semanas
-
-🔲 Por construir:
-   - UI: Módulo Proyectos (Kanban + timeline hitos)
-   - UI: Módulo Catálogos Base B y C (CRUD + sync Qdrant)
-   - UI: Presupuesto Métodos 2 y 3 (configurador + despiece)
-   - Trigger SQL: auto-creación proyecto al aceptar presupuesto
-   - Notificaciones de hitos próximos a vencer
-   - Canal B2B básico (mensajería + adjuntos)
+- Trigger SQL: auto-creación de proyecto al aceptar presupuesto
+  → El kanban existe pero los proyectos deben crearse automáticamente desde presupuestos_cabecera
+- Vista de timeline de hitos dentro de cada proyecto
+- Notificaciones de hitos próximos a vencer (alertas en dashboard)
+- Canal B2B básico (mensajería + adjuntos por proyecto)
+- Módulo de Presustand: conexión real al Agente Jarvis via webhook
+  → El UI del modo IA existe, falta confirmar que el endpoint n8n esté activo
 ```
 
-### Fase 3 — Módulo Financiero
+#### Fase 3 — Módulo Financiero
 
 ```
-OBJETIVO: Control total de cash flow y rentabilidad
-DURACIÓN ESTIMADA: 3-4 semanas
-
-🔲 Por construir:
-   - UI: Facturas a clientes (anticipo + final)
-   - UI: Facturas de proveedores + imputación analítica
-   - UI: Dashboard de cash flow
-   - UI: Cierre de proyectos y análisis de rentabilidad
-   - Generación automática PDF facturas
-   - Alertas de impagos y vencimientos
+- UI: Facturas a clientes (anticipo + final) → tabla facturas_proyectos
+- UI: Facturas de proveedores + imputación analítica → facturas_proveedores_*
+- UI: Dashboard de cash flow
+- UI: Cierre de proyectos y análisis de rentabilidad → cierres_proyectos
+- Generación automática PDF facturas
+- Alertas de impagos y vencimientos
 ```
 
-### Fase 4 — SaaS y Escala
+#### Fase 4 — SaaS y Escala
 
 ```
-OBJETIVO: Producto multi-tenant listo para comercializar
-DURACIÓN ESTIMADA: 4-6 semanas
-
-🔲 Por construir:
-   - Multi-tenant: aislamiento de datos por empresa
-   - Sistema de planes y límites
-   - Portal del cliente (seguimiento de su proyecto)
-   - API pública documentada
-   - Onboarding automatizado (nueva empresa → datos de prueba)
-   - Analytics avanzado para el gerente
-   - Internacionalización (en/fr/de)
+- Multi-tenant: aislamiento completo de datos por empresa
+- Sistema de planes y límites (tabla empresas.plan_saas)
+- Portal del cliente externo (seguimiento de su proyecto)
+- API pública documentada
+- Onboarding automatizado (nueva empresa → datos de prueba)
+- Analytics avanzado para gerente
+- Internacionalización (en/fr/de)
 ```
+
+### 🗂️ ESTRUCTURA DE ARCHIVOS DEL PROYECTO
+
+```
+budgeStands/
+├── Plan-Maestro.md          ← Este documento (fuente de verdad)
+├── DatosImportantes.txt     ← Credenciales locales (NO COMMITEAR)
+├── stand/                   ← App Next.js 14 (frontend principal)
+│   └── src/
+│       ├── app/
+│       │   ├── dashboard/   ← Módulos principales (ver tabla arriba)
+│       │   ├── login/       ← Autenticación
+│       │   └── api/generate-budget/  ← Proxy a n8n
+│       ├── components/      ← shadcn/ui + componentes propios
+│       └── middleware.ts    ← Protección de rutas
+├── flujosn8n/               ← Workflows n8n exportados
+│   ├── sync_catalogo_b_qdrant.json
+│   ├── sync_catalogo_c_qdrant.json
+│   └── cierre_proyecto_qdrant.json
+├── seeds/                   ← SQL de datos iniciales
+│   ├── seed_catalogo_elementos.sql   ← Base B
+│   ├── seed_tarifas_servicios.sql    ← Base C
+│   └── historico_proyectos/
+├── stand budget/            ← LEGACY: prototipo inicial n8n (referencia)
+│   ├── n8n_stands_presupuestador.json  ← Workflow agente Jarvis original
+│   ├── supabase_schema.sql             ← Schema inicial (sustituido por Plan-Maestro §4)
+│   └── README.md                       ← Guía de setup n8n (referencia)
+└── supabase/                ← Config local Supabase CLI (vacío por ahora)
+```
+
+> **Nota sobre `/stand budget/`:** Es el directorio del prototipo original (pre-The Titan). El workflow de n8n ahí contenido sigue siendo válido como referencia del Agente Jarvis. El `supabase_schema.sql` dentro está **obsoleto** — usar el schema del §4 de este documento.
+
+---
+
+## 10-B. ROADMAP POR FASES (Resumen ejecutivo)
+
+| Fase | Descripción | Estado |
+|---|---|---|
+| **Fase 1** | MVP Core — Presupuestador IA | ✅ **Completada** |
+| **Fase 1.5** | Autenticación (Google OAuth + middleware) | ✅ **Completada** |
+| **Fase 2** | Gestión de Proyectos (kanban, hitos, B2B) | 🔄 **En progreso** |
+| **Fase 3** | Módulo Financiero (facturas, cash flow, cierre) | ⏳ Pendiente |
+| **Fase 4** | SaaS multi-tenant y escala | ⏳ Pendiente |
 
 ---
 
@@ -1298,6 +1328,6 @@ ANTHROPIC_API_KEY=sk-ant-api03-...
 
 ---
 
-*Documento generado como base de desarrollo. Versión 1.0.*
-*Actualizar este documento ante cualquier cambio de arquitectura.*
+*Documento generado como base de desarrollo. Versión 1.1 — Actualizado 24-Jun-2026.*
+*Actualizar la sección §10 ante cualquier cambio de estado de los módulos.*
 *El modelo de IA debe consultar este documento antes de generar cualquier código.*

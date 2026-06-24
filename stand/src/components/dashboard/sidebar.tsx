@@ -145,19 +145,22 @@ export default function Sidebar({ user, empresa, onSignOut }: SidebarProps) {
         {/* Bottom Section (User Profile & SignOut) */}
         <div className="p-4 border-t border-[#27272a]/70 space-y-4 bg-[#09090b]/50">
           {/* User Info Card */}
-          <div className="flex items-center gap-3 p-2 rounded-lg bg-[#18181b]/40 border border-[#27272a]/30">
-            <div className="w-9 h-9 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-              <User className="h-4 w-4 text-indigo-400" />
+          <Link 
+            href="/dashboard/perfil" 
+            className="flex items-center gap-3 p-2 rounded-lg bg-[#18181b]/40 border border-[#27272a]/30 hover:bg-[#18181b]/95 hover:border-indigo-500/50 transition-all duration-200 cursor-pointer group/user"
+          >
+            <div className="w-9 h-9 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center group-hover/user:border-indigo-400/50 transition-colors">
+              <User className="h-4 w-4 text-indigo-400 group-hover/user:scale-110 transition-transform" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-xs font-semibold text-[#fafafa] truncate">
+              <div className="text-xs font-semibold text-[#fafafa] truncate group-hover/user:text-indigo-300 transition-colors">
                 {user.nombre_completo}
               </div>
               <div className="text-[10px] text-[#71717a] truncate font-medium">
                 {empresa.nombre}
               </div>
             </div>
-          </div>
+          </Link>
 
           {/* Logout Button */}
           <button

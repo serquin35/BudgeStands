@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# The Titan — Frontend (Next.js 14)
 
-## Getting Started
+Aplicación principal del ERP de stands feriales. Ver `Plan-Maestro.md` en la raíz del proyecto para la arquitectura completa.
 
-First, run the development server:
+## Stack
+
+- **Framework:** Next.js 14 (App Router)
+- **Estilos:** Tailwind CSS + shadcn/ui
+- **Base de datos:** Supabase (PostgreSQL + Auth + Storage)
+- **LLM / IA:** Agente Jarvis via n8n (webhook)
+
+## Módulos implementados
+
+| Ruta | Módulo |
+|---|---|
+| `/dashboard` | Dashboard con KPIs y alertas |
+| `/dashboard/clientes` | CRM Clientes (CRUD completo) |
+| `/dashboard/presustand` | Presupuestador IA (Métodos 1, 2, 3 + Modo IA) |
+| `/dashboard/proyectos` | Kanban de Proyectos (drag & drop) |
+| `/dashboard/catalogos` | Catálogos Base A, B y C |
+| `/dashboard/proveedores` | Gestión de Proveedores |
+| `/login` | Autenticación (email + Google OAuth) |
+
+## Arrancar en desarrollo
 
 ```bash
+cd stand
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Variables de entorno
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Copia `.env.local` (no está en el repo por seguridad). Variables requeridas:
 
-## Learn More
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://iqrwhycmgprkfbhuxlnn.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_ROLE_KEY=eyJ...        # Solo server-side
+N8N_WEBHOOK_BASE_URL=https://{n8n-domain}/webhook
+N8N_WEBHOOK_STAND_BUDGET=stand-budget-agent
+```
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> **Seguridad:** NUNCA commitear `.env.local`. Las claves de OpenAI/Anthropic/Qdrant van SOLO en n8n.
