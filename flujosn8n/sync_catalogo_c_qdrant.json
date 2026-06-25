@@ -68,7 +68,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const data = $input.first().json;\nif (!Array.isArray(data) || data.length === 0) {\n  throw new Error('No hay tarifas activas en catálogo C para sincronizar');\n}\nconsole.log(`Tarifas a sincronizar: ${data.length}`);\nreturn data.map(item => ({ json: item }));"
+        "jsCode": "const allItems = $input.all();\nlet data = [];\nif (allItems.length === 1) {\n  const firstItemJson = allItems[0].json;\n  if (Array.isArray(firstItemJson)) {\n    data = firstItemJson;\n  } else {\n    data = [firstItemJson];\n  }\n} else if (allItems.length > 1) {\n  data = allItems.map(item => item.json);\n}\nif (!data || data.length === 0) {\n  throw new Error('No hay tarifas activas en catálogo C para sincronizar');\n}\nconsole.log(`Tarifas a sincronizar: ${data.length}`);\nreturn data.map(item => ({ json: item }));"
       },
       "id": "wc-004",
       "name": "Split Tarifas",

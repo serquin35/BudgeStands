@@ -70,7 +70,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Supabase devuelve el array directamente como $json\nconst data = $input.first().json;\nif (!Array.isArray(data) || data.length === 0) {\n  throw new Error('No hay elementos activos en catálogo B para sincronizar');\n}\nconsole.log(`Elementos a sincronizar: ${data.length}`);\nreturn data.map(item => ({ json: item }));"
+        "jsCode": "const allItems = $input.all();\nlet data = [];\nif (allItems.length === 1) {\n  const firstItemJson = allItems[0].json;\n  if (Array.isArray(firstItemJson)) {\n    data = firstItemJson;\n  } else {\n    data = [firstItemJson];\n  }\n} else if (allItems.length > 1) {\n  data = allItems.map(item => item.json);\n}\nif (!data || data.length === 0) {\n  throw new Error('No hay elementos activos en catálogo B para sincronizar');\n}\nconsole.log(`Elementos a sincronizar: ${data.length}`);\nreturn data.map(item => ({ json: item }));"
       },
       "id": "wb-004",
       "name": "Split Elementos",
