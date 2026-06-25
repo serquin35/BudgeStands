@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/utils/supabase/server"
+import { createClient as createAdminClient } from "@supabase/supabase-js"
 
 export async function POST(request: NextRequest) {
   try {
@@ -46,7 +47,13 @@ export async function POST(request: NextRequest) {
 
     const buffer = Buffer.from(await file.arrayBuffer())
 
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    // Usar service_role key para subir archivos (bypassea RLS)
+    const supabaseAdmin = createAdminClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
+    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
       .from("stand-uploads")
       .upload(fileName, buffer, {
         contentType: file.type,
@@ -58,7 +65,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Error al subir el archivo: " + uploadError.message }, { status: 500 })
     }
 
-    const { data: publicUrlData } = supabase.storage
+    const { data: publicUrlData } = supabaseAdmin.storage
       .from("stand-uploads")
       .getPublicUrl(fileName)
 
