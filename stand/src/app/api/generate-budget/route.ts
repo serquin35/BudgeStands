@@ -32,7 +32,8 @@ export async function POST(request: NextRequest) {
       tipoStand, 
       estiloStand, 
       promptText, 
-      imageUrl 
+      imageUrl,
+      audioUrl 
     } = body
 
     if (!clienteId || !nombreFeria || !m2) {
@@ -46,11 +47,24 @@ export async function POST(request: NextRequest) {
 
     console.log("Enviando petición a n8n Jarvis...")
     
+    // Determinar tipo de contenido según qué inputs llegaron
+    // Prioridad: audio > image > texto
+    let contentType = "texto"
+    let contentValue = promptText || ""
+
+    if (audioUrl) {
+      contentType = "audio"
+      contentValue = audioUrl
+    } else if (imageUrl) {
+      contentType = "image"
+      contentValue = imageUrl
+    }
+
     // El payload que espera el Webhook de Jarvis según su nodo Switch
     const n8nPayload = {
       id_empresa: dbUser.id_empresa,
-      type: imageUrl ? "image" : "texto",
-      content: imageUrl || promptText || "",
+      type: contentType,
+      content: contentValue,
       feria: nombreFeria,
       m2: Number(m2),
       altura: Number(altura || 2.50),
@@ -113,8 +127,8 @@ export async function POST(request: NextRequest) {
         tipo_stand: tipoStand || "modular",
         estilo_stand: estiloStand || "moderno",
         metodo_presupuestacion: "metodo_2_bloques",
-        input_ia_tipo: imageUrl ? "image" : "texto",
-        input_ia_contenido: promptText,
+        input_ia_tipo: contentType,
+        input_ia_contenido: promptText || (audioUrl ? "Audio descriptivo" : ""),
         subtotal_construccion: subConstruccion,
         subtotal_servicios_feria: subServicios,
         subtotal_diseno_grafica: subDiseno,
@@ -194,8 +208,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Disparar asíncronamente la generación de imagen en n8n
-    if (!imageUrl) {
+    // Disparar asíncronamente la generación de imagen en n8n (solo si no hay imagen ni audio de entrada)
+    if (!imageUrl && !audioUrl) {
       console.log("Disparando generación de imagen asíncrona...");
       const imageUrlWebhook = process.env.N8N_IMAGE_GEN_WEBHOOK || "https://n8n.cheosdesign.info/webhook/generate-stand-image"
       fetch(imageUrlWebhook, {

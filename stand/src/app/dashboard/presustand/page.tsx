@@ -15,6 +15,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { StatusBadge } from "@/components/shared/status-badge"
+import { ImageUploader } from "@/components/shared/image-uploader"
+import { AudioRecorder } from "@/components/shared/audio-recorder"
 import { 
   Sparkles, 
   Layers, 
@@ -65,6 +67,7 @@ export default function PresustandPage() {
   const [estiloStand, setEstiloStand] = useState("moderno")
   const [promptText, setPromptText] = useState("")
   const [imageUrl, setImageUrl] = useState("")
+  const [audioUrl, setAudioUrl] = useState("")
 
   // Estimation State
   const [estSubtotalConstruccion, setEstSubtotalConstruccion] = useState(0)
@@ -386,7 +389,8 @@ export default function PresustandPage() {
           tipoStand,
           estiloStand,
           promptText,
-          imageUrl
+          imageUrl,
+          audioUrl
         })
       })
 
@@ -795,27 +799,28 @@ export default function PresustandPage() {
                     </div>
                     </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="promptText" className="text-xs">Prompt de diseño IA (materiales, zonas o extras) *</Label>
-                    <textarea
-                      id="promptText"
-                      placeholder="Ej: Diseña un stand tecnológico con moqueta de velour negra, panelado retroiluminado con imagen corporativa, mostrador de recepción curvo y zona lounge con sofá y mesa."
-                      value={promptText}
-                      onChange={(e) => setPromptText(e.target.value)}
-                      required
-                      rows={4}
-                      className="w-full bg-[#09090b] border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa] p-3 rounded-md"
-                    />
-                  </div>
+                  <AudioRecorder
+                    value={audioUrl}
+                    onUpload={setAudioUrl}
+                    disabled={generating}
+                  />
+
+                  <ImageUploader
+                    value={imageUrl}
+                    onUpload={setImageUrl}
+                    disabled={generating}
+                  />
 
                   <div className="space-y-2">
-                    <Label htmlFor="imageUrl" className="text-xs">Imagen de referencia (URL opcional)</Label>
-                    <Input
-                      id="imageUrl"
-                      placeholder="https://ejemplo.com/render.jpg"
-                      value={imageUrl}
-                      onChange={(e) => setImageUrl(e.target.value)}
-                      className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                    <Label htmlFor="promptText" className="text-xs">Prompt de diseño IA (materiales, zonas o extras) {!audioUrl && !imageUrl ? '*' : ''}</Label>
+                    <textarea
+                      id="promptText"
+                      placeholder={audioUrl || imageUrl ? "Opcional: añade detalles adicionales al audio o imagen..." : "Ej: Diseña un stand tecnológico con moqueta de velour negra, panelado retroiluminado..."}
+                      value={promptText}
+                      onChange={(e) => setPromptText(e.target.value)}
+                      required={!audioUrl && !imageUrl}
+                      rows={4}
+                      className="w-full bg-[#09090b] border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa] p-3 rounded-md"
                     />
                   </div>
 
