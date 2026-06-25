@@ -1,5 +1,5 @@
 # THE TITAN — Documento Maestro de Arquitectura
-## Versión 1.0 | Documento de Referencia para Desarrollo con IA
+## Versión 1.2 | Documento de Referencia para Desarrollo con IA
 
 > **Instrucción para el modelo de IA:** Este documento es la fuente de verdad absoluta del proyecto. Antes de generar cualquier código, componente, query o flujo, consulta este documento. Respeta los nombres de tablas, campos, enums y convenciones exactamente como están definidos aquí. Cuando un requerimiento no esté cubierto, pregunta antes de inventar.
 
@@ -1085,30 +1085,24 @@ Archivos:           kebab-case          (presupuesto-form.tsx, use-cliente.ts)
 ### 9.2 Estructura de Carpetas Next.js
 
 ```
-/app
-  /(auth)           → login, registro
-  /(dashboard)
-    /clientes
-    /presupuestos
-    /proyectos
-    /finanzas
-    /catalogos
-    /canal-b2b
-    /configuracion
-  /api              → route handlers para operaciones server-side
+/app                  → login, dashboard, api/generate-budget
+  /(auth)             → ⏳ No implementado (login en /app/login, sin ruta grupo)
+  /(dashboard)        → ⏳ No implementado (dashboard en /app/dashboard)
+  /api/generate-budget → ✅ Proxy a n8n Jarvis
 /components
-  /ui               → shadcn/ui components
-  /forms            → formularios específicos del negocio
-  /tables           → tablas de datos
-  /charts           → gráficas y visualizaciones
+  /ui                 → ✅ shadcn/ui components
+  /shared             → ✅ StatusBadge y futuros componentes compartidos
+  /forms              → ⏳ Pendiente
+  /tables             → ⏳ Pendiente
+  /charts             → ✅ OverviewChart (en /components/dashboard/)
 /lib
-  /supabase         → cliente y helpers de Supabase
-  /qdrant           → cliente y helpers de Qdrant
-  /n8n              → helpers para llamar webhooks n8n
-  /utils            → funciones utilitarias
-/hooks              → custom hooks de React
-/types              → TypeScript types (generados desde Supabase)
-/constants          → ENUMs y constantes de negocio
+  /supabase           → ⏳ Los helpers están en /utils/supabase/ (por migrar)
+  /qdrant             → ⏳ Pendiente
+  /n8n                → ⏳ Pendiente (llamadas n8n inline en route.ts)
+  /utils              → ✅ Parcial (cn() en /lib/utils.ts)
+/hooks                → ⏳ Pendiente (estado inline en páginas)
+/types                → ✅ Creado (interfaces en /types/index.ts)
+/constants            → ✅ Creado (enums en /constants/index.ts)
 ```
 
 ### 9.3 Estados y ENUMs Globales (TypeScript)
@@ -1185,7 +1179,7 @@ Porcentaje: valor.toFixed(2) + '%'
 #### Infraestructura
 
 | Componente | Estado | Notas |
-|---|---|---|
+|---|---|---|---|
 | Supabase Auth | ✅ Configurado | JWT + Google OAuth via GCP |
 | Middleware de protección de rutas | ✅ Implementado | `stand/src/middleware.ts` |
 | Schema completo de Supabase | ✅ Ejecutado | Todas las tablas del §4 están creadas |
@@ -1195,7 +1189,11 @@ Porcentaje: valor.toFixed(2) + '%'
 | Workflow sync Qdrant Base B | ✅ Creado | `flujosn8n/sync_catalogo_b_qdrant.json` |
 | Workflow sync Qdrant Base C | ✅ Creado | `flujosn8n/sync_catalogo_c_qdrant.json` |
 | Workflow cierre proyecto → Qdrant | ✅ Creado | `flujosn8n/cierre_proyecto_qdrant.json` |
-| API route `/api/generate-budget` | ✅ Implementada | Proxy al webhook n8n |
+| API route `/api/generate-budget` | ✅ Implementada | Proxy al webhook n8n con env vars |
+| Tipos compartidos (`/types/`) | ✅ Creado | Interfaz Cliente, Proveedor, Presupuesto, Tarifas, etc. |
+| Constantes (`/constants/`) | ✅ Creado | Enums ESTADO_PRESUPUESTO, TIPO_STAND, ROL_USUARIO, listas |
+| StatusBadge componente compartido | ✅ Creado | `components/shared/status-badge.tsx`, elimina duplicación |
+| n8n URLs en variables de entorno | ✅ Implementado | `N8N_BUDGET_AGENT_WEBHOOK`, `N8N_IMAGE_GEN_WEBHOOK` |
 
 ### 🔲 PENDIENTE DE CONSTRUIR
 
@@ -1290,9 +1288,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 SUPABASE_SERVICE_ROLE_KEY=eyJ...   # Solo en server-side, nunca en cliente
 
 # n8n (Agente Jarvis)
-N8N_WEBHOOK_BASE_URL=https://{tu-n8n-domain}/webhook
-N8N_WEBHOOK_STAND_BUDGET=stand-budget-agent
-N8N_WEBHOOK_INGESTA=ingesta-documentos
+N8N_BUDGET_AGENT_WEBHOOK=https://{tu-n8n-domain}/webhook/stand-budget-agent
+N8N_IMAGE_GEN_WEBHOOK=https://{tu-n8n-domain}/webhook/generate-stand-image
 
 # Qdrant (solo para server-side / n8n)
 QDRANT_URL=https://{cluster}.qdrant.tech
@@ -1328,6 +1325,6 @@ ANTHROPIC_API_KEY=sk-ant-api03-...
 
 ---
 
-*Documento generado como base de desarrollo. Versión 1.1 — Actualizado 24-Jun-2026.*
+*Documento generado como base de desarrollo. Versión 1.2 — Actualizado 24-Jun-2026.*
 *Actualizar la sección §10 ante cualquier cambio de estado de los módulos.*
 *El modelo de IA debe consultar este documento antes de generar cualquier código.*

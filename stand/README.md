@@ -38,8 +38,8 @@ Copia `.env.local` (no está en el repo por seguridad). Variables requeridas:
 NEXT_PUBLIC_SUPABASE_URL=https://iqrwhycmgprkfbhuxlnn.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 SUPABASE_SERVICE_ROLE_KEY=eyJ...        # Solo server-side
-N8N_WEBHOOK_BASE_URL=https://{n8n-domain}/webhook
-N8N_WEBHOOK_STAND_BUDGET=stand-budget-agent
+N8N_BUDGET_AGENT_WEBHOOK=https://{n8n-domain}/webhook/stand-budget-agent
+N8N_IMAGE_GEN_WEBHOOK=https://{n8n-domain}/webhook/generate-stand-image
 ```
 
 > **Seguridad:** NUNCA commitear `.env.local`. Las claves de OpenAI/Anthropic/Qdrant van SOLO en n8n.

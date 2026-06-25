@@ -9,31 +9,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Search, Plus, Edit2, Loader2, Phone, Mail, User, Briefcase, MapPin, DollarSign } from "lucide-react"
 
-interface Proveedor {
-  id: string
-  razon_social: string
-  nombre_comercial: string
-  cif_nif: string
-  domicilio_fiscal: string
-  email_contacto: string
-  telefono_contacto: string
-  nombre_contacto: string
-  especialidad: string
-  categorias_suministro: string[] // Guardado como JSONB
-  forma_pago: string
-  plazo_pago_dias: number
-}
+import type { Proveedor } from "@/types"
+import { ESPECIALIDADES_LIST } from "@/constants"
 
-const especialidadesList = [
-  "Carpintería",
-  "Iluminación y Electricidad",
-  "Rotulación e Impresión",
-  "Mobiliario",
-  "Audiovisuales",
-  "Logística y Transporte",
-  "Servicios de Feria",
-  "Varios"
-]
+const especialidadesList = ESPECIALIDADES_LIST
 
 export default function ProveedoresPage() {
   const supabase = createClient()

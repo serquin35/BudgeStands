@@ -61,7 +61,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Llamar a n8n Jarvis
-    const n8nResponse = await fetch("https://n8n.cheosdesign.info/webhook/stand-budget-agent", {
+    const n8nUrl = process.env.N8N_BUDGET_AGENT_WEBHOOK || "https://n8n.cheosdesign.info/webhook/stand-budget-agent"
+    const n8nResponse = await fetch(n8nUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -196,7 +197,8 @@ export async function POST(request: NextRequest) {
     // Disparar asíncronamente la generación de imagen en n8n
     if (!imageUrl) {
       console.log("Disparando generación de imagen asíncrona...");
-      fetch("https://n8n.cheosdesign.info/webhook/generate-stand-image", {
+      const imageUrlWebhook = process.env.N8N_IMAGE_GEN_WEBHOOK || "https://n8n.cheosdesign.info/webhook/generate-stand-image"
+      fetch(imageUrlWebhook, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

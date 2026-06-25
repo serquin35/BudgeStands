@@ -7,59 +7,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { Search, Plus, Edit2, Loader2, Database, DollarSign, Tag, Layers, Wrench } from "lucide-react"
+import { Search, Plus, Edit2, Loader2, Database, DollarSign, Tag, Layers, Wrench, RotateCcw } from "lucide-react"
 
-// Types Base A
-interface TarifaMacro {
-  id: string
-  tipo_proyecto: 'modular' | 'carpinteria_diseno' | 'hibrido' | 'retail_comercial' | 'doble_planta'
-  nivel_densidad: 'baja_minimalista' | 'media_estandar' | 'alta_espectacular'
-  precio_venta_m2: number
-  margen_beneficio_sugerido: number
-  descripcion_incluido: string
-}
+import type { TarifaMacro, ElementoCatalogo, TarifaServicio, CategoriaMatriz } from "@/types"
+import { TIPO_STAND_LIST, NIVEL_DENSIDAD_LIST } from "@/constants"
 
-// Types Base B
-interface ElementoCatalogo {
-  id: string
-  codigo_sku: string
-  nombre_elemento: string
-  id_categoria_matriz: number
-  descripcion_comercial: string
-  ancho_estandar_mm: number
-  fondo_estandar_mm: number
-  alto_estandar_mm: number
-  unidad_medida_bloque: 'ud' | 'ml' | 'm2'
-  precio_venta_unidad: number
-}
-
-// Types Base C
-interface TarifaServicio {
-  id: string
-  id_categoria_matriz: number
-  id_subcategoria_matriz: number | null
-  nombre_tecnico: string
-  descripcion_compra: string
-  medida_ancho_mm: number
-  medida_fondo_mm: number
-  medida_alto_mm: number
-  unidad_medida: 'm2' | 'ml' | 'ud' | 'kg' | 'l'
-  precio_coste_unidad_medida: number
-  unidad_tiempo: 'hora' | 'dia_montaje' | 'dia_feria' | 'evento_completo' | null
-  precio_unidad_tiempo: number
-  rendimiento_mecanico_hora: number
-  aplica_coeficiente_desperdicio: boolean
-  coeficiente_desperdicio: number
-  estado_tarifa: 'activa' | 'inactiva'
-}
-
-interface CategoriaMatriz {
-  id: number
-  nombre_categoria: string
-}
-
-const tipoProyectoList = ["modular", "carpinteria_diseno", "hibrido", "retail_comercial", "doble_planta"]
-const nivelDensidadList = ["baja_minimalista", "media_estandar", "alta_espectacular"]
+const tipoProyectoList = TIPO_STAND_LIST
+const nivelDensidadList = NIVEL_DENSIDAD_LIST
 
 export default function CatalogosPage() {
   const supabase = createClient()
@@ -146,6 +100,8 @@ export default function CatalogosPage() {
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
   const [empresaId, setEmpresaId] = useState<string | null>(null)
+  const [syncingB, setSyncingB] = useState(false)
+  const [syncingC, setSyncingC] = useState(false)
 
   useEffect(() => {
     async function loadData() {
@@ -193,6 +149,30 @@ export default function CatalogosPage() {
     }
     loadData()
   }, [])
+
+  // Sincronización con Qdrant
+  const syncCatalogo = async (tipo: "b" | "c") => {
+    if (!empresaId) return
+    const setSyncing = tipo === "b" ? setSyncingB : setSyncingC
+    setSyncing(true)
+    try {
+      const webhookUrl = tipo === "b"
+        ? (process.env.NEXT_PUBLIC_N8N_SYNC_B_WEBHOOK || "https://n8n.cheosdesign.info/webhook/sync-catalogo-b")
+        : (process.env.NEXT_PUBLIC_N8N_SYNC_C_WEBHOOK || "https://n8n.cheosdesign.info/webhook/sync-catalogo-c")
+      const res = await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id_empresa: empresaId })
+      })
+      if (!res.ok) throw new Error("Error en sync")
+      const data = await res.json()
+      alert(`✅ Catálogo ${tipo === "b" ? "B" : "C"} sincronizado con Qdrant`)
+    } catch (e) {
+      alert("Error al sincronizar con Qdrant")
+    } finally {
+      setSyncing(false)
+    }
+  }
 
   // Filtrados
   const filteredTarifas = tarifas.filter(t => 
@@ -484,6 +464,34 @@ export default function CatalogosPage() {
           </div>
         </button>
       </div>
+
+      {/* Sync buttons */}
+      {activeCatalog !== "basea" && (
+        <div className="flex justify-end gap-2">
+          {activeCatalog === "baseb" && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => syncCatalogo("b")}
+              disabled={syncingB}
+              className="text-xs border-[#27272a] text-[#a1a1aa] hover:text-[#fafafa]"
+            >
+              {syncingB ? <><RotateCcw className="h-3 w-3 mr-1 animate-spin" /> Sincronizando...</> : "Sync Qdrant Catálogo B"}
+            </Button>
+          )}
+          {activeCatalog === "basec" && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => syncCatalogo("c")}
+              disabled={syncingC}
+              className="text-xs border-[#27272a] text-[#a1a1aa] hover:text-[#fafafa]"
+            >
+              {syncingC ? <><RotateCcw className="h-3 w-3 mr-1 animate-spin" /> Sincronizando...</> : "Sync Qdrant Catálogo C"}
+            </Button>
+          )}
+        </div>
+      )}
 
       {/* Filters Card */}
       <Card className="border-[#27272a]/70 bg-[#09090b]/40">

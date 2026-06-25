@@ -14,6 +14,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog"
+import { StatusBadge } from "@/components/shared/status-badge"
 import { 
   Sparkles, 
   Layers, 
@@ -30,35 +31,7 @@ import {
   Plus
 } from "lucide-react"
 
-interface Cliente {
-  id: string
-  nombre_comercial: string
-}
-
-interface Presupuesto {
-  id: string
-  numero_presupuesto: string
-  nombre_feria: string
-  m2_superficie: number
-  altura_stand_m: number
-  tipo_stand: string
-  total_presupuesto: number
-  estado_presupuesto: string
-  created_at: string
-  clientes?: {
-    nombre_comercial: string
-  }
-}
-
-interface PresupuestoLinea {
-  id: string
-  orden: number
-  concepto_descripcion: string
-  cantidad: number
-  unidad: string
-  precio_unitario_venta: number
-  total_linea: number
-}
+import type { ClienteBasico, Presupuesto, PresupuestoLinea } from "@/types"
 
 const loadingMessages = [
   "Iniciando Jarvis IA Stand Constructor...",
@@ -77,7 +50,7 @@ const loadingMessages = [
 export default function PresustandPage() {
   const supabase = createClient()
   const [empresaId, setEmpresaId] = useState<string | null>(null)
-  const [clientes, setClientes] = useState<Cliente[]>([])
+  const [clientes, setClientes] = useState<ClienteBasico[]>([])
   const [presupuestos, setPresupuestos] = useState<Presupuesto[]>([])
   const [loadingData, setLoadingData] = useState(true)
 
@@ -503,22 +476,7 @@ export default function PresustandPage() {
     }
   }
 
-  const getStatusBadge = (estado: string) => {
-    switch (estado) {
-      case "aceptado":
-        return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Aceptado</span>
-      case "presentado":
-        return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">Presentado</span>
-      case "en_espera":
-        return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">En Espera</span>
-      case "en_negociacion":
-        return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">En Negociación</span>
-      case "borrador":
-        return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-zinc-500/10 text-zinc-400 border border-zinc-500/20">Borrador</span>
-      default:
-        return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">{estado}</span>
-    }
-  }
+  // getStatusBadge reemplazado por componente compartido StatusBadge
 
   return (
     <div className="space-y-6 w-full max-w-full overflow-hidden">
@@ -934,7 +892,7 @@ export default function PresustandPage() {
                           <div className="space-y-1 min-w-0 flex-1">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="font-bold text-xs text-indigo-400 shrink-0">{item.numero_presupuesto}</span>
-                              {getStatusBadge(item.estado_presupuesto)}
+                              <StatusBadge estado={item.estado_presupuesto} />
                             </div>
                             <div className="text-xs font-semibold text-[#fafafa] truncate w-full">
                               {item.clientes?.nombre_comercial || "Cliente"} - {item.nombre_feria}
@@ -979,7 +937,7 @@ export default function PresustandPage() {
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-extrabold text-sm text-indigo-400">{activePres.numero_presupuesto}</span>
-                        {getStatusBadge(activePres.estado_presupuesto)}
+                        <StatusBadge estado={activePres.estado_presupuesto} />
                       </div>
                       <CardTitle className="text-base text-[#fafafa] mt-1">
                         {activePres.clientes?.nombre_comercial} - {activePres.nombre_feria}

@@ -9,23 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Search, Plus, Edit2, ShieldAlert, CheckCircle, Ban, Loader2, Globe, Phone, Mail, User } from "lucide-react"
 
-interface Cliente {
-  id: string
-  razon_social: string
-  nombre_comercial: string
-  cif_nif: string
-  domicilio_fiscal: string
-  nombre_contacto_principal: string
-  email_contacto: string
-  telefono_contacto: string
-  sector_industrial: string
-  web_cliente: string
-  recinto_ferial_habitual: string
-  estado_cliente: 'activo' | 'bloqueado_impagos' | 'inactivo'
-  forma_pago_habitual: 'transferencia' | 'confirming' | 'pagare' | 'tarjeta'
-  plazo_pago_dias: number
-  tarifa_asignada: 'estandar' | 'premium' | 'distribuidor'
-}
+import type { Cliente } from "@/types"
 
 export default function ClientesPage() {
   const supabase = createClient()

@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { createClient } from "@/utils/supabase/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { StatusBadge } from "@/components/shared/status-badge"
 import OverviewChart from "@/components/dashboard/overview-chart"
 import { 
   Sparkles, 
@@ -56,22 +57,6 @@ export default async function DashboardPage() {
     : "0"
 
   // Helper para pintar badges de estado
-  const getStatusBadge = (estado: string) => {
-    switch (estado) {
-      case "aceptado":
-        return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Aceptado</span>
-      case "presentado":
-        return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">Presentado</span>
-      case "en_espera":
-        return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">En Espera</span>
-      case "en_negociacion":
-        return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">En Negociación</span>
-      case "borrador":
-        return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-zinc-500/10 text-zinc-400 border border-zinc-500/20">Borrador</span>
-      default:
-        return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">{estado}</span>
-    }
-  }
 
   return (
     <div className="space-y-6 w-full max-w-full overflow-hidden">
@@ -282,7 +267,7 @@ export default async function DashboardPage() {
                         {Number(item.total_presupuesto).toLocaleString("es-ES")} €
                       </td>
                       <td className="py-3.5 px-2 text-center">
-                        {getStatusBadge(item.estado_presupuesto)}
+                        <StatusBadge estado={item.estado_presupuesto} />
                       </td>
                       <td className="py-3.5 px-2 text-right text-[#a1a1aa]">
                         {new Date(item.created_at).toLocaleDateString("es-ES")}

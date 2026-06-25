@@ -1,27 +1,37 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Calendar, ChevronDown, MapPin, MoreHorizontal, Plus } from "lucide-react";
-
-const supabase = createClient();
+import { AlertCircle, Calendar, ChevronDown, MapPin, MoreHorizontal, Plus, Star, RotateCcw } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import type { ProyectoOperacion, EstadoProyecto } from "@/types";
+import { KANBAN_COLUMNAS } from "@/constants";
 
 const KANBAN_COLUMNS = [
-  { id: "Pendiente",   title: "Pendiente",   dot: "bg-slate-400",   border: "border-slate-400/30",   bg: "bg-slate-800/30" },
-  { id: "Diseño",      title: "Diseño",      dot: "bg-blue-400",    border: "border-blue-400/30",    bg: "bg-blue-900/20"  },
-  { id: "Fabricación", title: "Fabricación", dot: "bg-amber-400",   border: "border-amber-400/30",   bg: "bg-amber-900/20" },
-  { id: "Montaje",     title: "Montaje",     dot: "bg-purple-400",  border: "border-purple-400/30",  bg: "bg-purple-900/20"},
-  { id: "Finalizado",  title: "Finalizado",  dot: "bg-emerald-400", border: "border-emerald-400/30", bg: "bg-emerald-900/20"},
+  { id: "pendiente",   title: "Pendiente",   dot: "bg-slate-400",   border: "border-slate-400/30",   bg: "bg-slate-800/30" },
+  { id: "diseno",      title: "Diseño",      dot: "bg-blue-400",    border: "border-blue-400/30",    bg: "bg-blue-900/20"  },
+  { id: "fabricacion", title: "Fabricación", dot: "bg-amber-400",   border: "border-amber-400/30",   bg: "bg-amber-900/20" },
+  { id: "montaje",     title: "Montaje",     dot: "bg-purple-400",  border: "border-purple-400/30",  bg: "bg-purple-900/20"},
+  { id: "finalizado",  title: "Finalizado",  dot: "bg-emerald-400", border: "border-emerald-400/30", bg: "bg-emerald-900/20"},
 ];
 
-const MOCK_PROYECTOS = [
+const MOCK_PROYECTOS: ProyectoOperacion[] = [
   {
     id: "mock-1",
+    id_empresa: "mock",
+    id_presupuesto: "mock-p1",
     codigo_proyecto_interno: "PRJ-2026-001",
-    estado_proyecto: "Pendiente",
+    fecha_creacion_proyecto: new Date().toISOString(),
+    id_director_obra: null,
+    estado_proyecto: "pendiente" as EstadoProyecto,
+    notas_produccion: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
     presupuestos_cabecera: {
       nombre_feria: "Mobile World Congress",
       recinto_ferial: "Fira Barcelona",
@@ -32,8 +42,15 @@ const MOCK_PROYECTOS = [
   },
   {
     id: "mock-2",
+    id_empresa: "mock",
+    id_presupuesto: "mock-p2",
     codigo_proyecto_interno: "PRJ-2026-002",
-    estado_proyecto: "Diseño",
+    fecha_creacion_proyecto: new Date().toISOString(),
+    id_director_obra: null,
+    estado_proyecto: "diseno" as EstadoProyecto,
+    notas_produccion: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
     presupuestos_cabecera: {
       nombre_feria: "ARCO Madrid",
       recinto_ferial: "IFEMA",
@@ -44,8 +61,15 @@ const MOCK_PROYECTOS = [
   },
   {
     id: "mock-3",
+    id_empresa: "mock",
+    id_presupuesto: "mock-p3",
     codigo_proyecto_interno: "PRJ-2026-003",
-    estado_proyecto: "Fabricación",
+    fecha_creacion_proyecto: new Date().toISOString(),
+    id_director_obra: null,
+    estado_proyecto: "fabricacion" as EstadoProyecto,
+    notas_produccion: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
     presupuestos_cabecera: {
       nombre_feria: "Alimentaria",
       recinto_ferial: "Fira Barcelona",
@@ -59,9 +83,9 @@ const MOCK_PROYECTOS = [
 const formatMoney = (amount: number) =>
   new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(amount);
 
-// ─── Tarjeta de proyecto (usada en ambas vistas) ─────────────────────────────
-function ProyectoCard({ proyecto, onDragStart }: { proyecto: any; onDragStart?: (e: React.DragEvent, id: string) => void }) {
-  const presu = proyecto.presupuestos_cabecera || {};
+// ─── Tarjeta de proyecto (usada en ambas vistas) ──────────────────────────────────
+function ProyectoCard({ proyecto, onDragStart }: { proyecto: ProyectoOperacion; onDragStart?: (e: React.DragEvent, id: string) => void }) {
+  const presu = proyecto.presupuestos_cabecera ?? ({} as NonNullable<ProyectoOperacion["presupuestos_cabecera"]>);
   return (
     <Card
       draggable={!!onDragStart}
@@ -116,13 +140,13 @@ function ProyectoCard({ proyecto, onDragStart }: { proyecto: any; onDragStart?: 
 }
 
 // ─── Vista MÓVIL: acordeón por fase ─────────────────────────────────────────
-function MobileView({ proyectos, onStatusChange }: { proyectos: any[]; onStatusChange: (id: string, newStatus: string) => void }) {
+function MobileView({ proyectos, onStatusChange }: { proyectos: ProyectoOperacion[]; onStatusChange: (id: string, newStatus: string) => void }) {
   const [openSection, setOpenSection] = useState<string | null>("Pendiente");
 
   return (
     <div className="space-y-3 pb-6">
       {KANBAN_COLUMNS.map((col) => {
-        const items = proyectos.filter((p) => (p.estado_proyecto || "Pendiente") === col.id);
+        const items = proyectos.filter((p) => (p.estado_proyecto || "pendiente") === col.id);
         const isOpen = openSection === col.id;
         return (
           <div key={col.id} className={`rounded-xl border ${col.border} overflow-hidden`}>
@@ -186,7 +210,7 @@ function DesktopView({
   onDragOver,
   onDrop,
 }: {
-  proyectos: any[];
+  proyectos: ProyectoOperacion[];
   draggedItem: string | null;
   onDragStart: (e: React.DragEvent, id: string) => void;
   onDragOver: (e: React.DragEvent) => void;
@@ -195,7 +219,7 @@ function DesktopView({
   return (
     <div className="flex-1 flex gap-4 pb-4 min-h-0">
       {KANBAN_COLUMNS.map((col) => {
-        const items = proyectos.filter((p) => (p.estado_proyecto || "Pendiente") === col.id);
+        const items = proyectos.filter((p) => (p.estado_proyecto || "pendiente") === col.id);
         return (
           <div
             key={col.id}
@@ -236,13 +260,15 @@ function DesktopView({
 
 // ─── Página principal ────────────────────────────────────────────────────────
 export default function ProyectosPage() {
-  const [proyectos, setProyectos] = useState<any[]>([]);
+  // CRÍTICO: el cliente debe crearse dentro del componente para tener sesión disponible
+  const supabase = useMemo(() => createClient(), []);
+
+  const [proyectos, setProyectos] = useState<ProyectoOperacion[]>([]);
   const [loading, setLoading] = useState(true);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
 
-  useEffect(() => { fetchProyectos(); }, []);
 
-  const fetchProyectos = async () => {
+  const fetchProyectos = useCallback(async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("proyectos_operaciones")
@@ -252,16 +278,74 @@ export default function ProyectosPage() {
     if (!error && data && data.length > 0) {
       setProyectos(data);
     } else {
+      if (error) console.warn("[Kanban] Error al cargar proyectos:", error);
       setProyectos(MOCK_PROYECTOS);
     }
     setLoading(false);
-  };
+  }, [supabase]);
+
+  useEffect(() => { fetchProyectos(); }, [fetchProyectos]);
 
   const changeStatus = async (id: string, newStatus: string) => {
-    setProyectos((prev) => prev.map((p) => (p.id === id ? { ...p, estado_proyecto: newStatus } : p)));
-    if (!id.startsWith("mock-")) {
-      await supabase.from("proyectos_operaciones").update({ estado_proyecto: newStatus }).eq("id", id);
+    const nuevoEstado = newStatus as EstadoProyecto;
+
+    if (id.startsWith("mock-")) {
+      setProyectos((prev) => prev.map((p) => (p.id === id ? { ...p, estado_proyecto: nuevoEstado } : p)));
+      return;
     }
+
+    // Obtener estado anterior para rollback
+    const proyectoActual = proyectos.find((p) => p.id === id);
+    const estadoAnterior = proyectoActual?.estado_proyecto;
+
+    // Evitar actualización innecesaria si el estado es el mismo
+    if (estadoAnterior === nuevoEstado) return;
+
+    console.log(`[Kanban] Actualizando proyecto ${id}: ${estadoAnterior} → ${nuevoEstado}`);
+
+    // Optimistic update en UI
+    setProyectos((prev) => prev.map((p) => (p.id === id ? { ...p, estado_proyecto: nuevoEstado } : p)));
+
+    // Verificar sesión antes de ejecutar el UPDATE
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData.session) {
+      console.error("[Kanban] ERROR: No hay sesión activa. El UPDATE no se ejecutará.");
+      alert("Error: Sesión expirada. Recarga la página para volver a iniciar sesión.");
+      if (estadoAnterior) {
+        setProyectos((prev) => prev.map((p) => (p.id === id ? { ...p, estado_proyecto: estadoAnterior } : p)));
+      }
+      return;
+    }
+    console.log(`[Kanban] Sesión activa: ${sessionData.session.user.email}`);
+
+    const { data: updatedData, error, count } = await supabase
+      .from("proyectos_operaciones")
+      .update({ estado_proyecto: nuevoEstado, updated_at: new Date().toISOString() })
+      .eq("id", id)
+      .select();
+
+    console.log("[Kanban] Respuesta UPDATE:", { updatedData, error, count });
+
+    if (error) {
+      console.error("[Kanban] Error al persistir en Supabase:", error);
+      // Rollback al estado anterior
+      if (estadoAnterior) {
+        setProyectos((prev) => prev.map((p) => (p.id === id ? { ...p, estado_proyecto: estadoAnterior } : p)));
+      }
+      alert(`Error al cambiar estado: ${error.message}\nCódigo: ${error.code}`);
+      return;
+    }
+
+    if (!updatedData || updatedData.length === 0) {
+      console.warn("[Kanban] ADVERTENCIA: El UPDATE no afectó ninguna fila. Posible problema de RLS.");
+      alert("Advertencia: No se pudo guardar el cambio. Comprueba que tienes permisos sobre este proyecto.");
+      if (estadoAnterior) {
+        setProyectos((prev) => prev.map((p) => (p.id === id ? { ...p, estado_proyecto: estadoAnterior } : p)));
+      }
+      return;
+    }
+
+    console.log(`[Kanban] ✅ Estado actualizado correctamente en Supabase: ${nuevoEstado}`);
   };
 
   const handleDragStart = (e: React.DragEvent, id: string) => {
@@ -278,8 +362,64 @@ export default function ProyectosPage() {
     e.preventDefault();
     if (draggedItem) {
       await changeStatus(draggedItem, newStatus);
+      if (newStatus === "finalizado") {
+        const proyecto = proyectos.find((p) => p.id === draggedItem);
+        if (proyecto && !proyecto.id.startsWith("mock-")) {
+          setClosingProject(proyecto);
+          setCloseForm({ valoracion_cliente: 5, lecciones_aprendidas: "", ingreso_total_real: 0, gasto_total_real: 0 });
+          setShowCloseModal(true);
+        }
+      }
       setDraggedItem(null);
     }
+  };
+
+  // ─── Cierre de proyecto ──────────────────────────────────────
+  const [showCloseModal, setShowCloseModal] = useState(false);
+  const [closingProject, setClosingProject] = useState<ProyectoOperacion | null>(null);
+  const [closeForm, setCloseForm] = useState({ valoracion_cliente: 5, lecciones_aprendidas: "", ingreso_total_real: 0, gasto_total_real: 0 });
+  const [savingClose, setSavingClose] = useState(false);
+
+  const handleCloseProject = async () => {
+    if (!closingProject) return;
+    setSavingClose(true);
+    const presu = closingProject.presupuestos_cabecera ?? ({} as NonNullable<ProyectoOperacion["presupuestos_cabecera"]>);
+    const ingreso = Number(closeForm.ingreso_total_real);
+    const gasto = Number(closeForm.gasto_total_real);
+    const margenBruto = ingreso - gasto;
+    const margenPct = ingreso > 0 ? Number(((margenBruto / ingreso) * 100).toFixed(2)) : 0;
+    const presupuestoOriginal = Number(presu.total_presupuesto || 0);
+    const desviacion = presupuestoOriginal > 0 ? Number(((margenBruto - presupuestoOriginal) / presupuestoOriginal * 100).toFixed(2)) : 0;
+
+    const { error } = await supabase.from("cierres_proyectos").insert({
+      id_proyecto: closingProject.id,
+      ingreso_total_real: ingreso,
+      gasto_total_real: gasto,
+      margen_real_porcentaje: margenPct,
+      presupuesto_original: presupuestoOriginal,
+      desviacion_beneficio_porcentaje: desviacion,
+      valoracion_cliente: closeForm.valoracion_cliente,
+      lecciones_aprendidas: closeForm.lecciones_aprendidas,
+      fecha_cierre_oficial: new Date().toISOString().split("T")[0],
+    });
+
+    if (error) {
+      console.error("Error al cerrar proyecto:", error);
+      alert("Error al guardar el cierre del proyecto");
+      setSavingClose(false);
+      return;
+    }
+
+    const n8nUrl = process.env.NEXT_PUBLIC_N8N_CLOSE_PROJECT_WEBHOOK || "https://n8n.cheosdesign.info/webhook/proyecto-cerrado-v1";
+    fetch(n8nUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id_proyecto: closingProject.id }),
+    }).catch((err) => console.error("Error al notificar n8n:", err));
+
+    setShowCloseModal(false);
+    setClosingProject(null);
+    setSavingClose(false);
   };
 
   if (loading) {
@@ -325,6 +465,111 @@ export default function ProyectosPage() {
           onDrop={handleDrop}
         />
       </div>
+
+      {/* ─── Modal de cierre de proyecto ────────────────────────── */}
+      <Dialog open={showCloseModal} onOpenChange={setShowCloseModal}>
+        <DialogContent className="bg-[#09090b] border-[#27272a] text-[#fafafa] max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold">Cerrar Proyecto</DialogTitle>
+            <DialogDescription className="text-xs text-[#a1a1aa]">
+              {closingProject?.presupuestos_cabecera?.nombre_feria || "Sin nombre"} — {closingProject?.codigo_proyecto_interno || ""}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            {/* Valoración cliente */}
+            <div>
+              <Label className="text-xs text-[#a1a1aa] mb-2 block">Valoración del cliente</Label>
+              <div className="flex gap-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button key={star} type="button" onClick={() => setCloseForm((f) => ({ ...f, valoracion_cliente: star }))}>
+                    <Star className={`h-5 w-5 ${star <= closeForm.valoracion_cliente ? "text-amber-400 fill-amber-400" : "text-[#52525b]"}`} />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Lecciones aprendidas */}
+            <div>
+              <Label htmlFor="lecciones" className="text-xs text-[#a1a1aa]">Lecciones aprendidas</Label>
+              <textarea
+                id="lecciones"
+                className="w-full mt-1 px-3 py-2 text-xs bg-[#18181b] border border-[#27272a] rounded-lg text-[#fafafa] focus:outline-none focus:border-indigo-500/50 resize-none"
+                rows={3}
+                value={closeForm.lecciones_aprendidas}
+                onChange={(e) => setCloseForm((f) => ({ ...f, lecciones_aprendidas: e.target.value }))}
+                placeholder="¿Qué salió bien? ¿Qué mejorarías?"
+              />
+            </div>
+
+            {/* Ingreso y gasto real */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="ingreso" className="text-xs text-[#a1a1aa]">Ingreso real (€)</Label>
+                <Input
+                  id="ingreso"
+                  type="number"
+                  className="mt-1 text-xs bg-[#18181b] border-[#27272a]"
+                  value={closeForm.ingreso_total_real}
+                  onChange={(e) => setCloseForm((f) => ({ ...f, ingreso_total_real: Number(e.target.value) }))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="gasto" className="text-xs text-[#a1a1aa]">Gasto real (€)</Label>
+                <Input
+                  id="gasto"
+                  type="number"
+                  className="mt-1 text-xs bg-[#18181b] border-[#27272a]"
+                  value={closeForm.gasto_total_real}
+                  onChange={(e) => setCloseForm((f) => ({ ...f, gasto_total_real: Number(e.target.value) }))}
+                />
+              </div>
+            </div>
+
+            {/* Cálculos en vivo */}
+            {(() => {
+              const i = Number(closeForm.ingreso_total_real);
+              const g = Number(closeForm.gasto_total_real);
+              const mb = i - g;
+              const mp = i > 0 ? ((mb / i) * 100).toFixed(1) : "0.0";
+              const po = Number(closingProject?.presupuestos_cabecera?.total_presupuesto || 0);
+              return (
+                <div className="p-3 rounded-lg bg-[#18181b] border border-[#27272a] space-y-1.5">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-[#71717a]">Margen bruto</span>
+                    <span className={`font-semibold ${mb >= 0 ? "text-emerald-400" : "text-rose-400"}`}>{mb.toLocaleString("es-ES")} €</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-[#71717a]">Margen %</span>
+                    <span className={`font-semibold ${Number(mp) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>{mp}%</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-[#71717a]">Presupuesto original</span>
+                    <span className="font-semibold text-[#fafafa]">{po.toLocaleString("es-ES")} €</span>
+                  </div>
+                  <div className="flex justify-between text-xs pt-1.5 border-t border-[#27272a]">
+                    <span className="text-[#71717a]">Desviación vs presupuesto</span>
+                    <span className={`font-semibold ${mb >= po ? "text-emerald-400" : "text-rose-400"}`}>
+                      {po > 0 ? `${((mb - po) / po * 100).toFixed(1)}%` : "—"}
+                    </span>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button variant="outline" size="sm" onClick={() => setShowCloseModal(false)} disabled={savingClose}>
+              Cancelar
+            </Button>
+            <Button size="sm" onClick={handleCloseProject} disabled={savingClose}>
+              {savingClose ? (
+                <><RotateCcw className="h-3 w-3 mr-1 animate-spin" /> Guardando...</>
+              ) : "Cerrar proyecto"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
