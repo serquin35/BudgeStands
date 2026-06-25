@@ -2,18 +2,12 @@ import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/utils/supabase/server"
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 export async function POST(request: NextRequest) {
   try {
-    if (!serviceKey) {
-      return NextResponse.json({ error: "Error de configuración del servidor: service key no disponible" }, { status: 500 })
-    }
-
-    // Verificar autenticación por cookie (funciona con fetch del frontend sin Authorization header)
     const supabase = createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
 
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 })
     }
@@ -54,7 +48,18 @@ export async function POST(request: NextRequest) {
 
     const buffer = Buffer.from(await file.arrayBuffer())
 
-    // Subir a Storage usando REST API directamente con service_role (bypassea RLS)
+    // Usar service_role via REST API directa para subir a Storage.
+    // La SUPABASE_SERVICE_ROLE_KEY es una variable de servidor (no llega al cliente).
+    // Debe configurarse en Vercel → Settings → Environment Variables.
+    // En local se lee de .env.local
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    if (!serviceKey) {
+      return NextResponse.json({
+        error: "Error de configuración: la variable SUPABASE_SERVICE_ROLE_KEY no está definida. "
+             + "Añádela en Vercel → Settings → Environment Variables o en tu .env.local"
+      }, { status: 500 })
+    }
+
     const storageUrl = `${supabaseUrl}/storage/v1/object/stand-uploads/${fileName}`
     const uploadResp = await fetch(storageUrl, {
       method: "POST",
@@ -68,7 +73,7 @@ export async function POST(request: NextRequest) {
     if (!uploadResp.ok) {
       const errText = await uploadResp.text()
       console.error("Storage upload error:", uploadResp.status, errText)
-      return NextResponse.json({ error: `Error al subir el archivo (${uploadResp.status})` }, { status: 500 })
+      return NextResponse.json({ error: `Error al subir el archivo (código ${uploadResp.status})` }, { status: 500 })
     }
 
     const publicUrl = `${supabaseUrl}/storage/v1/object/public/stand-uploads/${fileName}`
