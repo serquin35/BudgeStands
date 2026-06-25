@@ -1,12 +1,19 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/utils/supabase/server"
-import { createClient as createAdminClient } from "@supabase/supabase-js"
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    if (!serviceKey) {
+      return NextResponse.json({ error: "Error de configuración del servidor: service key no disponible" }, { status: 500 })
+    }
 
+    // Verificar autenticación por cookie (funciona con fetch del frontend sin Authorization header)
+    const supabase = createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
+
     if (authError || !user) {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 })
     }
@@ -47,31 +54,28 @@ export async function POST(request: NextRequest) {
 
     const buffer = Buffer.from(await file.arrayBuffer())
 
-    // Usar service_role key para subir archivos (bypassea RLS)
-    const supabaseAdmin = createAdminClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    )
+    // Subir a Storage usando REST API directamente con service_role (bypassea RLS)
+    const storageUrl = `${supabaseUrl}/storage/v1/object/stand-uploads/${fileName}`
+    const uploadResp = await fetch(storageUrl, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${serviceKey}`,
+        "Content-Type": file.type,
+      },
+      body: buffer,
+    })
 
-    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
-      .from("stand-uploads")
-      .upload(fileName, buffer, {
-        contentType: file.type,
-        upsert: false,
-      })
-
-    if (uploadError) {
-      console.error("Error uploading to storage:", uploadError)
-      return NextResponse.json({ error: "Error al subir el archivo: " + uploadError.message }, { status: 500 })
+    if (!uploadResp.ok) {
+      const errText = await uploadResp.text()
+      console.error("Storage upload error:", uploadResp.status, errText)
+      return NextResponse.json({ error: `Error al subir el archivo (${uploadResp.status})` }, { status: 500 })
     }
 
-    const { data: publicUrlData } = supabaseAdmin.storage
-      .from("stand-uploads")
-      .getPublicUrl(fileName)
+    const publicUrl = `${supabaseUrl}/storage/v1/object/public/stand-uploads/${fileName}`
 
     return NextResponse.json({
       success: true,
-      url: publicUrlData.publicUrl,
+      url: publicUrl,
       fileName,
       tipo,
     })
