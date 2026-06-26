@@ -373,6 +373,16 @@ export default function PresustandPage() {
       setGenerationError("Por favor, selecciona un cliente, introduce la feria y los m².")
       return
     }
+
+    if (!promptText.trim() && !audioUrl) {
+      setGenerationError("Debes proporcionar indicaciones escritas o un audio para que Jarvis genere el presupuesto.")
+      return
+    }
+
+    if (imageUrl && !audioUrl && !promptText.trim()) {
+      setGenerationError("La imagen necesita una instrucción para que Jarvis entienda qué deseas hacer con ella.")
+      return
+    }
     setGenerating(true)
     setGenerationError(null)
     setLoadingMsgIdx(0)
@@ -712,7 +722,7 @@ export default function PresustandPage() {
                   <span>Método 2: Inteligencia Artificial (Jarvis AI)</span>
                 </CardTitle>
                 <CardDescription className="text-xs text-[#a1a1aa]">
-                  Jarvis generará un presupuesto desglosado con partidas a partir de tu prompt de texto o imagen de referencia.
+                  Jarvis generará un presupuesto desglosado a partir de tus indicaciones, audio o imagen de referencia.
                 </CardDescription>
               </CardHeader>
               <form onSubmit={handleGenerateIA}>
@@ -812,16 +822,32 @@ export default function PresustandPage() {
                   />
 
                   <div className="space-y-2">
-                    <Label htmlFor="promptText" className="text-xs">Prompt de diseño IA (materiales, zonas o extras) {!audioUrl && !imageUrl ? '*' : ''}</Label>
+                    <Label htmlFor="promptText" className="text-xs">Indicaciones para Jarvis</Label>
                     <textarea
                       id="promptText"
-                      placeholder={audioUrl || imageUrl ? "Opcional: añade detalles adicionales al audio o imagen..." : "Ej: Diseña un stand tecnológico con moqueta de velour negra, panelado retroiluminado..."}
+                      placeholder={
+                        imageUrl && audioUrl
+                          ? "Añade aclaraciones adicionales (opcional)..."
+                          : audioUrl
+                            ? "Notas adicionales (opcional)..."
+                            : imageUrl
+                              ? "Explica qué deseas hacer con la imagen..."
+                              : "Describe el stand que necesitas..."
+                      }
                       value={promptText}
                       onChange={(e) => setPromptText(e.target.value)}
-                      required={!audioUrl && !imageUrl}
                       rows={4}
                       className="w-full bg-[#09090b] border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa] p-3 rounded-md"
                     />
+                    <p className="text-[10px] text-[#71717a] leading-relaxed">
+                      {imageUrl && audioUrl
+                        ? "El audio contiene la descripción del proyecto. La imagen será utilizada como referencia visual. Este campo es opcional y sirve únicamente para añadir aclaraciones adicionales."
+                        : audioUrl
+                          ? "El audio será utilizado como descripción principal del proyecto. Puedes añadir notas adicionales aquí si lo deseas."
+                          : imageUrl
+                            ? "Explica qué debe hacer Jarvis con la imagen. Ejemplo: Calcula el presupuesto basándote en esta imagen, Inspírate en el diseño, Conserva la distribución."
+                            : "Describe el stand que necesitas."}
+                    </p>
                   </div>
 
                   {generationError && (
@@ -850,7 +876,7 @@ export default function PresustandPage() {
                   )}
                   <Button
                     type="submit"
-                    disabled={generating}
+                    disabled={generating || !selectedCliente || !nombreFeria || !m2 || (!promptText.trim() && !audioUrl && !imageUrl) || (imageUrl && !audioUrl && !promptText.trim())}
                     className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-xs shadow-lg shadow-indigo-500/15 disabled:opacity-50 disabled:cursor-not-allowed transition-all shrink-0"
                   >
                     {generating ? (
