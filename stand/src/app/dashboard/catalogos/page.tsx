@@ -156,17 +156,15 @@ export default function CatalogosPage() {
     const setSyncing = tipo === "b" ? setSyncingB : setSyncingC
     setSyncing(true)
     try {
-      const webhookUrl = tipo === "b"
-        ? (process.env.NEXT_PUBLIC_N8N_SYNC_B_WEBHOOK || "https://n8n.cheosdesign.info/webhook/sync-catalogo-b")
-        : (process.env.NEXT_PUBLIC_N8N_SYNC_C_WEBHOOK || "https://n8n.cheosdesign.info/webhook/sync-catalogo-c")
-      const res = await fetch(webhookUrl, {
+      const endpoint = tipo === "b" ? "/api/sync/catalogo-b" : "/api/sync/catalogo-c"
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id_empresa: empresaId })
       })
       if (!res.ok) throw new Error("Error en sync")
       const data = await res.json()
-      alert(`✅ Catálogo ${tipo === "b" ? "B" : "C"} sincronizado con Qdrant`)
+      alert(`Catálogo ${tipo === "b" ? "B" : "C"} sincronizado con Qdrant`)
     } catch (e) {
       alert("Error al sincronizar con Qdrant")
     } finally {

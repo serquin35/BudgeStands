@@ -410,8 +410,7 @@ export default function ProyectosPage() {
       return;
     }
 
-    const n8nUrl = process.env.NEXT_PUBLIC_N8N_CLOSE_PROJECT_WEBHOOK || "https://n8n.cheosdesign.info/webhook/proyecto-cerrado-v1";
-    fetch(n8nUrl, {
+    fetch("/api/sync/proyecto-cerrado", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id_proyecto: closingProject.id }),
