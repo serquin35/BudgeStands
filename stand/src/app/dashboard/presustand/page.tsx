@@ -726,136 +726,163 @@ export default function PresustandPage() {
                 </CardDescription>
               </CardHeader>
               <form onSubmit={handleGenerateIA}>
-                <CardContent className="space-y-4">
-                  {/* Common inputs */}
-                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="ia-cliente" className="text-xs">Cliente *</Label>
-                        <button
-                          type="button"
-                          onClick={() => setIsNewClientOpen(true)}
-                          className="text-[10px] text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1 transition-colors"
-                        >
-                          <Plus className="h-3 w-3" />
-                          <span>Nuevo Cliente</span>
-                        </button>
-                      </div>
-                      <select
-                        id="ia-cliente"
-                        value={selectedCliente}
-                        onChange={(e) => setSelectedCliente(e.target.value)}
-                        required
-                        className="w-full bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                      >
-                        <option value="">Selecciona un cliente</option>
-                        {clientes.map(c => (
-                          <option key={c.id} value={c.id}>{c.nombre_comercial}</option>
-                        ))}
-                      </select>
+                <CardContent className="space-y-6">
+
+                  {/* Sección 1: Información del Proyecto */}
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-sm font-semibold text-[#fafafa]">
+                        Información del Proyecto
+                      </h3>
+                      <p className="text-[10px] text-[#71717a] mt-0.5">
+                        Estos datos identifican el proyecto dentro de The Titan y son necesarios para generar correctamente el presupuesto.
+                      </p>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="ia-feria" className="text-xs">Feria / Evento *</Label>
-                      <Input
-                        id="ia-feria"
-                        placeholder="Ej: Mobile World Congress 2026"
-                        value={nombreFeria}
-                        onChange={(e) => setNombreFeria(e.target.value)}
-                        required
-                        className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
-                      />
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="ia-cliente" className="text-xs">Cliente *</Label>
+                          <button
+                            type="button"
+                            onClick={() => setIsNewClientOpen(true)}
+                            className="text-[10px] text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1 transition-colors"
+                          >
+                            <Plus className="h-3 w-3" />
+                            <span>Nuevo Cliente</span>
+                          </button>
+                        </div>
+                        <select
+                          id="ia-cliente"
+                          value={selectedCliente}
+                          onChange={(e) => setSelectedCliente(e.target.value)}
+                          required
+                          className="w-full bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        >
+                          <option value="">Selecciona un cliente</option>
+                          {clientes.map(c => (
+                            <option key={c.id} value={c.id}>{c.nombre_comercial}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="ia-feria" className="text-xs">Feria / Evento *</Label>
+                        <Input
+                          id="ia-feria"
+                          placeholder="Ej: Mobile World Congress 2026"
+                          value={nombreFeria}
+                          onChange={(e) => setNombreFeria(e.target.value)}
+                          required
+                          className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="ia-m2" className="text-xs">Superficie (m²) *</Label>
+                        <Input
+                          id="ia-m2"
+                          type="number"
+                          placeholder="80"
+                          value={m2}
+                          onChange={(e) => setM2(e.target.value)}
+                          required
+                          className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="ia-altura" className="text-xs">Altura Stand (m)</Label>
+                        <Input
+                          id="ia-altura"
+                          type="number"
+                          step="0.1"
+                          placeholder="4.00"
+                          value={altura}
+                          onChange={(e) => setAltura(e.target.value)}
+                          className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="ia-tipo" className="text-xs">Tipo Stand</Label>
+                        <select
+                          id="ia-tipo"
+                          value={tipoStand}
+                          onChange={(e) => setTipoStand(e.target.value)}
+                          className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                        >
+                          <option value="modular">Modular</option>
+                          <option value="carpinteria_diseno">Carpintería de Diseño</option>
+                          <option value="hibrido">Híbrido (Estructura + Madera)</option>
+                          <option value="retail_comercial">Retail / Comercial</option>
+                          <option value="doble_planta">Doble Planta</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
 
-                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="ia-m2" className="text-xs">Superficie (m²) *</Label>
-                      <Input
-                        id="ia-m2"
-                        type="number"
-                        placeholder="80"
-                        value={m2}
-                        onChange={(e) => setM2(e.target.value)}
-                        required
-                        className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="ia-altura" className="text-xs">Altura Stand (m)</Label>
-                      <Input
-                        id="ia-altura"
-                        type="number"
-                        step="0.1"
-                        placeholder="4.00"
-                        value={altura}
-                        onChange={(e) => setAltura(e.target.value)}
-                        className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="ia-tipo" className="text-xs">Tipo Stand</Label>
-                      <select
-                        id="ia-tipo"
-                        value={tipoStand}
-                        onChange={(e) => setTipoStand(e.target.value)}
-                        className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
-                      >
-                        <option value="modular">Modular</option>
-                        <option value="carpinteria_diseno">Carpintería de Diseño</option>
-                        <option value="hibrido">Híbrido (Estructura + Madera)</option>
-                        <option value="retail_comercial">Retail / Comercial</option>
-                        <option value="doble_planta">Doble Planta</option>
-                      </select>
-                    </div>
+                  {/* Separador */}
+                  <div className="border-t border-[#27272a]/60" />
+
+                  {/* Sección 2: Instrucciones para Jarvis */}
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-sm font-semibold text-[#fafafa] flex items-center gap-2">
+                        <Sparkles className="h-4 w-4 text-indigo-400" />
+                        <span>Instrucciones para Jarvis</span>
+                      </h3>
+                      <p className="text-[10px] text-[#71717a] mt-0.5">
+                        Describe el proyecto utilizando el método que prefieras. Puedes escribir, grabar un audio o adjuntar una imagen de referencia.
+                      </p>
                     </div>
 
-                  <AudioRecorder
-                    value={audioUrl}
-                    onUpload={setAudioUrl}
-                    disabled={generating}
-                  />
+                    <AudioRecorder
+                      value={audioUrl}
+                      onUpload={setAudioUrl}
+                      disabled={generating}
+                    />
 
-                  <ImageUploader
-                    value={imageUrl}
-                    onUpload={setImageUrl}
-                    disabled={generating}
-                  />
+                    <ImageUploader
+                      value={imageUrl}
+                      onUpload={setImageUrl}
+                      disabled={generating}
+                    />
 
-                  <div className="space-y-2">
-                    <Label htmlFor="promptText" className="text-xs">Indicaciones para Jarvis</Label>
-                    <textarea
-                      id="promptText"
-                      placeholder={
-                        imageUrl && audioUrl
-                          ? "Añade aclaraciones adicionales (opcional)..."
-                          : audioUrl
+                    <div className="space-y-2">
+                      <Label htmlFor="promptText" className="text-xs">Indicaciones para Jarvis</Label>
+                      <textarea
+                        id="promptText"
+                        placeholder={
+                          audioUrl
                             ? "Notas adicionales (opcional)..."
                             : imageUrl
-                              ? "Explica qué deseas hacer con la imagen..."
+                              ? "Explica qué debe hacer Jarvis con la imagen..."
                               : "Describe el stand que necesitas..."
-                      }
-                      value={promptText}
-                      onChange={(e) => setPromptText(e.target.value)}
-                      rows={4}
-                      className="w-full bg-[#09090b] border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa] p-3 rounded-md"
-                    />
-                    <p className="text-[10px] text-[#71717a] leading-relaxed">
-                      {imageUrl && audioUrl
-                        ? "El audio contiene la descripción del proyecto. La imagen será utilizada como referencia visual. Este campo es opcional y sirve únicamente para añadir aclaraciones adicionales."
-                        : audioUrl
-                          ? "El audio será utilizado como descripción principal del proyecto. Puedes añadir notas adicionales aquí si lo deseas."
-                          : imageUrl
-                            ? "Explica qué debe hacer Jarvis con la imagen. Ejemplo: Calcula el presupuesto basándote en esta imagen, Inspírate en el diseño, Conserva la distribución."
-                            : "Describe el stand que necesitas."}
-                    </p>
+                        }
+                        value={promptText}
+                        onChange={(e) => setPromptText(e.target.value)}
+                        rows={4}
+                        className="w-full bg-[#18181b] border-[#3f3f46] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa] p-3 rounded-md"
+                      />
+                      <p className="text-[10px] text-[#71717a] leading-relaxed">
+                        {imageUrl && audioUrl
+                          ? "El audio contiene la descripción principal del proyecto y la imagen servirá como referencia visual. Este campo es opcional."
+                          : audioUrl
+                            ? "El audio será utilizado como descripción principal del proyecto. Puedes añadir aclaraciones adicionales si lo deseas."
+                            : imageUrl
+                              ? "Explica qué debe hacer Jarvis con la imagen. Ejemplos: Calcula el presupuesto, Inspírate en el diseño, Conserva la distribución, Cambia materiales, Haz una versión modular."
+                              : "Explica materiales, distribución, zonas, acabados o cualquier detalle relevante."}
+                      </p>
+                    </div>
+
+                    {generationError && (
+                      <div className="p-3 rounded bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex gap-2 items-center">
+                        <AlertTriangle className="h-4 w-4 shrink-0" />
+                        <span>{generationError}</span>
+                      </div>
+                    )}
                   </div>
 
-                  {generationError && (
-                    <div className="p-3 rounded bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex gap-2 items-center">
-                      <AlertTriangle className="h-4 w-4 shrink-0" />
-                      <span>{generationError}</span>
-                    </div>
-                  )}
                 </CardContent>
                 <CardFooter className="flex justify-between items-center border-t border-[#27272a]/50 py-3 bg-[#09090b]/40">
                   {generating ? (
@@ -876,7 +903,7 @@ export default function PresustandPage() {
                   )}
                   <Button
                     type="submit"
-                    disabled={generating || !selectedCliente || !nombreFeria || !m2 || (!promptText.trim() && !audioUrl && !imageUrl) || (imageUrl && !audioUrl && !promptText.trim())}
+                    disabled={generating || !selectedCliente || !nombreFeria || !m2 || (!promptText.trim() && !audioUrl) || (imageUrl && !audioUrl && !promptText.trim())}
                     className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-xs shadow-lg shadow-indigo-500/15 disabled:opacity-50 disabled:cursor-not-allowed transition-all shrink-0"
                   >
                     {generating ? (
