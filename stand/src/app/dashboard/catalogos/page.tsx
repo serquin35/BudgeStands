@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { toast } from "sonner"
 import { Search, Plus, Edit2, Loader2, Database, DollarSign, Tag, Layers, Wrench, RotateCcw } from "lucide-react"
 
 import type { TarifaMacro, ElementoCatalogo, TarifaServicio, CategoriaMatriz } from "@/types"
@@ -164,9 +165,9 @@ export default function CatalogosPage() {
       })
       if (!res.ok) throw new Error("Error en sync")
       const data = await res.json()
-      alert(`Catálogo ${tipo === "b" ? "B" : "C"} sincronizado con Qdrant`)
-    } catch (e) {
-      alert("Error al sincronizar con Qdrant")
+      toast.success(`✅ ${data.elementos_indexados ?? 'Todos los'} elementos sincronizados con Qdrant`)
+    } catch {
+      toast.error("Error al sincronizar con Qdrant. Inténtalo de nuevo.")
     } finally {
       setSyncing(false)
     }
