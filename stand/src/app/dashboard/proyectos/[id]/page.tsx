@@ -7,7 +7,7 @@ import { ProyectoOperacion, ProyectoHito } from "@/types"
 import { StatusBadge } from "@/components/shared/status-badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { CheckCircle2, Clock, AlertCircle, ArrowLeft, Building2, Calendar, MapPin, Maximize } from "lucide-react"
+import { CheckCircle2, Clock, AlertCircle, ArrowLeft, Building2, Calendar, MapPin, Maximize, HelpCircle } from "lucide-react"
 
 export default function ProyectoDetallePage({ params }: { params: { id: string } }) {
   const router = useRouter()
@@ -58,12 +58,23 @@ export default function ProyectoDetallePage({ params }: { params: { id: string }
     fetchProyecto()
   }, [params.id, supabase])
 
-  const formatCurrency = (value: number | null | undefined) => {
-    if (value === null || value === undefined) return "N/A"
-    return new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(value)
-  }
+  const formatCurrency = (amount: number | null | undefined) => {
+  if (amount == null) return "0,00 €"
+  return new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(amount)
+}
 
-  const getSemaforoHito = (hito: ProyectoHito) => {
+const descripcionesHitos: Record<string, string> = {
+  cobro_anticipo: "Fecha límite para recibir el pago inicial antes de arrancar producción.",
+  compra_materiales: "Día límite para pedir los materiales especiales o de despiece al proveedor.",
+  cae_seguridad: "Fecha máxima para subir la documentación de prevención de riesgos (CAE) al recinto ferial.",
+  inicio_fabricacion: "Día en que el taller comienza a cortar y ensamblar las piezas estructurales.",
+  reserva_logistica: "Fecha límite para contratar camiones, hoteles y dietas del equipo de montaje.",
+  fecha_carga: "Día en que el stand terminado se carga en los camiones rumbo a la feria.",
+  fecha_montaje: "Primer día de montaje oficial dentro del recinto ferial.",
+  fecha_cobro_final: "Fecha límite para emitir y cobrar la factura de liquidación del proyecto."
+}
+
+const getSemaforoHito = (hito: ProyectoHito) => {
     if (hito.estado_hito === "completado") return "text-green-500 bg-green-500/10 border-green-500/20"
     if (hito.estado_hito === "retrasado") return "text-red-500 bg-red-500/10 border-red-500/20"
     
@@ -216,7 +227,17 @@ export default function ProyectoDetallePage({ params }: { params: { id: string }
 
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-950 p-4 rounded-lg border border-slate-800 shadow-sm">
                       <div>
-                        <h4 className="text-sm font-medium text-slate-200">{formatTipoHito(hito.tipo_hito)}</h4>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-sm font-medium text-slate-200">{formatTipoHito(hito.tipo_hito)}</h4>
+                          <div className="group relative flex items-center">
+                            <HelpCircle className="h-4 w-4 text-slate-500 cursor-help hover:text-slate-300 transition-colors" />
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-48 sm:w-64 p-2.5 bg-slate-800 text-xs text-slate-200 rounded-md shadow-xl z-50 border border-slate-700 pointer-events-none">
+                              {descripcionesHitos[hito.tipo_hito] || "Sin descripción disponible."}
+                              {/* Triángulo del tooltip */}
+                              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                            </div>
+                          </div>
+                        </div>
                         <div className="flex items-center gap-3 mt-1">
                           <p className="text-xs text-slate-400">
                             Programado: <span className="text-slate-300 font-medium">{hito.fecha_programada}</span>
