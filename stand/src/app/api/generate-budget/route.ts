@@ -94,11 +94,23 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify(n8nPayload)
     })
 
+    // Leer el body como texto primero para evitar "Unexpected end of JSON input"
+    const rawBody = await n8nResponse.text()
+    console.log("Respuesta cruda de n8n:", rawBody.substring(0, 500))
+
     if (!n8nResponse.ok) {
-      throw new Error(`Error en el servicio IA de n8n: ${n8nResponse.statusText}`)
+      throw new Error(`Error en el servicio IA de n8n (${n8nResponse.status}): ${rawBody.substring(0, 200)}`)
     }
 
-    const aiResult = await n8nResponse.json()
+    let aiResult: any = {}
+    try {
+      aiResult = JSON.parse(rawBody)
+    } catch (parseErr) {
+      console.warn("n8n devolvió respuesta no-JSON, continuando con valores por defecto:", rawBody.substring(0, 200))
+      // Si n8n devuelve texto plano (ej: "Agent stopped due to max iterations") 
+      // continuamos con un resultado vacío y guardamos el presupuesto igualmente
+      aiResult = { output: rawBody }
+    }
     console.log("Respuesta de n8n recibida exitosamente:", aiResult)
 
     let parsedOutput = aiResult.output;
