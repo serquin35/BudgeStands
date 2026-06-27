@@ -107,13 +107,15 @@ function ProyectoCard({ proyecto, onDragStart }: { proyecto: ProyectoOperacion; 
           <span className="text-xs font-mono font-medium text-indigo-400 bg-indigo-400/10 px-2 py-0.5 rounded border border-indigo-400/20">
             {proyecto.codigo_proyecto_interno || "PRJ-XXX"}
           </span>
-          <button className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link href={`/dashboard/proyectos/${proyecto.id}`} className="text-muted-foreground hover:text-indigo-400 transition-colors z-10">
             <MoreHorizontal className="h-4 w-4" />
-          </button>
+          </Link>
         </div>
-        <h4 className="font-semibold text-sm line-clamp-2 leading-tight mb-3 text-[#fafafa]">
-          {presu.nombre_feria || "Stand sin nombre"}
-        </h4>
+        <Link href={`/dashboard/proyectos/${proyecto.id}`} className="hover:underline text-[#fafafa] z-10 block">
+          <h4 className="font-semibold text-sm line-clamp-2 leading-tight mb-3">
+            {presu.nombre_feria || "Stand sin nombre"}
+          </h4>
+        </Link>
         <div className="space-y-1.5 text-xs text-[#71717a]">
           <div className="flex items-center gap-1.5">
             <MapPin className="h-3.5 w-3.5 shrink-0" />

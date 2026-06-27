@@ -115,6 +115,22 @@ export type EstadoProyecto =
   | "finalizado"
   | "cancelado"
 
+export interface ProyectoHito {
+  id: string
+  id_proyecto: string
+  tipo_hito: string
+  fecha_programada: string
+  fecha_real_ejecucion: string | null
+  id_responsable: string | null
+  estado_hito: "pendiente" | "en_progreso" | "completado" | "retrasado"
+  notas: string | null
+  created_at: string
+  updated_at: string
+  usuarios?: {
+    nombre_completo: string
+  } | null
+}
+
 export interface ProyectoOperacion {
   id: string
   id_empresa: string
@@ -127,10 +143,18 @@ export interface ProyectoOperacion {
   created_at: string
   updated_at: string
   presupuestos_cabecera?: {
+    numero_presupuesto: string | null
     nombre_feria: string | null
     recinto_ferial: string | null
     fecha_inicio_feria: string | null
     total_presupuesto: number | null
     imagen_stand_url: string | null
+    m2_superficie: number | null
+    tipo_stand: string | null
+    clientes?: {
+      nombre_comercial: string | null
+      sector_industrial: string | null
+    } | null
   } | null
+  proyectos_hitos?: ProyectoHito[]
 }
