@@ -117,7 +117,7 @@ function ProyectoCard({ proyecto, onDragStart }: { proyecto: ProyectoOperacion; 
         <div className="space-y-1.5 text-xs text-[#71717a]">
           <div className="flex items-center gap-1.5">
             <MapPin className="h-3.5 w-3.5 shrink-0" />
-            <span className="truncate">{presu.recinto_ferial || "Sin recinto"}</span>
+            <span className="truncate">{presu.recinto_ferial || presu.nombre_feria || "Sin recinto"}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5 shrink-0" />
