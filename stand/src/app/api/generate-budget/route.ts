@@ -80,7 +80,8 @@ export async function POST(request: NextRequest) {
       tipo_stand: tipoStand || "modular",
       estilo: estiloStand || "moderno",
       cliente: clienteNombre,
-      presupuesto_max: 0
+      presupuesto_max: 0,
+      promptText: promptText || ""
     }
 
     // Llamar a n8n Jarvis
