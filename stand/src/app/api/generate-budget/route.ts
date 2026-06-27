@@ -40,6 +40,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Faltan campos obligatorios" }, { status: 400 })
     }
 
+    // Obtener el nombre visible del cliente para el contexto de Jarvis
+    const { data: clienteData } = await supabase
+      .from("clientes")
+      .select("nombre_comercial, razon_social")
+      .eq("id", clienteId)
+      .single()
+
+    const clienteNombre = clienteData?.nombre_comercial || clienteData?.razon_social || clienteId
+
     // Generar un número de presupuesto secuencial o temporal
     const timestamp = Date.now()
     const random = Math.floor(Math.random() * 1000)
@@ -70,7 +79,7 @@ export async function POST(request: NextRequest) {
       altura: Number(altura || 2.50),
       tipo_stand: tipoStand || "modular",
       estilo: estiloStand || "moderno",
-      cliente: clienteId,
+      cliente: clienteNombre,
       presupuesto_max: 0
     }
 
