@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       contentType = "audio"
       contentValue = audioUrl
     } else if (imageUrl) {
-      contentType = "image"
+      contentType = "imagen"
       contentValue = imageUrl
     }
 
