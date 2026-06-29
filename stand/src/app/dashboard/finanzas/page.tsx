@@ -118,6 +118,31 @@ function FinanzasContent() {
     ]
   })
 
+  // Cash Flow State
+  const [cashFlowData, setCashFlowData] = useState<{
+    cobradoMes: number[]
+    gastoMes: number[]
+    meses: string[]
+    previsto30: number
+    previsto60: number
+    previsto90: number
+    alertasVencimiento: any[]
+  } | null>(null)
+  const [loadingCashFlow, setLoadingCashFlow] = useState(false)
+
+  // Cierre State
+  const [proyectosParaCierre, setProyectosParaCierre] = useState<any[]>([])
+  const [loadingCierre, setLoadingCierre] = useState(false)
+  const [cierreModal, setCierreModal] = useState<{
+    open: boolean
+    proyecto: any
+    ingresoReal: number
+    gastoReal: number
+    valoracion: number
+    lecciones: string
+    saving: boolean
+  } | null>(null)
+
   // Load search parameters
   useEffect(() => {
     if (initProyectoId) {
@@ -163,9 +188,9 @@ function FinanzasContent() {
   // Load Supplier Invoices
   useEffect(() => {
     if (!empresaId) return
-    if (activeTab === "proveedores") {
-      loadFacturasProveedores()
-    }
+    if (activeTab === "proveedores") loadFacturasProveedores()
+    if (activeTab === "cashflow") loadCashFlow()
+    if (activeTab === "cierre") loadProyectosParaCierre()
   }, [empresaId, activeTab])
 
   // Fetch Suppliers and Categories when needed
@@ -258,6 +283,200 @@ function FinanzasContent() {
       toast.error("Error al cargar las facturas de clientes")
     } finally {
       setLoadingFacturas(false)
+    }
+  }
+
+  async function loadCashFlow() {
+    if (!empresaId) return
+    setLoadingCashFlow(true)
+    try {
+      const hoy = new Date()
+      const mes30 = new Date(hoy); mes30.setDate(hoy.getDate() + 30)
+      const mes60 = new Date(hoy); mes60.setDate(hoy.getDate() + 60)
+      const mes90 = new Date(hoy); mes90.setDate(hoy.getDate() + 90)
+      const fmt = (d: Date) => d.toISOString().split("T")[0]
+
+      // Ingresos: facturas pendientes de cobro
+      const { data: factPend } = await supabase
+        .from("facturas_proyectos")
+        .select("total_factura_bruto, fecha_vencimiento, estado_cobro")
+        .neq("estado_cobro", "cobrada")
+        .filter("proyectos_operaciones.id_empresa", "eq", empresaId)
+
+      // Gastos proveedor pendientes
+      const { data: gastPend } = await supabase
+        .from("facturas_proveedores_cabecera")
+        .select("total_factura_bruto, fecha_vencimiento, estado_pago")
+        .eq("id_empresa", empresaId)
+        .eq("estado_pago", "pendiente")
+
+      // Cobros históricos mes a mes (últimos 6 meses)
+      const { data: histIngr } = await supabase
+        .from("facturas_proyectos")
+        .select("total_factura_bruto, fecha_cobro_real, estado_cobro")
+        .eq("estado_cobro", "cobrada")
+
+      // Gastos históricos mes a mes (últimos 6 meses)
+      const { data: histGast } = await supabase
+        .from("facturas_proveedores_cabecera")
+        .select("total_factura_bruto, created_at")
+        .eq("id_empresa", empresaId)
+        .eq("estado_pago", "pagada")
+
+      // Build last 6 months labels
+      const meses: string[] = []
+      const cobradoMes: number[] = []
+      const gastoMes: number[] = []
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1)
+        const label = d.toLocaleString("es-ES", { month: "short", year: "2-digit" })
+        meses.push(label)
+        const mesNum = d.getMonth()
+        const yearNum = d.getFullYear()
+        const ingr = (histIngr || []).filter((f: any) => {
+          if (!f.fecha_cobro_real) return false
+          const fd = new Date(f.fecha_cobro_real)
+          return fd.getMonth() === mesNum && fd.getFullYear() === yearNum
+        }).reduce((s: number, f: any) => s + Number(f.total_factura_bruto || 0), 0)
+        const gast = (histGast || []).filter((f: any) => {
+          const fd = new Date(f.created_at)
+          return fd.getMonth() === mesNum && fd.getFullYear() === yearNum
+        }).reduce((s: number, f: any) => s + Number(f.total_factura_bruto || 0), 0)
+        cobradoMes.push(ingr)
+        gastoMes.push(gast)
+      }
+
+      // Prevision 30/60/90
+      const calcPrevision = (facturas: any[], limite: Date) =>
+        (facturas || []).filter((f: any) => new Date(f.fecha_vencimiento) <= limite)
+          .reduce((s: number, f: any) => s + Number(f.total_factura_bruto || 0), 0)
+
+      // Alertas de vencimiento próximo (clientes)
+      const alertasVencimiento = (factPend || []).filter((f: any) => {
+        const dias = Math.ceil((new Date(f.fecha_vencimiento).getTime() - hoy.getTime()) / 86400000)
+        return dias >= 0 && dias <= 14
+      }).map((f: any) => ({
+        ...f,
+        diasRestantes: Math.ceil((new Date(f.fecha_vencimiento).getTime() - hoy.getTime()) / 86400000)
+      })).sort((a: any, b: any) => a.diasRestantes - b.diasRestantes)
+
+      setCashFlowData({
+        cobradoMes,
+        gastoMes,
+        meses,
+        previsto30: calcPrevision(factPend || [], mes30),
+        previsto60: calcPrevision(factPend || [], mes60),
+        previsto90: calcPrevision(factPend || [], mes90),
+        alertasVencimiento
+      })
+    } catch (err) {
+      console.error("Error al cargar cash flow:", err)
+      toast.error("Error al cargar datos de cash flow")
+    } finally {
+      setLoadingCashFlow(false)
+    }
+  }
+
+  async function loadProyectosParaCierre() {
+    if (!empresaId) return
+    setLoadingCierre(true)
+    try {
+      // Get projects that are finalized/desmontado and not yet closed
+      const { data: projs, error } = await supabase
+        .from("proyectos_operaciones")
+        .select(`
+          id,
+          codigo_proyecto_interno,
+          estado_proyecto,
+          presupuestos_cabecera (
+            total_presupuesto,
+            nombre_feria,
+            clientes ( nombre_comercial )
+          ),
+          cierres_proyectos ( id )
+        `)
+        .eq("id_empresa", empresaId)
+        .in("estado_proyecto", ["desmontado", "finalizado", "facturado"])
+        .order("created_at", { ascending: false })
+
+      if (error) throw error
+      // Only show projects without a cierre record
+      const sinCierre = (projs || []).filter((p: any) =>
+        !p.cierres_proyectos || p.cierres_proyectos.length === 0
+      )
+      setProyectosParaCierre(sinCierre)
+    } catch (err) {
+      console.error("Error al cargar proyectos para cierre:", err)
+      toast.error("Error al cargar proyectos candidatos al cierre")
+    } finally {
+      setLoadingCierre(false)
+    }
+  }
+
+  async function openCierreModal(proyecto: any) {
+    // Calculate real income (cobrado) and costs (proveedor pagado) for this project
+    const [{ data: ingr }, { data: gast }] = await Promise.all([
+      supabase
+        .from("facturas_proyectos")
+        .select("total_factura_bruto")
+        .eq("id_proyecto", proyecto.id)
+        .eq("estado_cobro", "cobrada"),
+      supabase
+        .from("facturas_proveedores_lineas")
+        .select("total_linea_coste")
+        .eq("id_proyecto", proyecto.id)
+    ])
+    const ingresoReal = (ingr || []).reduce((s: number, f: any) => s + Number(f.total_factura_bruto || 0), 0)
+    const gastoReal = (gast || []).reduce((s: number, l: any) => s + Number(l.total_linea_coste || 0), 0)
+    setCierreModal({ open: true, proyecto, ingresoReal, gastoReal, valoracion: 5, lecciones: "", saving: false })
+  }
+
+  async function handleCerrarProyecto() {
+    if (!cierreModal) return
+    setCierreModal(prev => prev ? { ...prev, saving: true } : null)
+    try {
+      const { proyecto, ingresoReal, gastoReal, valoracion, lecciones } = cierreModal
+      const margenBruto = ingresoReal - gastoReal
+      const margenPct = ingresoReal > 0 ? Number(((margenBruto / ingresoReal) * 100).toFixed(2)) : 0
+      const presupOrig = Number((proyecto.presupuestos_cabecera as any)?.total_presupuesto || 0)
+      const desvPct = presupOrig > 0 ? Number((((ingresoReal - presupOrig) / presupOrig) * 100).toFixed(2)) : 0
+
+      const { error: cierreErr } = await supabase
+        .from("cierres_proyectos")
+        .insert({
+          id_proyecto: proyecto.id,
+          ingreso_total_real: ingresoReal,
+          gasto_total_real: gastoReal,
+          margen_bruto_real: margenBruto,
+          margen_real_porcentaje: margenPct,
+          presupuesto_original: presupOrig,
+          desviacion_beneficio_porcentaje: desvPct,
+          valoracion_cliente: valoracion,
+          lecciones_aprendidas: lecciones,
+          fecha_cierre_oficial: new Date().toISOString().split("T")[0]
+        })
+      if (cierreErr) throw cierreErr
+
+      // Update project state to 'cerrado'
+      await supabase
+        .from("proyectos_operaciones")
+        .update({ estado_proyecto: "cerrado" })
+        .eq("id", proyecto.id)
+
+      // Trigger n8n webhook (fire and forget)
+      fetch(`/api/sync/proyecto-cerrado`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id_proyecto: proyecto.id, codigo: proyecto.codigo_proyecto_interno })
+      }).catch(console.error)
+
+      toast.success(`Proyecto ${proyecto.codigo_proyecto_interno} cerrado correctamente`)
+      setCierreModal(null)
+      loadProyectosParaCierre()
+    } catch (err: any) {
+      console.error("Error al cerrar proyecto:", err)
+      toast.error(err.message || "Error al cerrar el proyecto")
+      setCierreModal(prev => prev ? { ...prev, saving: false } : null)
     }
   }
 
@@ -1449,24 +1668,276 @@ function FinanzasContent() {
         </div>
       )}
 
+      {/* ── TAB: CASH FLOW ── */}
       {activeTab === "cashflow" && (
-        <Card className="bg-[#09090b]/40 border-[#27272a]/60 backdrop-blur-md p-12 text-center">
-          <TrendingUp className="w-12 h-12 text-[#71717a] mx-auto mb-4" />
-          <h3 className="text-base font-bold text-white mb-2">Dashboard de Cash Flow (Sprint 3)</h3>
-          <p className="text-xs text-[#a1a1aa] max-w-md mx-auto">
-            El control previsional e histórico de tesorería, alertas de márgenes y previsiones a 30/60/90 días se desarrollará en el Sprint 3.
-          </p>
-        </Card>
+        <div className="space-y-6">
+          {loadingCashFlow ? (
+            <div className="flex justify-center py-20"><Loader2 className="w-7 h-7 animate-spin text-indigo-500" /></div>
+          ) : cashFlowData ? (
+            <>
+              {/* Previsión 30/60/90 días */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[
+                  { label: "Cobros previstos 30d", value: cashFlowData.previsto30, color: "text-indigo-400", bg: "bg-indigo-500/10" },
+                  { label: "Cobros previstos 60d", value: cashFlowData.previsto60, color: "text-violet-400", bg: "bg-violet-500/10" },
+                  { label: "Cobros previstos 90d", value: cashFlowData.previsto90, color: "text-purple-400", bg: "bg-purple-500/10" },
+                ].map(item => (
+                  <Card key={item.label} className="bg-[#09090b]/40 border-[#27272a]/60 backdrop-blur-md">
+                    <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                      <CardTitle className="text-xs font-semibold text-[#a1a1aa]">{item.label}</CardTitle>
+                      <div className={`p-2 rounded-lg ${item.bg} ${item.color}`}><TrendingUp className="w-4 h-4" /></div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className={`text-2xl font-bold ${item.color}`}>{formatCurrency(item.value)}</div>
+                      <div className="text-[10px] text-[#71717a] mt-1">Facturas pendientes de cobro</div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Gráfico: Ingresos vs Gastos histórico (últimos 6 meses) */}
+              <Card className="bg-[#09090b]/30 border-[#27272a]/60 backdrop-blur-md">
+                <CardHeader>
+                  <CardTitle className="text-base font-bold">Ingresos Cobrados vs Gastos Pagados — Últimos 6 meses</CardTitle>
+                  <CardDescription className="text-xs text-[#a1a1aa]">Comparativa mensual de flujo de caja real ejecutado.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {cashFlowData.meses.map((mes, i) => {
+                      const ingr = cashFlowData.cobradoMes[i]
+                      const gast = cashFlowData.gastoMes[i]
+                      const maxVal = Math.max(...cashFlowData.cobradoMes, ...cashFlowData.gastoMes, 1)
+                      return (
+                        <div key={mes} className="space-y-1">
+                          <div className="flex justify-between text-[10px] text-[#a1a1aa]">
+                            <span className="font-semibold uppercase tracking-wider">{mes}</span>
+                            <span className={ingr >= gast ? "text-green-400" : "text-red-400"}>
+                              {ingr >= gast ? "+" : ""}{formatCurrency(ingr - gast)}
+                            </span>
+                          </div>
+                          <div className="flex gap-1 items-center">
+                            <div className="w-12 text-[10px] text-indigo-400 text-right">{formatCurrency(ingr).replace(" €","€")}</div>
+                            <div className="flex-1 h-3 bg-[#18181b] rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all"
+                                style={{ width: `${maxVal > 0 ? (ingr / maxVal) * 100 : 0}%` }}
+                              />
+                            </div>
+                          </div>
+                          <div className="flex gap-1 items-center">
+                            <div className="w-12 text-[10px] text-rose-400 text-right">{formatCurrency(gast).replace(" €","€")}</div>
+                            <div className="flex-1 h-3 bg-[#18181b] rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-gradient-to-r from-rose-500 to-pink-500 rounded-full transition-all"
+                                style={{ width: `${maxVal > 0 ? (gast / maxVal) * 100 : 0}%` }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
+                    <div className="flex gap-4 pt-2 text-[10px] text-[#71717a] border-t border-[#27272a]">
+                      <span className="flex items-center gap-1"><span className="inline-block w-3 h-1.5 rounded bg-indigo-500"/> Cobrado</span>
+                      <span className="flex items-center gap-1"><span className="inline-block w-3 h-1.5 rounded bg-rose-500"/> Pagado a proveedores</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Alertas de vencimiento próximo */}
+              <Card className="bg-[#09090b]/30 border-[#27272a]/60 backdrop-blur-md">
+                <CardHeader>
+                  <CardTitle className="text-base font-bold flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-yellow-400" />
+                    Alertas de Vencimiento Próximo (&lt;14 días)
+                  </CardTitle>
+                  <CardDescription className="text-xs text-[#a1a1aa]">Facturas de clientes que vencen en los próximos 14 días.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {cashFlowData.alertasVencimiento.length === 0 ? (
+                    <div className="text-center py-6">
+                      <Check className="w-8 h-8 text-green-500 mx-auto mb-2" />
+                      <p className="text-xs text-[#71717a]">No hay facturas con vencimiento urgente. ¡Todo en orden!</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {cashFlowData.alertasVencimiento.map((f: any, i: number) => (
+                        <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-[#18181b]/40 border border-yellow-500/20">
+                          <div className="flex items-center gap-3">
+                            <div className="p-1.5 rounded-md bg-yellow-500/10">
+                              <Calendar className="w-3.5 h-3.5 text-yellow-400" />
+                            </div>
+                            <div>
+                              <div className="text-xs font-semibold text-white">{formatCurrency(f.total_factura_bruto)}</div>
+                              <div className="text-[10px] text-[#71717a]">Vence: {new Date(f.fecha_vencimiento).toLocaleDateString("es-ES")}</div>
+                            </div>
+                          </div>
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
+                            f.diasRestantes <= 3 ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
+                          }`}>
+                            {f.diasRestantes === 0 ? "Hoy" : `${f.diasRestantes}d`}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </>
+          ) : (
+            <div className="text-center py-20 text-[#71717a] text-sm">Sin datos disponibles</div>
+          )}
+        </div>
       )}
 
+      {/* ── TAB: CIERRE DE PROYECTOS ── */}
       {activeTab === "cierre" && (
-        <Card className="bg-[#09090b]/40 border-[#27272a]/60 backdrop-blur-md p-12 text-center">
-          <ShieldAlert className="w-12 h-12 text-[#71717a] mx-auto mb-4" />
-          <h3 className="text-base font-bold text-white mb-2">Cierre de Proyectos y Rentabilidad (Sprint 4)</h3>
-          <p className="text-xs text-[#a1a1aa] max-w-md mx-auto">
-            El cierre económico de proyectos (ingresos cobrados vs gastos de compras reales), valoración del cliente, lecciones aprendidas e indexación semántica en Qdrant se desarrollará en el Sprint 4.
-          </p>
-        </Card>
+        <div className="space-y-6">
+          <Card className="bg-[#09090b]/30 border-[#27272a]/60 backdrop-blur-md">
+            <CardHeader>
+              <CardTitle className="text-lg font-bold">Proyectos Pendientes de Cierre Económico</CardTitle>
+              <CardDescription className="text-xs text-[#a1a1aa]">
+                Proyectos desmontados o finalizados sin cierre contable registrado. Al cerrar se calcula la rentabilidad real y se indexa en Qdrant.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loadingCierre ? (
+                <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-indigo-500" /></div>
+              ) : proyectosParaCierre.length === 0 ? (
+                <div className="text-center py-12">
+                  <Check className="w-10 h-10 text-green-500 mx-auto mb-3" />
+                  <p className="text-sm text-[#71717a]">Todos los proyectos finalizados tienen cierre económico registrado.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {proyectosParaCierre.map((proj: any) => {
+                    const pres = proj.presupuestos_cabecera as any
+                    return (
+                      <div key={proj.id} className="flex items-center justify-between p-4 rounded-xl border border-[#27272a]/60 bg-[#18181b]/30 hover:bg-[#18181b]/50 transition-colors">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center">
+                            <DollarSign className="w-5 h-5 text-indigo-400" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-semibold text-white">{proj.codigo_proyecto_interno}</div>
+                            <div className="text-xs text-[#a1a1aa]">
+                              {pres?.clientes?.[0]?.nombre_comercial || pres?.clientes?.nombre_comercial || "—"} · {pres?.nombre_feria || ""}
+                            </div>
+                            <div className="text-[10px] text-[#71717a] mt-0.5">Presupuesto: {formatCurrency(Number(pres?.total_presupuesto || 0))}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-[10px] px-2 py-0.5 rounded-full border bg-amber-500/10 text-amber-400 border-amber-500/20 capitalize">
+                            {proj.estado_proyecto}
+                          </span>
+                          <Button
+                            size="sm"
+                            onClick={() => openCierreModal(proj)}
+                            className="text-xs font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 shadow-md shadow-emerald-500/20 h-8"
+                          >
+                            Cerrar Proyecto
+                          </Button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Cierre Modal */}
+          {cierreModal && (
+            <Dialog open={cierreModal.open} onOpenChange={(o) => !o && setCierreModal(null)}>
+              <DialogContent className="bg-[#09090b] border-[#27272a] text-[#fafafa] max-w-lg">
+                <DialogHeader>
+                  <DialogTitle className="text-lg font-bold flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5 text-emerald-400" />
+                    Cierre Económico — {cierreModal.proyecto.codigo_proyecto_interno}
+                  </DialogTitle>
+                  <DialogDescription className="text-xs text-[#a1a1aa]">
+                    Revisa los números reales. Al confirmar, el proyecto quedará cerrado y se sincronizará con Qdrant.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-5 my-4">
+                  {/* Rentabilidad real */}
+                  <div className="rounded-lg border border-[#27272a] p-4 space-y-3">
+                    <p className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Desglose de Rentabilidad Real</p>
+                    <div className="grid grid-cols-2 gap-3 text-xs">
+                      <div className="space-y-0.5">
+                        <div className="text-[#71717a]">Presupuesto original</div>
+                        <div className="font-semibold text-white">{formatCurrency(Number((cierreModal.proyecto.presupuestos_cabecera as any)?.total_presupuesto || 0))}</div>
+                      </div>
+                      <div className="space-y-0.5">
+                        <div className="text-[#71717a]">Cobrado al cliente</div>
+                        <div className="font-semibold text-indigo-400">{formatCurrency(cierreModal.ingresoReal)}</div>
+                      </div>
+                      <div className="space-y-0.5">
+                        <div className="text-[#71717a]">Coste real proveedores</div>
+                        <div className="font-semibold text-rose-400">{formatCurrency(cierreModal.gastoReal)}</div>
+                      </div>
+                      <div className="space-y-0.5">
+                        <div className="text-[#71717a]">Margen bruto real</div>
+                        <div className={`font-bold text-base ${(cierreModal.ingresoReal - cierreModal.gastoReal) >= 0 ? "text-green-400" : "text-red-400"}`}>
+                          {formatCurrency(cierreModal.ingresoReal - cierreModal.gastoReal)}
+                          <span className="text-xs ml-1">
+                            ({cierreModal.ingresoReal > 0 ? (((cierreModal.ingresoReal - cierreModal.gastoReal) / cierreModal.ingresoReal) * 100).toFixed(1) : 0}%)
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Valoración cliente */}
+                  <div className="space-y-2">
+                    <Label className="text-xs text-[#a1a1aa]">Valoración del cliente (1-5 ⭐)</Label>
+                    <div className="flex gap-2">
+                      {[1,2,3,4,5].map(n => (
+                        <button
+                          key={n}
+                          type="button"
+                          onClick={() => setCierreModal(prev => prev ? { ...prev, valoracion: n } : null)}
+                          className={`text-2xl transition-transform hover:scale-110 ${
+                            n <= cierreModal.valoracion ? "opacity-100" : "opacity-30"
+                          }`}
+                        >
+                          ⭐
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Lecciones aprendidas */}
+                  <div className="space-y-2">
+                    <Label className="text-xs text-[#a1a1aa]">Lecciones aprendidas (opcional)</Label>
+                    <textarea
+                      value={cierreModal.lecciones}
+                      onChange={(e) => setCierreModal(prev => prev ? { ...prev, lecciones: e.target.value } : null)}
+                      placeholder="Qué funcionó bien, qué mejorar para el próximo proyecto..."
+                      rows={3}
+                      className="w-full bg-[#18181b]/40 border border-[#27272a] rounded-lg px-3 py-2 text-xs text-[#fafafa] placeholder:text-[#52525b] focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none"
+                    />
+                  </div>
+                </div>
+
+                <DialogFooter className="flex justify-end gap-2 pt-4 border-t border-[#27272a]">
+                  <Button variant="outline" onClick={() => setCierreModal(null)} className="text-xs border-[#3f3f46] text-[#a1a1aa] hover:bg-[#27272a]">
+                    Cancelar
+                  </Button>
+                  <Button
+                    onClick={handleCerrarProyecto}
+                    disabled={cierreModal.saving}
+                    className="text-xs font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 shadow-md shadow-emerald-500/20 px-5"
+                  >
+                    {cierreModal.saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                    ✓ Confirmar Cierre
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
       )}
 
       {/* Block Client dialog confirmation */}
