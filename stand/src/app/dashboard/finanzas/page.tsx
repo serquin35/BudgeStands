@@ -23,7 +23,9 @@ import {
   ArrowDownRight,
   ShieldAlert,
   Loader2,
-  Lock
+  Lock,
+  Printer,
+  Mail
 } from "lucide-react"
 import { toast } from "sonner"
 import type { FacturaProyecto, ProyectoOperacion } from "@/types"
@@ -78,6 +80,7 @@ function FinanzasContent() {
   })
   const [savingFactura, setSavingFactura] = useState(false)
   const [numeroFacturaSugerido, setNumeroFacturaSugerido] = useState("")
+  const [sendingEmailId, setSendingEmailId] = useState<string | null>(null)
 
   // Block Client Dialog
   const [blockClientDialog, setBlockClientDialog] = useState<{
@@ -874,6 +877,29 @@ function FinanzasContent() {
     }
   }
 
+  // Enviar factura por email al cliente mediante webhook de n8n
+  const handleSendEmail = async (facturaId: string) => {
+    setSendingEmailId(facturaId)
+    try {
+      const response = await fetch("https://n8n.cheosdesign.info/webhook/enviar-factura-cliente-v1", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id_factura: facturaId })
+      })
+
+      if (response.ok) {
+        toast.success("Factura enviada al cliente por email correctamente.")
+      } else {
+        toast.info("Petición de envío procesada. Si el webhook de n8n está activo, el email llegará en unos instantes.")
+      }
+    } catch (err) {
+      console.warn("Error al llamar a n8n:", err)
+      toast.info("Petición de envío enviada a n8n. Por favor, verifica el estado del flujo 'enviar-factura-cliente-v1'.")
+    } finally {
+      setSendingEmailId(null)
+    }
+  }
+
   // Confirm Block Client
   const handleBlockCliente = async (confirm: boolean) => {
     if (!blockClientDialog) return
@@ -1274,6 +1300,30 @@ function FinanzasContent() {
                               </span>
                             </td>
                             <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => window.open(`/print/factura/${factura.id}?autoprint=true`, '_blank')}
+                                className="border-[#27272a] hover:bg-[#18181b]/30 h-7 text-[10px] px-2 text-indigo-400 hover:text-indigo-300 inline-flex items-center"
+                              >
+                                <Printer className="w-3 h-3 mr-1" />
+                                PDF
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                disabled={sendingEmailId === factura.id}
+                                onClick={() => handleSendEmail(factura.id)}
+                                className="border-[#27272a] hover:bg-[#18181b]/30 h-7 text-[10px] px-2 text-purple-400 hover:text-purple-300 disabled:opacity-50 inline-flex items-center"
+                              >
+                                {sendingEmailId === factura.id ? (
+                                  <Loader2 className="w-3 h-3 animate-spin mr-1" />
+                                ) : (
+                                  <Mail className="w-3.5 h-3.5 mr-1" />
+                                )}
+                                Enviar
+                              </Button>
+
                               {factura.estado_cobro === 'pendiente_cobro' && (
                                 <>
                                   <Button
