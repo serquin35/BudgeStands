@@ -380,7 +380,7 @@ function FinanzasContent() {
           fecha_emision: facturaProveedorForm.fecha_emision,
           fecha_recepcion: facturaProveedorForm.fecha_recepcion,
           fecha_vencimiento: facturaProveedorForm.fecha_vencimiento,
-          base_imponible,
+          base_imponible: baseImponible,
           importe_iva: importeIva,
           total_factura_bruto: totalFacturaBruto,
           estado_pago: "pendiente",
@@ -638,12 +638,13 @@ function FinanzasContent() {
           .eq("id", idProyecto)
           .single()
 
-        const clientInfo = proj?.presupuestos_cabecera?.clientes
-        if (clientInfo) {
+        const clientInfo = (proj?.presupuestos_cabecera as any)?.clientes
+        const clientObj = Array.isArray(clientInfo) ? clientInfo[0] : clientInfo
+        if (clientObj) {
           setBlockClientDialog({
             open: true,
-            clienteId: clientInfo.id,
-            clienteNombre: clientInfo.nombre_comercial,
+            clienteId: clientObj.id,
+            clienteNombre: clientObj.nombre_comercial,
             facturaId: facturaId
           })
         }
@@ -836,12 +837,14 @@ function FinanzasContent() {
                   <option value="impagada_vencida">Impagada</option>
                 </select>
 
+                <Button
+                  className="bg-indigo-600 hover:bg-indigo-700 text-xs px-4 py-2 h-9"
+                  onClick={() => setIsNewFacturaOpen(true)}
+                >
+                  <Plus className="w-4 h-4 mr-2" /> Emitir Factura
+                </Button>
+
                 <Dialog open={isNewFacturaOpen} onOpenChange={setIsNewFacturaOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="bg-indigo-600 hover:bg-indigo-700 text-xs px-4 py-2 h-9">
-                      <Plus className="w-4 h-4 mr-2" /> Emitir Factura
-                    </Button>
-                  </DialogTrigger>
                   <DialogContent className="bg-[#09090b] border-[#27272a] text-[#fafafa] max-w-lg">
                     <form onSubmit={handleEmitirFactura}>
                       <DialogHeader>
@@ -1094,15 +1097,356 @@ function FinanzasContent() {
         </div>
       )}
 
-      {/* Placeholders/Stubs for remaining tabs */}
+      {/* ── TAB: FACTURAS DE PROVEEDORES ── */}
       {activeTab === "proveedores" && (
-        <Card className="bg-[#09090b]/40 border-[#27272a]/60 backdrop-blur-md p-12 text-center">
-          <Receipt className="w-12 h-12 text-[#71717a] mx-auto mb-4" />
-          <h3 className="text-base font-bold text-white mb-2">Facturas de Proveedores (Sprint 2)</h3>
-          <p className="text-xs text-[#a1a1aa] max-w-md mx-auto">
-            La gestión de facturas recibidas de proveedores, desgloses e imputación analítica técnica a proyectos se desarrollará en la siguiente fase de ejecución.
-          </p>
-        </Card>
+        <div className="space-y-6">
+
+          {/* KPI Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="bg-[#09090b]/40 border-[#27272a]/60 backdrop-blur-md">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <CardTitle className="text-xs font-semibold text-[#a1a1aa]">Total Recibido</CardTitle>
+                <div className="p-2 rounded-lg bg-rose-500/10 text-rose-400"><ArrowDownRight className="w-4 h-4" /></div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-rose-400">
+                  {formatCurrency(facturasProveedores.reduce((s: number, f: any) => s + Number(f.total_factura_bruto || 0), 0))}
+                </div>
+                <div className="text-[10px] text-[#71717a] mt-1">Coste bruto acumulado de proveedores</div>
+              </CardContent>
+            </Card>
+            <Card className="bg-[#09090b]/40 border-[#27272a]/60 backdrop-blur-md">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <CardTitle className="text-xs font-semibold text-[#a1a1aa]">Pagadas</CardTitle>
+                <div className="p-2 rounded-lg bg-green-500/10 text-green-400"><Check className="w-4 h-4" /></div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-green-400">
+                  {formatCurrency(facturasProveedores.filter((f: any) => f.estado_pago === "pagada").reduce((s: number, f: any) => s + Number(f.total_factura_bruto || 0), 0))}
+                </div>
+                <div className="text-[10px] text-[#71717a] mt-1">Pagos ya ejecutados</div>
+              </CardContent>
+            </Card>
+            <Card className="bg-[#09090b]/40 border-[#27272a]/60 backdrop-blur-md">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <CardTitle className="text-xs font-semibold text-[#a1a1aa]">Pendiente de Pago</CardTitle>
+                <div className="p-2 rounded-lg bg-yellow-500/10 text-yellow-400"><AlertCircle className="w-4 h-4" /></div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-yellow-400">
+                  {formatCurrency(facturasProveedores.filter((f: any) => f.estado_pago === "pendiente").reduce((s: number, f: any) => s + Number(f.total_factura_bruto || 0), 0))}
+                </div>
+                <div className="text-[10px] text-[#71717a] mt-1">Facturas pendientes de pagar</div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* List + Actions */}
+          <Card className="bg-[#09090b]/30 border-[#27272a]/60 backdrop-blur-md">
+            <CardHeader className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6">
+              <div>
+                <CardTitle className="text-lg font-bold">Facturas Recibidas de Proveedores</CardTitle>
+                <CardDescription className="text-xs text-[#a1a1aa]">Gestiona los costes imputados a proyectos.</CardDescription>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                <div className="relative w-full sm:w-64">
+                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#71717a]" />
+                  <Input
+                    placeholder="Buscar proveedor, nº factura..."
+                    value={searchQueryProveedores}
+                    onChange={(e) => setSearchQueryProveedores(e.target.value)}
+                    className="pl-9 bg-[#18181b]/40 border-[#27272a] focus-visible:ring-indigo-500 text-xs"
+                  />
+                </div>
+                <select
+                  value={statusFilterProveedores}
+                  onChange={(e) => setStatusFilterProveedores(e.target.value)}
+                  className="bg-[#18181b]/60 border border-[#27272a] rounded-lg px-3 py-2 text-xs text-[#fafafa] focus:ring-indigo-500"
+                >
+                  <option value="todos">Todos los Estados</option>
+                  <option value="pendiente">Pendiente Pago</option>
+                  <option value="pagada">Pagada</option>
+                  <option value="disputa_bloqueada">En Disputa</option>
+                </select>
+                {/* New Supplier Invoice Dialog */}
+                <Button
+                  className="text-xs font-semibold text-white bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 shadow-lg shadow-rose-500/30 ring-1 ring-rose-400/20 transition-all duration-200 whitespace-nowrap"
+                  onClick={() => setIsNewFacturaProveedorOpen(true)}
+                >
+                  <Plus className="w-4 h-4 mr-2" /> Registrar Factura
+                </Button>
+
+                <Dialog open={isNewFacturaProveedorOpen} onOpenChange={setIsNewFacturaProveedorOpen}>
+
+                  <DialogContent className="bg-[#09090b] border-[#27272a] text-[#fafafa] max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <form onSubmit={handleEmitirFacturaProveedor}>
+                      <DialogHeader>
+                        <DialogTitle className="text-lg font-bold">Registrar Factura de Proveedor</DialogTitle>
+                        <DialogDescription className="text-xs text-[#a1a1aa]">
+                          Paso 1: datos de cabecera. Paso 2: líneas de detalle con imputación a proyecto y categoría técnica.
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <div className="space-y-5 my-5">
+                        {/* ── STEP 1: HEADER ── */}
+                        <div className="rounded-lg border border-[#27272a] p-4 space-y-4">
+                          <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wider">① Cabecera de Factura</p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {/* Proveedor */}
+                            <div className="space-y-1 sm:col-span-2">
+                              <Label className="text-xs text-[#a1a1aa]">Proveedor *</Label>
+                              <select
+                                value={facturaProveedorForm.id_proveedor}
+                                onChange={(e) => setFacturaProveedorForm(p => ({ ...p, id_proveedor: e.target.value }))}
+                                required
+                                className="w-full bg-[#18181b]/60 border border-[#27272a] rounded-lg px-3 py-2 text-xs text-[#fafafa] focus:ring-indigo-500"
+                              >
+                                <option value="">Selecciona un proveedor...</option>
+                                {suppliersList.map((s: any) => (
+                                  <option key={s.id} value={s.id}>{s.nombre_comercial}</option>
+                                ))}
+                              </select>
+                            </div>
+                            {/* Nº Factura */}
+                            <div className="space-y-1">
+                              <Label className="text-xs text-[#a1a1aa]">Nº Factura del Proveedor *</Label>
+                              <Input
+                                value={facturaProveedorForm.numero_factura_proveedor}
+                                onChange={(e) => setFacturaProveedorForm(p => ({ ...p, numero_factura_proveedor: e.target.value }))}
+                                placeholder="Ej: FP-2026-0042"
+                                required
+                                className="bg-[#18181b]/40 border-[#27272a] text-xs focus-visible:ring-indigo-500"
+                              />
+                            </div>
+                            {/* Método Pago */}
+                            <div className="space-y-1">
+                              <Label className="text-xs text-[#a1a1aa]">Método de Pago</Label>
+                              <select
+                                value={facturaProveedorForm.metodo_pago}
+                                onChange={(e) => setFacturaProveedorForm(p => ({ ...p, metodo_pago: e.target.value as any }))}
+                                className="w-full bg-[#18181b]/60 border border-[#27272a] rounded-lg px-3 py-2 text-xs text-[#fafafa] focus:ring-indigo-500"
+                              >
+                                <option value="transferencia">Transferencia</option>
+                                <option value="confirming">Confirming</option>
+                                <option value="tarjeta">Tarjeta</option>
+                                <option value="girado">Pagaré / Girado</option>
+                              </select>
+                            </div>
+                            {/* Fechas */}
+                            <div className="space-y-1">
+                              <Label className="text-xs text-[#a1a1aa]">Fecha Emisión *</Label>
+                              <Input type="date" value={facturaProveedorForm.fecha_emision} onChange={(e) => setFacturaProveedorForm(p => ({ ...p, fecha_emision: e.target.value }))} required className="bg-[#18181b]/40 border-[#27272a] text-xs focus-visible:ring-indigo-500" />
+                            </div>
+                            <div className="space-y-1">
+                              <Label className="text-xs text-[#a1a1aa]">Fecha Recepción</Label>
+                              <Input type="date" value={facturaProveedorForm.fecha_recepcion} onChange={(e) => setFacturaProveedorForm(p => ({ ...p, fecha_recepcion: e.target.value }))} className="bg-[#18181b]/40 border-[#27272a] text-xs focus-visible:ring-indigo-500" />
+                            </div>
+                            <div className="space-y-1">
+                              <Label className="text-xs text-[#a1a1aa]">Fecha Vencimiento *</Label>
+                              <Input type="date" value={facturaProveedorForm.fecha_vencimiento} onChange={(e) => setFacturaProveedorForm(p => ({ ...p, fecha_vencimiento: e.target.value }))} required className="bg-[#18181b]/40 border-[#27272a] text-xs focus-visible:ring-indigo-500" />
+                            </div>
+                            <div className="space-y-1">
+                              <Label className="text-xs text-[#a1a1aa]">Notas Internas</Label>
+                              <Input value={facturaProveedorForm.notas} onChange={(e) => setFacturaProveedorForm(p => ({ ...p, notas: e.target.value }))} placeholder="Opcional..." className="bg-[#18181b]/40 border-[#27272a] text-xs focus-visible:ring-indigo-500" />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* ── STEP 2: LINE ITEMS ── */}
+                        <div className="rounded-lg border border-[#27272a] p-4 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <p className="text-xs font-semibold text-rose-400 uppercase tracking-wider">② Líneas de Detalle e Imputación</p>
+                            <Button type="button" variant="outline" size="sm" onClick={handleAddProveedorLinea} className="h-7 text-[10px] border-[#3f3f46] text-[#a1a1aa] hover:bg-[#27272a] hover:text-white">
+                              <Plus className="w-3 h-3 mr-1" /> Añadir Línea
+                            </Button>
+                          </div>
+
+                          {facturaProveedorForm.lineas.map((linea, idx) => (
+                            <div key={idx} className="rounded-md border border-[#3f3f46]/50 bg-[#18181b]/30 p-3 space-y-3">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-semibold text-[#71717a]">Línea {idx + 1}</span>
+                                {facturaProveedorForm.lineas.length > 1 && (
+                                  <button type="button" onClick={() => handleRemoveProveedorLinea(idx)} className="text-[#71717a] hover:text-red-400 transition-colors">
+                                    <X className="w-3.5 h-3.5" />
+                                  </button>
+                                )}
+                              </div>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div className="space-y-1 sm:col-span-2">
+                                  <Label className="text-[10px] text-[#a1a1aa]">Descripción *</Label>
+                                  <Input
+                                    value={linea.descripcion_articulo}
+                                    onChange={(e) => handleProveedorLineaChange(idx, "descripcion_articulo", e.target.value)}
+                                    placeholder="Ej: Paneles de madera chapada..."
+                                    required
+                                    className="bg-[#18181b]/60 border-[#27272a] text-xs focus-visible:ring-rose-500 h-8"
+                                  />
+                                </div>
+                                <div className="space-y-1">
+                                  <Label className="text-[10px] text-[#a1a1aa]">Cantidad</Label>
+                                  <Input type="number" min="0.01" step="0.01" value={linea.cantidad} onChange={(e) => handleProveedorLineaChange(idx, "cantidad", e.target.value)} className="bg-[#18181b]/60 border-[#27272a] text-xs focus-visible:ring-rose-500 h-8" />
+                                </div>
+                                <div className="space-y-1">
+                                  <Label className="text-[10px] text-[#a1a1aa]">Unidad</Label>
+                                  <Input value={linea.unidad} onChange={(e) => handleProveedorLineaChange(idx, "unidad", e.target.value)} placeholder="ud / m² / h" className="bg-[#18181b]/60 border-[#27272a] text-xs focus-visible:ring-rose-500 h-8" />
+                                </div>
+                                <div className="space-y-1">
+                                  <Label className="text-[10px] text-[#a1a1aa]">Precio Unit. Coste (€)</Label>
+                                  <Input type="number" min="0" step="0.01" value={linea.precio_unitario_coste} onChange={(e) => handleProveedorLineaChange(idx, "precio_unitario_coste", e.target.value)} className="bg-[#18181b]/60 border-[#27272a] text-xs focus-visible:ring-rose-500 h-8" />
+                                </div>
+                                <div className="space-y-1">
+                                  <Label className="text-[10px] text-[#a1a1aa] flex items-center gap-1">
+                                    Total Línea
+                                    <span className="text-rose-400 font-semibold">
+                                      {formatCurrency(Number(linea.cantidad) * Number(linea.precio_unitario_coste))}
+                                    </span>
+                                  </Label>
+                                  <div className="h-8" /> {/* spacer */}
+                                </div>
+                                <div className="space-y-1 sm:col-span-2 grid grid-cols-2 gap-3">
+                                  <div className="space-y-1">
+                                    <Label className="text-[10px] text-[#a1a1aa]">Imputar a Proyecto</Label>
+                                    <select
+                                      value={linea.id_proyecto}
+                                      onChange={(e) => handleProveedorLineaChange(idx, "id_proyecto", e.target.value)}
+                                      className="w-full bg-[#18181b]/60 border border-[#27272a] rounded-lg px-2 py-1.5 text-xs text-[#fafafa] focus:ring-rose-500"
+                                    >
+                                      <option value="">Sin proyecto específico</option>
+                                      {proyectosList.map((p: any) => (
+                                        <option key={p.id} value={p.id}>
+                                          {p.codigo_proyecto_interno} — {(p.presupuestos_cabecera as any)?.clientes?.nombre_comercial || ""}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                  <div className="space-y-1">
+                                    <Label className="text-[10px] text-[#a1a1aa]">Categoría Técnica *</Label>
+                                    <select
+                                      value={linea.id_categoria_matriz}
+                                      onChange={(e) => handleProveedorLineaChange(idx, "id_categoria_matriz", e.target.value)}
+                                      required
+                                      className="w-full bg-[#18181b]/60 border border-[#27272a] rounded-lg px-2 py-1.5 text-xs text-[#fafafa] focus:ring-rose-500"
+                                    >
+                                      <option value="">Selecciona categoría...</option>
+                                      {categoriesList.map((c: any) => (
+                                        <option key={c.id} value={c.id}>{c.nombre}</option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+
+                          {/* Running total preview */}
+                          <div className="flex justify-end gap-6 pt-2 border-t border-[#27272a] text-xs">
+                            <span className="text-[#a1a1aa]">Base imponible: <span className="text-white font-semibold">{formatCurrency(facturaProveedorForm.lineas.reduce((s, l) => s + Number(l.cantidad) * Number(l.precio_unitario_coste), 0))}</span></span>
+                            <span className="text-[#a1a1aa]">IVA 21%: <span className="text-white font-semibold">{formatCurrency(facturaProveedorForm.lineas.reduce((s, l) => s + Number(l.cantidad) * Number(l.precio_unitario_coste), 0) * 0.21)}</span></span>
+                            <span className="text-rose-400 font-bold">Total: {formatCurrency(facturaProveedorForm.lineas.reduce((s, l) => s + Number(l.cantidad) * Number(l.precio_unitario_coste), 0) * 1.21)}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <DialogFooter className="flex justify-end gap-2 pt-4 border-t border-[#27272a]">
+                        <Button type="button" variant="outline" onClick={() => setIsNewFacturaProveedorOpen(false)} className="text-xs border-[#3f3f46] text-[#a1a1aa] hover:bg-[#27272a] hover:text-white">
+                          Cancelar
+                        </Button>
+                        <Button type="submit" disabled={savingFacturaProveedor} className="text-xs font-semibold text-white bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 shadow-lg shadow-rose-500/30 ring-1 ring-rose-400/20 transition-all duration-200 px-5">
+                          {savingFacturaProveedor ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                          ✓ Registrar Factura
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </CardHeader>
+
+            <CardContent>
+              {loadingProveedores ? (
+                <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-indigo-500" /></div>
+              ) : facturasProveedores.length === 0 ? (
+                <div className="text-center py-12">
+                  <Receipt className="w-10 h-10 text-[#3f3f46] mx-auto mb-3" />
+                  <p className="text-sm text-[#71717a]">No hay facturas de proveedores registradas.</p>
+                  <p className="text-xs text-[#52525b] mt-1">Registra la primera usando el botón superior.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-[#27272a] text-[#71717a]">
+                        <th className="text-left py-2 px-2 font-medium">Nº Factura</th>
+                        <th className="text-left py-2 px-2 font-medium">Proveedor</th>
+                        <th className="text-left py-2 px-2 font-medium">Base / IVA / Total</th>
+                        <th className="text-left py-2 px-2 font-medium">Vencimiento</th>
+                        <th className="text-left py-2 px-2 font-medium">Estado</th>
+                        <th className="text-left py-2 px-2 font-medium">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {facturasProveedores
+                        .filter((f: any) => {
+                          const matchStatus = statusFilterProveedores === "todos" || f.estado_pago === statusFilterProveedores
+                          const matchSearch = !searchQueryProveedores || 
+                            (f.numero_factura_proveedor || "").toLowerCase().includes(searchQueryProveedores.toLowerCase()) ||
+                            (f.proveedores?.nombre_comercial || "").toLowerCase().includes(searchQueryProveedores.toLowerCase())
+                          return matchStatus && matchSearch
+                        })
+                        .map((fac: any) => {
+                          const hoy = new Date()
+                          const vence = new Date(fac.fecha_vencimiento)
+                          const dias = Math.ceil((vence.getTime() - hoy.getTime()) / 86400000)
+                          const badge =
+                            fac.estado_pago === "pagada"
+                              ? { color: "bg-green-500/10 text-green-400 border-green-500/20", label: "Pagada" }
+                              : fac.estado_pago === "disputa_bloqueada"
+                              ? { color: "bg-orange-500/10 text-orange-400 border-orange-500/20", label: "Disputa" }
+                              : dias < 0
+                              ? { color: "bg-rose-500/10 text-rose-400 border-rose-500/20", label: "Vencida" }
+                              : dias <= ALERTA_VENCIMIENTO_DIAS
+                              ? { color: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20", label: `Vence en ${dias}d` }
+                              : { color: "bg-zinc-800/80 text-zinc-400 border-zinc-700", label: "Pendiente" }
+
+                          return (
+                            <tr key={fac.id} className="border-b border-[#27272a]/40 hover:bg-[#18181b]/30 transition-colors">
+                              <td className="py-3 px-2 font-mono text-indigo-300">{fac.numero_factura_proveedor}</td>
+                              <td className="py-3 px-2 text-[#fafafa]">{fac.proveedores?.nombre_comercial || "—"}</td>
+                              <td className="py-3 px-2">
+                                <div className="text-[#a1a1aa]">{formatCurrency(fac.base_imponible)} + {formatCurrency(fac.importe_iva)}</div>
+                                <div className="font-semibold text-rose-300">{formatCurrency(fac.total_factura_bruto)}</div>
+                              </td>
+                              <td className="py-3 px-2 text-[#a1a1aa]">
+                                {new Date(fac.fecha_vencimiento).toLocaleDateString("es-ES")}
+                              </td>
+                              <td className="py-3 px-2">
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${badge.color}`}>
+                                  {badge.label}
+                                </span>
+                              </td>
+                              <td className="py-3 px-2">
+                                <div className="flex gap-1 flex-wrap">
+                                  {fac.estado_pago !== "pagada" && (
+                                    <Button size="sm" onClick={() => handleUpdateEstadoProveedor(fac.id, "pagada")} className="bg-green-600 hover:bg-green-700 h-7 text-[10px] px-2">Pagar</Button>
+                                  )}
+                                  {fac.estado_pago !== "disputa_bloqueada" && fac.estado_pago !== "pagada" && (
+                                    <Button size="sm" variant="outline" onClick={() => handleUpdateEstadoProveedor(fac.id, "disputa_bloqueada")} className="border-orange-600/40 text-orange-400 hover:bg-orange-900/20 h-7 text-[10px] px-2">Disputa</Button>
+                                  )}
+                                  {fac.estado_pago !== "pendiente" && (
+                                    <Button size="sm" variant="outline" onClick={() => handleUpdateEstadoProveedor(fac.id, "pendiente")} className="border-[#27272a] hover:bg-[#18181b]/30 h-7 text-[10px] px-2 text-[#a1a1aa]">Revertir</Button>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          )
+                        })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {activeTab === "cashflow" && (
