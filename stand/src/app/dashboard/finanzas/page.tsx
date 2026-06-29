@@ -877,11 +877,11 @@ function FinanzasContent() {
     }
   }
 
-  // Enviar factura por email al cliente mediante webhook de n8n
+  // Enviar factura por email al cliente mediante proxy API (evita CORS)
   const handleSendEmail = async (facturaId: string) => {
     setSendingEmailId(facturaId)
     try {
-      const response = await fetch("https://n8n.cheosdesign.info/webhook/enviar-factura-cliente-v1", {
+      const response = await fetch("/api/send-invoice", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id_factura: facturaId })
@@ -890,11 +890,11 @@ function FinanzasContent() {
       if (response.ok) {
         toast.success("Factura enviada al cliente por email correctamente.")
       } else {
-        toast.info("Petición de envío procesada. Si el webhook de n8n está activo, el email llegará en unos instantes.")
+        toast.error("Ocurrió un error al enviar el email.")
       }
     } catch (err) {
-      console.warn("Error al llamar a n8n:", err)
-      toast.info("Petición de envío enviada a n8n. Por favor, verifica el estado del flujo 'enviar-factura-cliente-v1'.")
+      console.warn("Error al procesar envío:", err)
+      toast.error("Error interno al intentar enviar la factura.")
     } finally {
       setSendingEmailId(null)
     }
