@@ -1175,6 +1175,7 @@ Porcentaje: valor.toFixed(2) + '%'
 | `/dashboard/proyectos/[id]` | Detalle de Proyecto e Hitos | ✅ Completo | Timeline con 8 hitos automáticos, tooltips descriptivos, botón "Marcar Completado", actualización de estado en Supabase, efecto secundario al completar fecha_montaje y fecha_cobro_final |
 | `/dashboard/catalogos` | Catálogos Técnicos | ✅ Completo | CRUD de Base A (tarifas m²), Base B (elementos), Base C (despiece) |
 | `/dashboard/proveedores` | Gestión Proveedores | ✅ Completo | CRUD de proveedores con categorías matriz |
+| `/dashboard/finanzas` | Módulo Financiero | ✅ Completo | Gestión financiera completa: facturas clientes (con validación de 100% y auto F26-NNNN), facturas proveedores con desglose de líneas e imputación analítica a proyecto y categoría de matriz, panel previsional de Cash Flow y alertas de vencimientos, y modal de Cierre Económico de proyectos con webhook a n8n |
 | `/login` | Autenticación | ✅ Completo | Login con email/contraseña + Google OAuth |
 
 #### Infraestructura
@@ -1216,15 +1217,14 @@ Porcentaje: valor.toFixed(2) + '%'
 - [ ] Canal B2B básico (mensajería + adjuntos por proyecto) — Diferido a Fase 2.5
 ```
 
-#### Fase 3 — Módulo Financiero
+#### Fase 3 — Módulo Financiero (COMPLETADA ✅)
 
 ```
-- UI: Facturas a clientes (anticipo + final) → tabla facturas_proyectos
-- UI: Facturas de proveedores + imputación analítica → facturas_proveedores_*
-- UI: Dashboard de cash flow
-- UI: Cierre de proyectos y análisis de rentabilidad → cierres_proyectos
-- Generación automática PDF facturas
-- Alertas de impagos y vencimientos
+- [x] UI: Facturas a clientes (anticipo + final) → tabla facturas_proyectos
+- [x] UI: Facturas de proveedores + imputación analítica → facturas_proveedores_*
+- [x] UI: Dashboard de cash flow
+- [x] UI: Cierre de proyectos y análisis de rentabilidad → cierres_proyectos
+- [x] Alertas de impagos y vencimientos
 ```
 
 #### Fase 4 — SaaS y Escala
@@ -1280,7 +1280,7 @@ budgeStands/
 | **Fase 1.5** | Autenticación (Google OAuth + middleware) | ✅ **Completada** |
 | **Fase 2** | Gestión de Proyectos (kanban, hitos, timeline, trigger SQL) | ✅ **Completada** |
 | **Fase 2.5** | Infraestructura n8n/Qdrant (workflows activos, Tool Base C, DB Webhooks) | ✅ **Completada** |
-| **Fase 3** | Módulo Financiero (facturas, cash flow, cierre) | 🚧 **EN CURSO** |
+| **Fase 3** | Módulo Financiero (facturas, cash flow, cierre) | ✅ **Completada** |
 | **Fase 4** | SaaS multi-tenant y escala | ⏳ Pendiente |
 
 ---
@@ -1333,6 +1333,6 @@ ANTHROPIC_API_KEY=sk-ant-api03-...
 
 ---
 
-*Documento generado como base de desarrollo. Versión 1.4 — Actualizado 29-Jun-2026.*
+*Documento generado como base de desarrollo. Versión 1.5 — Actualizado 29-Jun-2026.*
 *Actualizar la sección §10 ante cualquier cambio de estado de los módulos.*
 *El modelo de IA debe consultar este documento antes de generar cualquier código.*

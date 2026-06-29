@@ -131,13 +131,20 @@ Headers de ambos: `Content-Type: application/json`
 ~~2. Añadir Tool Base C en n8n (paso 4)~~
 ~~3. Crear DB Webhooks en Supabase (paso 5)~~
 
-✅ **Todo completado — No hay acciones manuales pendientes. Siguiente fase: Módulo Financiero (Fase 3).**
+✅ **Todo completado — No hay acciones manuales pendientes. Siguiente fase: SaaS y Escala (Fase 4).**
 
 ### ✅ Resuelto en Fase 2 / Fase 2.5
 - Trigger SQL `fix_crear_proyecto_desde_presupuesto.sql` — Ejecutado en Supabase.
 - Vista detalle de proyecto con timeline de 8 hitos — Implementada y funcionando.
-- Tooltips descriptivos por cada tipo de hito — Implementados.
+- Tooltips descriptivos por cada hito — Implementados.
 - Actualización de estado de hitos (Completado) con persistencia Supabase — Funcionando.
 - Workflows n8n `sync-catalogo-b-v1`, `sync-catalogo-c-v1`, `proyecto-cerrado-v1` — Importados y activos.
 - Tool `consultar_despiece_taller` añadida al Agente Jarvis + System Message Método 3 actualizado.
 - DB Webhooks en Supabase (`auto_sync_catalogo_b`, `auto_sync_catalogo_c`) — Configurados y activos.
+
+### ✅ Resuelto en Fase 3 (Módulo Financiero)
+- **Sprint 1 (Facturación de Clientes):** Formulario de emisión de facturas a clientes con número secuencial autogenerado (`rpc('generar_numero_factura')`), IVA dinámico del presupuesto de origen, validación asíncrona de facturación acumulada <= 100%, cambio de estado (pendiente/cobrada/impagada) y lógica de bloqueo automático de clientes deudores (solo para rol admin).
+- **Sprint 2 (Facturas de Proveedores):** Formulario de 2 pasos (Cabecera + Líneas con imputación a Proyecto y Categoría de Matriz), listado de facturas de proveedores, y acciones para pagar, disputar o revertir estado.
+- **Sprint 3 (Analítica de Cash Flow):** Tarjetas de previsión de cobros a 30, 60 y 90 días, gráfico de barras horizontales de ingresos vs gastos reales ejecutados en los últimos 6 meses (CSS puro sin librerías externas), y sección de alertas para vencimientos urgentes de facturas en los próximos 14 días.
+- **Sprint 4 (Cierre de Proyectos):** Listado de proyectos finalizados sin cierre, modal de cierre económico con visualización en tiempo real de rentabilidad (Presupuesto original vs Cobrado vs Gastos reales de proveedores y margen bruto real), valoración interactiva del cliente por estrellas (1 a 5), campo para lecciones aprendidas y envío automático al webhook `proyecto-cerrado-v1` de n8n.
+- **Bugs resueltos:** Bug de `ReferenceError: base_imponible` resuelto en inserts de facturas de clientes y proveedores; se añadió la columna `updated_at` a la tabla `facturas_proyectos` para corregir la actualización mediante trigger SQL; se corrigió la respuesta del array `clientes` en los joins de Supabase en la página de finanzas y se eliminaron los `DialogTrigger asChild` redundantes para asegurar compatibilidad de tipos TS.
