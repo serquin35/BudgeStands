@@ -29,6 +29,7 @@ export const ROL_USUARIO = {
   DIRECTOR_OBRA: "director_obra",
   TALLER: "taller",
   CONTABILIDAD: "contabilidad",
+  CLIENTE_EXTERNO: "cliente_externo",
 } as const
 
 export const TIPO_STAND_LIST = ["modular", "carpinteria_diseno", "hibrido", "retail_comercial", "doble_planta"] as const

@@ -22,6 +22,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Perfil de usuario no encontrado" }, { status: 404 })
     }
 
+    // Validar límites del plan
+    const { data: usageData, error: usageError } = await supabase.rpc("get_plan_usage")
+    if (usageError) {
+      console.error("Error al obtener límites de plan:", usageError)
+    } else if (usageData) {
+      const { uso, limites } = usageData
+      if (limites && limites.ia_calls_mes !== -1 && uso.ia_calls_mes >= limites.ia_calls_mes) {
+        return NextResponse.json({ 
+          error: `Has superado el límite de créditos Jarvis IA de tu plan (${limites.ia_calls_mes} al mes). Por favor, actualiza tu plan.` 
+        }, { status: 403 })
+      }
+      if (limites && limites.presupuestos_mes !== -1 && uso.presupuestos_mes >= limites.presupuestos_mes) {
+        return NextResponse.json({ 
+          error: `Has superado el límite de presupuestos creados de tu plan (${limites.presupuestos_mes} al mes). Por favor, actualiza tu plan.` 
+        }, { status: 403 })
+      }
+    }
+
     // Leer payload del cliente
     const body = await request.json()
     const { 

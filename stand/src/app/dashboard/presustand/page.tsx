@@ -96,6 +96,9 @@ export default function PresustandPage() {
   const [newClientTelefono, setNewClientTelefono] = useState("")
   const [newClientSaving, setNewClientSaving] = useState(false)
   const [newClientError, setNewClientError] = useState<string | null>(null)
+  
+  // Plan limits and usage
+  const [planUsage, setPlanUsage] = useState<any>(null)
 
   // Cargar datos iniciales
   useEffect(() => {
@@ -121,6 +124,12 @@ export default function PresustandPage() {
 
             // Cargar presupuestos
             loadPresupuestos(dbUser.id_empresa)
+
+            // Cargar límites del plan
+            const { data: usageData } = await supabase.rpc("get_plan_usage")
+            if (usageData) {
+              setPlanUsage(usageData)
+            }
           }
         }
       } catch (err) {
@@ -279,6 +288,16 @@ export default function PresustandPage() {
       alert("Por favor, selecciona un cliente, introduce la feria y la superficie en m².")
       return
     }
+
+    // Validar límites del plan
+    if (planUsage) {
+      const { uso, limites } = planUsage
+      if (limites && limites.presupuestos_mes !== -1 && uso.presupuestos_mes >= limites.presupuestos_mes) {
+        alert(`Has superado el límite de presupuestos creados de tu plan (${limites.presupuestos_mes} al mes). Por favor, actualiza tu plan en la pestaña de Perfil.`)
+        return
+      }
+    }
+
     setSavingEst(true)
 
     try {
@@ -356,6 +375,13 @@ export default function PresustandPage() {
       
       // Recargar histórico
       loadPresupuestos(dbUser.id_empresa)
+      
+      // Recargar límites del plan
+      const { data: usageData } = await supabase.rpc("get_plan_usage")
+      if (usageData) {
+        setPlanUsage(usageData)
+      }
+
       setActiveTab("historial")
       handleViewDetails(pres.id)
     } catch (err: any) {
@@ -383,6 +409,19 @@ export default function PresustandPage() {
       setGenerationError("La imagen necesita una instrucción para que Jarvis entienda qué deseas hacer con ella.")
       return
     }
+    // Validar límites del plan
+    if (planUsage) {
+      const { uso, limites } = planUsage
+      if (limites && limites.ia_calls_mes !== -1 && uso.ia_calls_mes >= limites.ia_calls_mes) {
+        setGenerationError(`Has superado el límite de créditos Jarvis IA de tu plan (${limites.ia_calls_mes} al mes). Por favor, actualiza tu plan en la pestaña de Perfil.`)
+        return
+      }
+      if (limites && limites.presupuestos_mes !== -1 && uso.presupuestos_mes >= limites.presupuestos_mes) {
+        setGenerationError(`Has superado el límite de presupuestos creados de tu plan (${limites.presupuestos_mes} al mes). Por favor, actualiza tu plan en la pestaña de Perfil.`)
+        return
+      }
+    }
+
     setGenerating(true)
     setGenerationError(null)
     setLoadingMsgIdx(0)
@@ -414,6 +453,12 @@ export default function PresustandPage() {
         const { data: dbUser } = await supabase.from("usuarios").select("id_empresa").eq("id", user.id).single()
         if (dbUser) {
           await loadPresupuestos(dbUser.id_empresa)
+          
+          // Recargar límites del plan
+          const { data: usageData } = await supabase.rpc("get_plan_usage")
+          if (usageData) {
+            setPlanUsage(usageData)
+          }
         }
       }
 

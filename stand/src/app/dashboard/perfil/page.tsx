@@ -20,7 +20,8 @@ import {
   Lock, 
   Sparkles,
   Briefcase,
-  Users
+  Users,
+  FileText
 } from "lucide-react"
 
 export default function PerfilPage() {
@@ -42,6 +43,9 @@ export default function PerfilPage() {
   const [empresaEmail, setEmpresaEmail] = useState("")
   const [empresaLogo, setEmpresaLogo] = useState("")
   const [empresaPlan, setEmpresaPlan] = useState("starter")
+  
+  // Plan Usage State
+  const [planUsage, setPlanUsage] = useState<any>(null)
   
   // Notification states
   const [savingUser, setSavingUser] = useState(false)
@@ -89,6 +93,12 @@ export default function PerfilPage() {
               setEmpresaEmail(dbEmpresa.email_principal || "")
               setEmpresaLogo(dbEmpresa.logo_url || "")
               setEmpresaPlan(dbEmpresa.plan_saas || "starter")
+            }
+
+            // Cargar límites y uso del plan
+            const { data: usageData, error: usageError } = await supabase.rpc("get_plan_usage")
+            if (!usageError && usageData) {
+              setPlanUsage(usageData)
             }
           }
         }
@@ -278,37 +288,100 @@ export default function PerfilPage() {
               </div>
 
               {/* Progress limit cards */}
-              <div className="space-y-3.5">
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs font-semibold">
-                    <span className="text-[#a1a1aa] flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5 text-indigo-400" /> Créditos Jarvis AI (Mes)</span>
-                    <span className="text-[#fafafa]">12 / 100</span>
-                  </div>
-                  <div className="h-2 w-full bg-[#27272a] rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-600 w-[12%] rounded-full" />
-                  </div>
-                </div>
+              {planUsage ? (
+                (() => {
+                  const usage = planUsage.uso || { ia_calls_mes: 0, proyectos_activos: 0, usuarios_activos: 0, presupuestos_mes: 0 };
+                  const limits = planUsage.limites || { ia_calls_mes: 10, proyectos_activos: 5, usuarios: 1, presupuestos_mes: 20 };
 
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs font-semibold">
-                    <span className="text-[#a1a1aa] flex items-center gap-1.5"><Briefcase className="h-3.5 w-3.5 text-indigo-400" /> Proyectos Activos</span>
-                    <span className="text-[#fafafa]">4 / Ilimitados</span>
-                  </div>
-                  <div className="h-2 w-full bg-[#27272a] rounded-full overflow-hidden">
-                    <div className="h-full bg-indigo-500 w-[100%] rounded-full" />
-                  </div>
-                </div>
+                  const iaLimitText = limits.ia_calls_mes === -1 ? "Ilimitados" : `${limits.ia_calls_mes}`;
+                  const iaUsageText = `${usage.ia_calls_mes} / ${iaLimitText}`;
+                  const iaPct = limits.ia_calls_mes === -1 ? 0 : Math.min((usage.ia_calls_mes / limits.ia_calls_mes) * 100, 100);
 
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs font-semibold">
-                    <span className="text-[#a1a1aa] flex items-center gap-1.5"><Users className="h-3.5 w-3.5 text-indigo-400" /> Usuarios del Equipo</span>
-                    <span className="text-[#fafafa]">2 / 5</span>
-                  </div>
-                  <div className="h-2 w-full bg-[#27272a] rounded-full overflow-hidden">
-                    <div className="h-full bg-indigo-500 w-[40%] rounded-full" />
-                  </div>
+                  const presLimitText = limits.presupuestos_mes === -1 ? "Ilimitados" : `${limits.presupuestos_mes}`;
+                  const presUsageText = `${usage.presupuestos_mes} / ${presLimitText}`;
+                  const presPct = limits.presupuestos_mes === -1 ? 0 : Math.min((usage.presupuestos_mes / limits.presupuestos_mes) * 100, 100);
+
+                  const projLimitText = limits.proyectos_activos === -1 ? "Ilimitados" : `${limits.proyectos_activos}`;
+                  const projUsageText = `${usage.proyectos_activos} / ${projLimitText}`;
+                  const projPct = limits.proyectos_activos === -1 ? 0 : Math.min((usage.proyectos_activos / limits.proyectos_activos) * 100, 100);
+
+                  const userLimitText = limits.usuarios === -1 ? "Ilimitados" : `${limits.usuarios}`;
+                  const userUsageText = `${usage.usuarios_activos} / ${userLimitText}`;
+                  const userPct = limits.usuarios === -1 ? 0 : Math.min((usage.usuarios_activos / limits.usuarios) * 100, 100);
+
+                  return (
+                    <div className="space-y-3.5">
+                      {/* Jarvis AI */}
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs font-semibold">
+                          <span className="text-[#a1a1aa] flex items-center gap-1.5">
+                            <Sparkles className="h-3.5 w-3.5 text-indigo-400" /> Créditos Jarvis AI (Mes)
+                          </span>
+                          <span className="text-[#fafafa]">{iaUsageText}</span>
+                        </div>
+                        <div className="h-2 w-full bg-[#27272a] rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full transition-all duration-500" 
+                            style={{ width: `${limits.ia_calls_mes === -1 ? 100 : iaPct}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Presupuestos */}
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs font-semibold">
+                          <span className="text-[#a1a1aa] flex items-center gap-1.5">
+                            <FileText className="h-3.5 w-3.5 text-indigo-400" /> Presupuestos (Mes)
+                          </span>
+                          <span className="text-[#fafafa]">{presUsageText}</span>
+                        </div>
+                        <div className="h-2 w-full bg-[#27272a] rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-indigo-500 rounded-full transition-all duration-500" 
+                            style={{ width: `${limits.presupuestos_mes === -1 ? 100 : presPct}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Proyectos */}
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs font-semibold">
+                          <span className="text-[#a1a1aa] flex items-center gap-1.5">
+                            <Briefcase className="h-3.5 w-3.5 text-indigo-400" /> Proyectos Activos
+                          </span>
+                          <span className="text-[#fafafa]">{projUsageText}</span>
+                        </div>
+                        <div className="h-2 w-full bg-[#27272a] rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-indigo-500 rounded-full transition-all duration-500" 
+                            style={{ width: `${limits.proyectos_activos === -1 ? 100 : projPct}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Usuarios */}
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs font-semibold">
+                          <span className="text-[#a1a1aa] flex items-center gap-1.5">
+                            <Users className="h-3.5 w-3.5 text-indigo-400" /> Usuarios del Equipo
+                          </span>
+                          <span className="text-[#fafafa]">{userUsageText}</span>
+                        </div>
+                        <div className="h-2 w-full bg-[#27272a] rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-indigo-500 rounded-full transition-all duration-500" 
+                            style={{ width: `${limits.usuarios === -1 ? 100 : userPct}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()
+              ) : (
+                <div className="flex justify-center py-4">
+                  <Loader2 className="h-5 w-5 text-indigo-500 animate-spin" />
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
         </div>
