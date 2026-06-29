@@ -55,3 +55,25 @@ export const KANBAN_COLUMNAS = [
   { id: "montaje",     label: "Montaje",     color: "purple" },
   { id: "finalizado",  label: "Finalizado",  color: "green"  },
 ] as const
+
+export const ESTADO_COBRO = {
+  PENDIENTE: 'pendiente_cobro',
+  COBRADA: 'cobrada',
+  IMPAGADA: 'impagada_vencida'
+} as const
+
+export const ESTADO_PAGO_PROVEEDOR = {
+  PENDIENTE: 'pendiente',
+  PAGADA: 'pagada',
+  DISPUTA: 'disputa_bloqueada'
+} as const
+
+export const TIPO_FACTURA = {
+  ANTICIPO: 'anticipo',
+  FINAL: 'final',
+  RECTIFICATIVA: 'rectificativa'
+} as const
+
+export const ALERTA_VENCIMIENTO_DIAS = 7
+export const PCT_ANTICIPO_DEFAULT = 50
+export const PCT_FINAL_DEFAULT = 50

@@ -1158,7 +1158,7 @@ Porcentaje: valor.toFixed(2) + '%'
 
 ---
 
-## 10. ESTADO ACTUAL DEL DESARROLLO (Actualizado: 24-Jun-2026)
+## 10. ESTADO ACTUAL DEL DESARROLLO (Actualizado: 29-Jun-2026)
 
 > Este apartado refleja el estado real construido en el proyecto. Consultar antes de planificar nuevas funcionalidades.
 
@@ -1172,6 +1172,7 @@ Porcentaje: valor.toFixed(2) + '%'
 | `/dashboard/clientes` | CRM Clientes | ✅ Completo | CRUD completo con todos los campos de la tabla |
 | `/dashboard/presustand` | Presustand (Presupuestador) | ✅ Completo | Métodos 1, 2 y 3 + Modo IA (texto/imagen/audio) |
 | `/dashboard/proyectos` | Kanban de Proyectos | ✅ Completo | Kanban drag & drop (desktop) + acordeón (móvil), conectado a Supabase con fallback a mock |
+| `/dashboard/proyectos/[id]` | Detalle de Proyecto e Hitos | ✅ Completo | Timeline con 8 hitos automáticos, tooltips descriptivos, botón "Marcar Completado", actualización de estado en Supabase, efecto secundario al completar fecha_montaje y fecha_cobro_final |
 | `/dashboard/catalogos` | Catálogos Técnicos | ✅ Completo | CRUD de Base A (tarifas m²), Base B (elementos), Base C (despiece) |
 | `/dashboard/proveedores` | Gestión Proveedores | ✅ Completo | CRUD de proveedores con categorías matriz |
 | `/login` | Autenticación | ✅ Completo | Login con email/contraseña + Google OAuth |
@@ -1185,28 +1186,34 @@ Porcentaje: valor.toFixed(2) + '%'
 | Schema completo de Supabase | ✅ Ejecutado | Todas las tablas del §4 están creadas |
 | Seeds Base B (catalogo_elementos) | ✅ Disponibles | `seeds/seed_catalogo_elementos.sql` |
 | Seeds Base C (tarifas_servicios) | ✅ Disponibles | `seeds/seed_tarifas_servicios.sql` |
-| Workflows n8n Agente Jarvis | ✅ Creados | En `/flujosn8n/` + `/stand budget/n8n_stands_presupuestador.json` |
-| Workflow sync Qdrant Base B | ✅ Creado | `flujosn8n/sync_catalogo_b_qdrant.json` |
-| Workflow sync Qdrant Base C | ✅ Creado | `flujosn8n/sync_catalogo_c_qdrant.json` |
-| Workflow cierre proyecto → Qdrant | ✅ Creado | `flujosn8n/cierre_proyecto_qdrant.json` |
+| Workflows n8n Agente Jarvis | ✅ Activo | En n8n + `/flujosn8n/` + `/stand budget/n8n_stands_presupuestador.json` |
+| Workflow sync Qdrant Base B | ✅ Activo en n8n | `sync-catalogo-b-v1` importado y activo en n8n |
+| Workflow sync Qdrant Base C | ✅ Activo en n8n | `sync-catalogo-c-v1` importado y activo en n8n |
+| Workflow cierre proyecto → Qdrant | ✅ Activo en n8n | `proyecto-cerrado-v1` importado y activo en n8n |
+| Tool Base C en Agente Jarvis | ✅ Configurado | Tool `consultar_despiece_taller` añadida + System Message actualizado con Método 3 |
+| DB Webhooks Supabase → n8n | ✅ Configurados | `auto_sync_catalogo_b` y `auto_sync_catalogo_c` activos en Supabase |
 | API route `/api/generate-budget` | ✅ Implementada | Proxy al webhook n8n con env vars |
 | Tipos compartidos (`/types/`) | ✅ Creado | Interfaz Cliente, Proveedor, Presupuesto, Tarifas, etc. |
 | Constantes (`/constants/`) | ✅ Creado | Enums ESTADO_PRESUPUESTO, TIPO_STAND, ROL_USUARIO, listas |
 | StatusBadge componente compartido | ✅ Creado | `components/shared/status-badge.tsx`, elimina duplicación |
 | n8n URLs en variables de entorno | ✅ Implementado | `N8N_BUDGET_AGENT_WEBHOOK`, `N8N_IMAGE_GEN_WEBHOOK` |
+| Trigger SQL auto-creación proyecto + hitos | ✅ Completo | `Fix_Sqls/fix_crear_proyecto_desde_presupuesto.sql` — Crea proyecto y 8 hitos automáticos al aceptar presupuesto |
+| Timeline de hitos con tooltips | ✅ Completo | Vista detalle proyecto con línea de tiempo, colores semáforo, tooltips descriptivos, botón completar |
 
 ### 🔲 PENDIENTE DE CONSTRUIR
 
-#### Fase 2 — Gestión de Proyectos (PRIORIDAD ACTUAL)
+#### Fase 2 — Gestión de Proyectos (COMPLETADA ✅)
 
 ```
-- Trigger SQL: auto-creación de proyecto al aceptar presupuesto
-  → El kanban existe pero los proyectos deben crearse automáticamente desde presupuestos_cabecera
-- Vista de timeline de hitos dentro de cada proyecto
-- Notificaciones de hitos próximos a vencer (alertas en dashboard)
-- Canal B2B básico (mensajería + adjuntos por proyecto)
-- Módulo de Presustand: conexión real al Agente Jarvis via webhook
-  → El UI del modo IA existe, falta confirmar que el endpoint n8n esté activo
+- [x] Trigger SQL: auto-creación de proyecto al aceptar presupuesto
+- [x] Vista de timeline de hitos dentro de cada proyecto
+- [x] Tooltips descriptivos en cada hito
+- [x] Botón "Marcar Completado" con persistencia Supabase y efectos secundarios
+- [x] Workflows n8n sync Qdrant (Base B, Base C, cierre) — Importados y activos en n8n
+- [x] Tool Base C (consultar_despiece_taller) añadida al Agente Jarvis
+- [x] DB Webhooks Supabase configurados (auto_sync_catalogo_b y auto_sync_catalogo_c)
+- [ ] Notificaciones de hitos próximos a vencer (alertas en dashboard) — Diferido a Fase 2.5
+- [ ] Canal B2B básico (mensajería + adjuntos por proyecto) — Diferido a Fase 2.5
 ```
 
 #### Fase 3 — Módulo Financiero
@@ -1271,8 +1278,9 @@ budgeStands/
 |---|---|---|
 | **Fase 1** | MVP Core — Presupuestador IA | ✅ **Completada** |
 | **Fase 1.5** | Autenticación (Google OAuth + middleware) | ✅ **Completada** |
-| **Fase 2** | Gestión de Proyectos (kanban, hitos, B2B) | 🔄 **En progreso** |
-| **Fase 3** | Módulo Financiero (facturas, cash flow, cierre) | ⏳ Pendiente |
+| **Fase 2** | Gestión de Proyectos (kanban, hitos, timeline, trigger SQL) | ✅ **Completada** |
+| **Fase 2.5** | Infraestructura n8n/Qdrant (workflows activos, Tool Base C, DB Webhooks) | ✅ **Completada** |
+| **Fase 3** | Módulo Financiero (facturas, cash flow, cierre) | 🚧 **EN CURSO** |
 | **Fase 4** | SaaS multi-tenant y escala | ⏳ Pendiente |
 
 ---
@@ -1325,6 +1333,6 @@ ANTHROPIC_API_KEY=sk-ant-api03-...
 
 ---
 
-*Documento generado como base de desarrollo. Versión 1.2 — Actualizado 24-Jun-2026.*
+*Documento generado como base de desarrollo. Versión 1.4 — Actualizado 29-Jun-2026.*
 *Actualizar la sección §10 ante cualquier cambio de estado de los módulos.*
 *El modelo de IA debe consultar este documento antes de generar cualquier código.*

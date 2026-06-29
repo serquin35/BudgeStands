@@ -122,9 +122,22 @@ Headers de ambos: `Content-Type: application/json`
 - Seed Base C ejecutado (34 tarifas de servicio insertadas)
 - Tipos y constantes compartidos en `/types/` y `/constants/`
 - Componente StatusBadge compartido
+- Timeline de hitos con tooltips en detalle de proyecto — `/dashboard/proyectos/[id]`
+- Trigger SQL para auto-creación de proyecto + 8 hitos al aceptar presupuesto — `Fix_Sqls/fix_crear_proyecto_desde_presupuesto.sql`
+- Botón "Marcar Completado" en hitos con persistencia Supabase y efectos secundarios (montaje, cobro final)
 
 ### ❌ Requiere acción tuya
-1. Importar/activar los 3 flujos n8n si no lo están
-2. Añadir Tool Base C en n8n (paso 4)
-3. Crear DB Webhooks en Supabase (paso 5)
-4. Crear trigger auto_crear_proyecto (paso 1, para producción)
+~~1. Importar/activar los 3 flujos n8n si no lo están~~
+~~2. Añadir Tool Base C en n8n (paso 4)~~
+~~3. Crear DB Webhooks en Supabase (paso 5)~~
+
+✅ **Todo completado — No hay acciones manuales pendientes. Siguiente fase: Módulo Financiero (Fase 3).**
+
+### ✅ Resuelto en Fase 2 / Fase 2.5
+- Trigger SQL `fix_crear_proyecto_desde_presupuesto.sql` — Ejecutado en Supabase.
+- Vista detalle de proyecto con timeline de 8 hitos — Implementada y funcionando.
+- Tooltips descriptivos por cada tipo de hito — Implementados.
+- Actualización de estado de hitos (Completado) con persistencia Supabase — Funcionando.
+- Workflows n8n `sync-catalogo-b-v1`, `sync-catalogo-c-v1`, `proyecto-cerrado-v1` — Importados y activos.
+- Tool `consultar_despiece_taller` añadida al Agente Jarvis + System Message Método 3 actualizado.
+- DB Webhooks en Supabase (`auto_sync_catalogo_b`, `auto_sync_catalogo_c`) — Configurados y activos.

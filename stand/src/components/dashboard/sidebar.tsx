@@ -11,9 +11,10 @@ import {
   Truck,
   LogOut, 
   Menu, 
-  X,
+  X, 
   User,
-  Briefcase
+  Briefcase,
+  Receipt
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -59,6 +60,11 @@ export default function Sidebar({ user, empresa, onSignOut }: SidebarProps) {
       name: "Proveedores",
       href: "/dashboard/proveedores",
       icon: Truck,
+    },
+    {
+      name: "Finanzas",
+      href: "/dashboard/finanzas",
+      icon: Receipt,
     },
     {
       name: "Catálogos",

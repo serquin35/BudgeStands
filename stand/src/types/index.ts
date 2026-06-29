@@ -157,4 +157,68 @@ export interface ProyectoOperacion {
     } | null
   } | null
   proyectos_hitos?: ProyectoHito[]
+  facturas_proyectos?: FacturaProyecto[]
+}
+
+export interface FacturaProyecto {
+  id: string
+  id_proyecto: string
+  numero_factura_legal: string
+  tipo_factura: "anticipo" | "final" | "rectificativa"
+  porcentaje_facturado: number
+  base_imponible: number
+  porcentaje_iva: number
+  importe_iva: number
+  total_factura_bruto: number
+  estado_cobro: "pendiente_cobro" | "cobrada" | "impagada_vencida"
+  fecha_emision: string
+  fecha_vencimiento: string
+  fecha_cobro_real?: string
+  notas?: string
+  pdf_url?: string
+}
+
+export interface FacturaProveedorCabecera {
+  id: string
+  id_empresa: string
+  id_proveedor: string
+  numero_factura_proveedor: string
+  fecha_emision: string
+  fecha_recepcion: string
+  fecha_vencimiento: string
+  base_imponible: number
+  importe_iva: number
+  total_factura_bruto: number
+  estado_pago: "pendiente" | "pagada" | "disputa_bloqueada"
+  metodo_pago: "transferencia" | "confirming" | "tarjeta" | "girado"
+  pdf_url?: string
+  notas?: string
+  proveedores?: { nombre_comercial: string; razon_social: string }
+  lineas?: FacturaProveedorLinea[]
+}
+
+export interface FacturaProveedorLinea {
+  id: string
+  id_factura_proveedor: string
+  id_proyecto?: string
+  id_categoria_matriz?: number
+  descripcion_articulo: string
+  cantidad: number
+  unidad?: string
+  precio_unitario_coste: number
+  total_linea_coste: number
+}
+
+export interface CierreProyecto {
+  id: string
+  id_proyecto: string
+  ingreso_total_real: number
+  gasto_total_real: number
+  margen_bruto_real: number
+  margen_real_porcentaje: number
+  presupuesto_original: number
+  desviacion_beneficio_porcentaje: number
+  valoracion_cliente?: 1 | 2 | 3 | 4 | 5
+  lecciones_aprendidas?: string
+  fecha_cierre_oficial: string
 }
