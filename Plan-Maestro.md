@@ -1,5 +1,5 @@
 # THE TITAN — Documento Maestro de Arquitectura
-## Versión 1.2 | Documento de Referencia para Desarrollo con IA
+## Versión 1.8 | Documento de Referencia para Desarrollo con IA
 
 > **Instrucción para el modelo de IA:** Este documento es la fuente de verdad absoluta del proyecto. Antes de generar cualquier código, componente, query o flujo, consulta este documento. Respeta los nombres de tablas, campos, enums y convenciones exactamente como están definidos aquí. Cuando un requerimiento no esté cubierto, pregunta antes de inventar.
 
@@ -1082,85 +1082,19 @@ Constantes:         UPPER_SNAKE_CASE    (ESTADO_PRESUPUESTO, IVA_DEFAULT)
 Archivos:           kebab-case          (presupuesto-form.tsx, use-cliente.ts)
 ```
 
-### 9.2 Estructura de Carpetas Next.js
+### 9.2 Formato de Números y Fechas
 
 ```
-/app                  → login, dashboard, api/generate-budget
-  /(auth)             → ⏳ No implementado (login en /app/login, sin ruta grupo)
-  /(dashboard)        → ⏳ No implementado (dashboard en /app/dashboard)
-  /api/generate-budget → ✅ Proxy a n8n Jarvis
-/components
-  /ui                 → ✅ shadcn/ui components
-  /shared             → ✅ StatusBadge y futuros componentes compartidos
-  /forms              → ⏳ Pendiente
-  /tables             → ⏳ Pendiente
-  /charts             → ✅ OverviewChart (en /components/dashboard/)
-/lib
-  /supabase           → ⏳ Los helpers están en /utils/supabase/ (por migrar)
-  /qdrant             → ⏳ Pendiente
-  /n8n                → ⏳ Pendiente (llamadas n8n inline en route.ts)
-  /utils              → ✅ Parcial (cn() en /lib/utils.ts)
-/hooks                → ⏳ Pendiente (estado inline en páginas)
-/types                → ✅ Creado (interfaces en /types/index.ts)
-/constants            → ✅ Creado (enums en /constants/index.ts)
-```
-
-### 9.3 Estados y ENUMs Globales (TypeScript)
-
-```typescript
-// /constants/enums.ts
-
-export const ESTADO_PRESUPUESTO = {
-  BORRADOR: 'borrador',
-  EN_ESPERA: 'en_espera',
-  PRESENTADO: 'presentado',
-  EN_NEGOCIACION: 'en_negociacion',
-  ACEPTADO: 'aceptado',
-  RECHAZADO: 'rechazado',
-  CANCELADO: 'cancelado'
-} as const;
-
-export const METODO_PRESUPUESTACION = {
-  MACRO: 'metodo_1_macro',
-  BLOQUES: 'metodo_2_bloques',
-  DESPIECE: 'metodo_3_despiece',
-  COMBINADO: 'combinado'
-} as const;
-
-export const TIPO_STAND = {
-  MODULAR: 'modular',
-  CARPINTERIA: 'carpinteria_diseno',
-  HIBRIDO: 'hibrido',
-  RETAIL: 'retail_comercial',
-  DOBLE_PLANTA: 'doble_planta'
-} as const;
-
-export const ROL_USUARIO = {
-  ADMIN: 'admin',
-  COMERCIAL: 'comercial',
-  DIRECTOR_OBRA: 'director_obra',
-  TALLER: 'taller',
-  CONTABILIDAD: 'contabilidad'
-} as const;
-
-export const IVA_DEFAULT = 21.00;
-export const NUMERO_PRESUPUESTO_PREFIX = 'PRES';
-export const NUMERO_PROYECTO_PREFIX = 'OP';
-```
-
-### 9.4 Formato de Números y Fechas
-
-```
-Moneda:   Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' })
-Fecha:    Intl.DateTimeFormat('es-ES', { day:'2-digit', month:'2-digit', year:'numeric' })
-Porcentaje: valor.toFixed(2) + '%'
+Moneda:      Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' })
+Fecha:       Intl.DateTimeFormat('es-ES', { day:'2-digit', month:'2-digit', year:'numeric' })
+Porcentaje:  valor.toFixed(2) + '%'
 ```
 
 ---
 
-## 10. ESTADO ACTUAL DEL DESARROLLO (Actualizado: 29-Jun-2026)
+## 10. ESTADO ACTUAL DEL DESARROLLO (Actualizado: 30-Jun-2026)
 
-> Este apartado refleja el estado real construido en el proyecto. Consultar antes de planificar nuevas funcionalidades.
+> **Este apartado es la ÚNICA referencia de estado válida.** Los ficheros `INSTRUCCIONES_PENDIENTES.md`, `TAREAS-PENDIENTES.md` y `ANALISIS-FASES-3-4.md` han sido eliminados por estar obsoletos. Consultar solo este §10 antes de planificar cualquier funcionalidad.
 
 ### ✅ MÓDULOS COMPLETADOS
 
@@ -1170,74 +1104,80 @@ Porcentaje: valor.toFixed(2) + '%'
 |---|---|---|---|
 | `/dashboard` | Dashboard principal | ✅ Completo | KPIs, gráfica de facturación, alertas de hitos |
 | `/dashboard/clientes` | CRM Clientes | ✅ Completo | CRUD completo con todos los campos de la tabla |
-| `/dashboard/presustand` | Presustand (Presupuestador) | ✅ Completo | Métodos 1, 2 y 3 + Modo IA (texto/imagen/audio) |
-| `/dashboard/proyectos` | Kanban de Proyectos | ✅ Completo | Kanban drag & drop (desktop) + acordeón (móvil), conectado a Supabase con fallback a mock |
-| `/dashboard/proyectos/[id]` | Detalle de Proyecto e Hitos | ✅ Completo | Timeline con 8 hitos automáticos, tooltips descriptivos, botón "Marcar Completado", actualización de estado en Supabase, efecto secundario al completar fecha_montaje y fecha_cobro_final |
-| `/dashboard/catalogos` | Catálogos Técnicos | ✅ Completo | CRUD de Base A (tarifas m²), Base B (elementos), Base C (despiece) |
+| `/dashboard/presustand` | Presustand (Presupuestador) | ✅ Completo | Métodos 1, 2 y 3 + Modo IA (texto/imagen/audio) + bloqueo por límites de plan |
+| `/dashboard/proyectos` | Kanban de Proyectos | ✅ Completo | Kanban drag & drop (desktop) + acordeón (móvil), conectado a Supabase |
+| `/dashboard/proyectos/[id]` | Detalle de Proyecto e Hitos | ✅ Completo | Timeline 8 hitos automáticos, tooltips, botón Completar, colores semáforo (≤7 días = amarillo) |
+| `/dashboard/catalogos` | Catálogos Técnicos | ✅ Completo | CRUD Base A (tarifas m²), Base B (elementos), Base C (despiece) + botones Sync Qdrant |
 | `/dashboard/proveedores` | Gestión Proveedores | ✅ Completo | CRUD de proveedores con categorías matriz |
-| `/dashboard/finanzas` | Módulo Financiero | ✅ Completo | Gestión financiera completa: facturas clientes (con validación de 100% y auto F26-NNNN), facturas proveedores con desglose de líneas e imputación analítica a proyecto y categoría de matriz, panel previsional de Cash Flow y alertas de vencimientos, y modal de Cierre Económico de proyectos con webhook a n8n |
+| `/dashboard/finanzas` | Módulo Financiero | ✅ Completo | Facturas clientes (auto F26-NNNN, validación ≤100%, bloqueo deudores), facturas proveedores (cabecera+líneas, imputación analítica), Cash Flow previsional 30/60/90d + gráfico 6 meses + alertas 14d, Cierre Económico con rentabilidad real, estrellas, lecciones y webhook n8n |
+| `/dashboard/perfil` | Perfil y Suscripción | ✅ Completo | Edición de datos de usuario y empresa, card Suscripción SaaS con plan activo y 4 barras de uso (IA calls, presupuestos/mes, proyectos activos, usuarios). Llama a `get_plan_usage()` RPC. |
+| `/print/factura/[id]` | Template de factura imprimible | ✅ Completo | Página de impresión con datos fiscales |
+| `/print/presupuesto/[id]` | Template de presupuesto imprimible | ✅ Completo | Vista imprimible (A4 y PDF) con despiece y render IA |
+| `/api/send-invoice` | Envío email de factura | ✅ Completo | API route para envío de facturas por email |
 | `/login` | Autenticación | ✅ Completo | Login con email/contraseña + Google OAuth |
 
 #### Infraestructura
 
 | Componente | Estado | Notas |
-|---|---|---|---|
+|---|---|---|
 | Supabase Auth | ✅ Configurado | JWT + Google OAuth via GCP |
+| RLS (Row Level Security) | ✅ Activo | Todas las 19 tablas del proyecto tienen RLS habilitado |
 | Middleware de protección de rutas | ✅ Implementado | `stand/src/middleware.ts` |
 | Schema completo de Supabase | ✅ Ejecutado | Todas las tablas del §4 están creadas |
-| Seeds Base B (catalogo_elementos) | ✅ Disponibles | `seeds/seed_catalogo_elementos.sql` |
-| Seeds Base C (tarifas_servicios) | ✅ Disponibles | `seeds/seed_tarifas_servicios.sql` |
-| Workflows n8n Agente Jarvis | ✅ Activo | En n8n + `/flujosn8n/` + `/stand budget/n8n_stands_presupuestador.json` |
-| Workflow sync Qdrant Base B | ✅ Activo en n8n | `sync-catalogo-b-v1` importado y activo en n8n |
-| Workflow sync Qdrant Base C | ✅ Activo en n8n | `sync-catalogo-c-v1` importado y activo en n8n |
-| Workflow cierre proyecto → Qdrant | ✅ Activo en n8n | `proyecto-cerrado-v1` importado y activo en n8n |
-| Tool Base C en Agente Jarvis | ✅ Configurado | Tool `consultar_despiece_taller` añadida + System Message actualizado con Método 3 |
+| Variables de entorno en Vercel | ✅ Configuradas | `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `N8N_WEBHOOK_BASE_URL`, `Name` — todas en Production y Preview |
+| Seeds Base B (catalogo_elementos) | ✅ Ejecutados | `seeds/seed_catalogo_elementos.sql` |
+| Seeds Base C (tarifas_servicios) | ✅ Ejecutados | `seeds/seed_tarifas_servicios.sql` (34 tarifas insertadas) |
+| Workflow Agente Jarvis n8n | ✅ Activo | `/flujosn8n/` + `/stand budget/n8n_stands_presupuestador.json` |
+| Workflow sync Qdrant Base B | ✅ Activo | `sync-catalogo-b-v1` activo en n8n |
+| Workflow sync Qdrant Base C | ✅ Activo | `sync-catalogo-c-v1` activo en n8n |
+| Workflow cierre proyecto → Qdrant | ✅ Activo | `proyecto-cerrado-v1` activo en n8n |
+| Workflow Supabase Keep-Alive | ✅ Activo | `supabase_keep_alive.json` — Schedule semanal en n8n, última ejecución exitosa Jun 29 |
+| Tool Base C en Agente Jarvis | ✅ Configurado | `consultar_despiece_taller` añadida + System Message Método 3 |
 | DB Webhooks Supabase → n8n | ✅ Configurados | `auto_sync_catalogo_b` y `auto_sync_catalogo_c` activos en Supabase |
-| API route `/api/generate-budget` | ✅ Implementada | Proxy al webhook n8n con env vars |
-| Tipos compartidos (`/types/`) | ✅ Creado | Interfaz Cliente, Proveedor, Presupuesto, Tarifas, etc. |
-| Constantes (`/constants/`) | ✅ Creado | Enums ESTADO_PRESUPUESTO, TIPO_STAND, ROL_USUARIO, listas |
-| StatusBadge componente compartido | ✅ Creado | `components/shared/status-badge.tsx`, elimina duplicación |
-| n8n URLs en variables de entorno | ✅ Implementado | `N8N_BUDGET_AGENT_WEBHOOK`, `N8N_IMAGE_GEN_WEBHOOK` |
-| Trigger SQL auto-creación proyecto + hitos | ✅ Completo | `Fix_Sqls/fix_crear_proyecto_desde_presupuesto.sql` — Crea proyecto y 8 hitos automáticos al aceptar presupuesto |
-| Timeline de hitos con tooltips | ✅ Completo | Vista detalle proyecto con línea de tiempo, colores semáforo, tooltips descriptivos, botón completar |
+| Función RPC `get_plan_usage()` | ✅ Activa | Devuelve uso actual vs límites por plan (ia_calls, presupuestos, proyectos, usuarios) |
+| Función RPC `generar_numero_factura()` | ✅ Activa | Genera secuencial F26-NNNN para facturas de clientes |
+| Trigger SQL auto-proyecto+hitos | ✅ Activo | `Fix_Sqls/fix_crear_proyecto_desde_presupuesto.sql` — al aceptar presupuesto crea proyecto + 8 hitos |
+| API route `/api/generate-budget` | ✅ Implementada | Proxy al webhook n8n con límites de plan |
+| API route `/api/upload` | ✅ Implementada | Subida de archivos a Supabase Storage (máx 10MB) |
+| Tipos compartidos (`/types/index.ts`) | ✅ Creado | Interfaces: Cliente, Proveedor, Presupuesto, Tarifas, FacturaProyecto, CierreProyecto, etc. |
+| Constantes (`/constants/index.ts`) | ✅ Creado | ESTADO_PRESUPUESTO, TIPO_STAND, ROL_USUARIO (incluye `cliente_externo`), KANBAN_COLUMNAS, ESTADO_COBRO, TIPO_FACTURA |
+| StatusBadge componente compartido | ✅ Creado | `components/shared/status-badge.tsx` |
 
-### 🔲 PENDIENTE DE CONSTRUIR
+---
 
-#### Fase 2 — Gestión de Proyectos (COMPLETADA ✅)
+### 🐛 DEUDA TÉCNICA CONOCIDA (bugs menores, no bloqueantes)
 
-```
-- [x] Trigger SQL: auto-creación de proyecto al aceptar presupuesto
-- [x] Vista de timeline de hitos dentro de cada proyecto
-- [x] Tooltips descriptivos en cada hito
-- [x] Botón "Marcar Completado" con persistencia Supabase y efectos secundarios
-- [x] Workflows n8n sync Qdrant (Base B, Base C, cierre) — Importados y activos en n8n
-- [x] Tool Base C (consultar_despiece_taller) añadida al Agente Jarvis
-- [x] DB Webhooks Supabase configurados (auto_sync_catalogo_b y auto_sync_catalogo_c)
-- [ ] Notificaciones de hitos próximos a vencer (alertas en dashboard) — Diferido a Fase 2.5
-- [ ] Canal B2B básico (mensajería + adjuntos por proyecto) — Diferido a Fase 2.5
-```
+| Bug | Archivo | Descripción | Estado Real |
+|---|---|---|---|
+| `EstadoProyecto` incompleto | `types/index.ts` L110-116 | El union type solo tenía 6 valores pero el código usaba también `"desmontado"`, `"facturado"`, `"cerrado"` | **Resuelto (Fijado ✅)** |
+| Alert obsoleto | `proyectos/[id]/page.tsx` L151 | Decía "Modal pendiente de construir" pero el modal ya existe en `/finanzas` | **Resuelto (Redirecciona y alerta correctamente ✅)** |
 
-#### Fase 3 — Módulo Financiero (COMPLETADA ✅)
+---
+
+### ⏳ PENDIENTE — Fase 4 (SaaS y Escala)
+
+> La infraestructura multi-tenant (RLS, `id_empresa`, `plan_saas`) ya está en la BD. Lo que falta es la lógica de negocio de escala.
 
 ```
-- [x] UI: Facturas a clientes (anticipo + final) → tabla facturas_proyectos
-- [x] UI: Facturas de proveedores + imputación analítica → facturas_proveedores_*
-- [x] UI: Dashboard de cash flow
-- [x] UI: Cierre de proyectos y análisis de rentabilidad → cierres_proyectos
-- [x] Alertas de impagos y vencimientos
+- [ ] Analytics avanzado para gerente
+      → Facturación acumulada vs objetivo, rentabilidad media por proyecto,
+        % conversión presupuestos, Top 5 clientes, carga de taller 30d
+
+- [x] Widget de hitos próximos en dashboard principal
+      → Implementado con carga dinámica desde Supabase en tiempo real (vencidos o programados para ≤7 días) y enlaces directos al proyecto. (Completado: 30-Jun-2026)
+
+- [ ] Canal B2B básico
+      → Mensajería + adjuntos por proyecto (taller ↔ oficina técnica)
+        (Diferido de Fase 2.5)
+
+- [ ] API pública documentada (baja prioridad)
+      → REST endpoints + API Key + Swagger. Solo si hay clientes que lo pidan.
+
+- [ ] Internacionalización i18n (baja prioridad)
+      → next-intl para es/en/fr/de. Solo si hay clientes internacionales.
 ```
 
-#### Fase 4 — SaaS y Escala
-
-```
-- Multi-tenant: aislamiento completo de datos por empresa
-- Sistema de planes y límites (tabla empresas.plan_saas)
-- Portal del cliente externo (seguimiento de su proyecto)
-- API pública documentada
-- Onboarding automatizado (nueva empresa → datos de prueba)
-- Analytics avanzado para gerente
-- Internacionalización (en/fr/de)
-```
+---
 
 ### 🗂️ ESTRUCTURA DE ARCHIVOS DEL PROYECTO
 
@@ -1333,6 +1273,6 @@ ANTHROPIC_API_KEY=sk-ant-api03-...
 
 ---
 
-*Documento generado como base de desarrollo. Versión 1.5 — Actualizado 29-Jun-2026.*
+*Versión 1.6 — Actualizado 30-Jun-2026. Eliminados documentos obsoletos: INSTRUCCIONES_PENDIENTES.md, TAREAS-PENDIENTES.md, ANALISIS-FASES-3-4.md.*
 *Actualizar la sección §10 ante cualquier cambio de estado de los módulos.*
 *El modelo de IA debe consultar este documento antes de generar cualquier código.*

@@ -31,9 +31,14 @@ export interface Presupuesto {
   total_presupuesto: number
   estado_presupuesto: string
   created_at: string
-  clientes?: {
-    nombre_comercial: string
-  }
+  imagen_stand_url?: string | null
+  subtotal_construccion?: number | null
+  subtotal_servicios_feria?: number | null
+  subtotal_diseno_grafica?: number | null
+  subtotal_transporte_mo?: number | null
+  base_imponible?: number | null
+  importe_iva?: number | null
+  clientes?: any
 }
 
 export interface PresupuestoLinea {
@@ -114,6 +119,9 @@ export type EstadoProyecto =
   | "montaje"
   | "finalizado"
   | "cancelado"
+  | "desmontado"
+  | "facturado"
+  | "cerrado"
 
 export interface ProyectoHito {
   id: string

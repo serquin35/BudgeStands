@@ -30,7 +30,8 @@ import {
   Clock,
   ArrowUpRight,
   TrendingDown,
-  Plus
+  Plus,
+  Printer
 } from "lucide-react"
 
 import type { ClienteBasico, Presupuesto, PresupuestoLinea } from "@/types"
@@ -1050,22 +1051,33 @@ export default function PresustandPage() {
                       </CardDescription>
                     </div>
                     
-                    {/* State Selector */}
-                    <div className="space-y-1">
-                      <Label className="text-[9px] font-semibold text-[#a1a1aa] uppercase tracking-wider">Estado Comercial</Label>
-                      <select
-                        value={activePres.estado_presupuesto}
-                        onChange={(e) => handleUpdateStatus(e.target.value)}
-                        className="bg-[#09090b] border-[#27272a] text-[11px] font-semibold text-[#fafafa] rounded-md h-8 px-2 focus:ring-1 focus:ring-indigo-500"
+                    {/* State Selector & Print */}
+                    <div className="flex items-end gap-2">
+                      <div className="space-y-1">
+                        <Label className="text-[9px] font-semibold text-[#a1a1aa] uppercase tracking-wider">Estado Comercial</Label>
+                        <select
+                          value={activePres.estado_presupuesto}
+                          onChange={(e) => handleUpdateStatus(e.target.value)}
+                          className="bg-[#09090b] border-[#27272a] text-[11px] font-semibold text-[#fafafa] rounded-md h-8 px-2 focus:ring-1 focus:ring-indigo-500"
+                        >
+                          <option value="borrador">Borrador</option>
+                          <option value="en_espera">En Espera</option>
+                          <option value="presentado">Presentado</option>
+                          <option value="en_negociacion">En Negociación</option>
+                          <option value="aceptado">Aceptado</option>
+                          <option value="rechazado">Rechazado</option>
+                          <option value="cancelado">Cancelado</option>
+                        </select>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => window.open(`/print/presupuesto/${activePres.id}?autoprint=true`, "_blank")}
+                        className="border-[#27272a] hover:bg-[#18181b]/50 text-[#a1a1aa] hover:text-[#fafafa] h-8 w-8"
+                        title="Imprimir / Exportar a PDF"
                       >
-                        <option value="borrador">Borrador</option>
-                        <option value="en_espera">En Espera</option>
-                        <option value="presentado">Presentado</option>
-                        <option value="en_negociacion">En Negociación</option>
-                        <option value="aceptado">Aceptado</option>
-                        <option value="rechazado">Rechazado</option>
-                        <option value="cancelado">Cancelado</option>
-                      </select>
+                        <Printer className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 </CardHeader>

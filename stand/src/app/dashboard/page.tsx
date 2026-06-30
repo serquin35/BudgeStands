@@ -42,6 +42,41 @@ export default async function DashboardPage() {
 
   const items = presupuestos || []
 
+  // Obtener hitos próximos a vencer (o vencidos sin completar)
+  const targetDate = new Date()
+  targetDate.setDate(targetDate.getDate() + 7)
+  const targetDateStr = targetDate.toISOString().split('T')[0]
+
+  const { data: hitosData, error: hitosError } = await supabase
+    .from("proyectos_hitos")
+    .select(`
+      id,
+      id_proyecto,
+      tipo_hito,
+      fecha_programada,
+      estado_hito,
+      notas,
+      proyectos_operaciones (
+        id,
+        codigo_proyecto_interno,
+        presupuestos_cabecera (
+          nombre_feria,
+          clientes (
+            nombre_comercial
+          )
+        )
+      )
+    `)
+    .in("estado_hito", ["pendiente", "en_progreso", "retrasado"])
+    .lte("fecha_programada", targetDateStr)
+    .order("fecha_programada", { ascending: true })
+
+  if (hitosError) {
+    console.error("Error al cargar hitos en el dashboard:", hitosError)
+  }
+
+  const hitosAlertas = (hitosData || []) as any[]
+
   // Calcular KPIs
   const totalPresupuestos = items.length
   const totalFacturado = items
@@ -195,21 +230,71 @@ export default async function DashboardPage() {
               </div>
             </div>
 
-            {/* Quick alert */}
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[#18181b]/60 border border-[#27272a]/40 text-xs">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
-              <div>
-                <div className="font-semibold text-[#fafafa]">Presupuesto Aceptado</div>
-                <div className="text-[#a1a1aa] mt-0.5">Telefónica aprobó PRES-2026-0001 para el MWC 2026 (90.992 €).</div>
+            {/* Hitos Críticos y Alertas */}
+            <div className="space-y-2.5 pt-2">
+              <div className="text-xs font-bold text-[#fafafa] uppercase tracking-wider">
+                Hitos Críticos (Próximos 7 días)
               </div>
-            </div>
+              {hitosAlertas.length === 0 ? (
+                <div className="flex items-center gap-2.5 p-3 rounded-lg bg-[#18181b]/30 border border-[#27272a]/20 text-xs text-[#a1a1aa]">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>No hay hitos críticos programados para esta semana.</span>
+                </div>
+              ) : (
+                hitosAlertas.slice(0, 3).map((hito) => {
+                  const diasRestantes = Math.ceil(
+                    (new Date(hito.fecha_programada).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+                  )
+                  const isOverdue = diasRestantes < 0
+                  const isToday = diasRestantes === 0
 
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-[#18181b]/60 border border-[#27272a]/40 text-xs">
-              <AlertCircle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-              <div>
-                <div className="font-semibold text-[#fafafa]">Acción Requerida</div>
-                <div className="text-[#a1a1aa] mt-0.5">PRES-2026-0002 de Iberia requiere seguimiento comercial (177.265 €).</div>
-              </div>
+                  let colorText = "text-amber-400"
+                  let colorBg = "bg-amber-500/10 border-amber-500/20"
+                  let labelTime = `Quedan ${diasRestantes} días`
+                  
+                  if (isOverdue) {
+                    colorText = "text-red-400"
+                    colorBg = "bg-red-500/10 border-red-500/20"
+                    labelTime = `Retrasado (${Math.abs(diasRestantes)}d)`
+                  } else if (isToday) {
+                    colorText = "text-orange-400"
+                    colorBg = "bg-orange-500/10 border-orange-500/20"
+                    labelTime = "Hoy"
+                  } else if (diasRestantes === 1) {
+                    labelTime = "Mañana"
+                  }
+
+                  const proyecto = hito.proyectos_operaciones
+                  const client = proyecto?.presupuestos_cabecera?.clientes
+                  const feria = proyecto?.presupuestos_cabecera?.nombre_feria
+
+                  return (
+                    <Link href={`/dashboard/proyectos/${hito.id_proyecto}`} key={hito.id}>
+                      <div className={`flex items-start justify-between gap-3 p-3 rounded-lg border transition-all hover:bg-[#18181b]/80 text-xs cursor-pointer ${colorBg}`}>
+                        <div className="min-w-0 flex-1">
+                          <div className="font-semibold text-[#fafafa] flex items-center gap-1.5 flex-wrap">
+                            <span className="capitalize">{hito.tipo_hito.replace(/_/g, " ")}</span>
+                            <span className="text-[10px] text-indigo-400 font-mono">({proyecto?.codigo_proyecto_interno})</span>
+                          </div>
+                          <div className="text-[#a1a1aa] text-[10px] mt-0.5 truncate">
+                            {client?.nombre_comercial} — {feria || "Feria"}
+                          </div>
+                        </div>
+                        <div className={`text-[10px] font-bold shrink-0 ${colorText} text-right`}>
+                          {labelTime}
+                        </div>
+                      </div>
+                    </Link>
+                  )
+                })
+              )}
+              {hitosAlertas.length > 3 && (
+                <div className="text-right">
+                  <Link href="/dashboard/proyectos" className="text-[10px] text-indigo-400 hover:underline">
+                    Ver {hitosAlertas.length - 3} alertas más en Kanban →
+                  </Link>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

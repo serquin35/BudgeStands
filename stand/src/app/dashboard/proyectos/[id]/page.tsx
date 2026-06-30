@@ -148,7 +148,8 @@ const getSemaforoHito = (hito: ProyectoHito) => {
     }
     
     if (hito.tipo_hito === "fecha_cobro_final") {
-      alert("Hito final completado. El proyecto está listo para cierre financiero (Modal pendiente de construir).")
+      alert("Hito final completado. El proyecto está listo para el cierre financiero en el módulo de Finanzas.")
+      router.push("/dashboard/finanzas")
     }
   }
 
@@ -173,7 +174,7 @@ const getSemaforoHito = (hito: ProyectoHito) => {
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
             {proyecto.codigo_proyecto_interno}
-            <StatusBadge status={proyecto.estado_proyecto} type="proyecto" />
+            <StatusBadge estado={proyecto.estado_proyecto} />
           </h1>
           <p className="text-slate-400">{pc?.numero_presupuesto} - {clienteNombre || "Cliente no asignado"}</p>
         </div>
