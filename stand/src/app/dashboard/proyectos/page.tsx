@@ -277,11 +277,11 @@ export default function ProyectosPage() {
       .select("*, presupuestos_cabecera(nombre_feria, recinto_ferial, fecha_inicio_feria, total_presupuesto, imagen_stand_url)")
       .order("created_at", { ascending: false });
 
-    if (!error && data && data.length > 0) {
-      setProyectos(data);
-    } else {
-      if (error) console.warn("[Kanban] Error al cargar proyectos:", error);
+    if (error) {
+      console.warn("[Kanban] Error al cargar proyectos:", error);
       setProyectos(MOCK_PROYECTOS);
+    } else {
+      setProyectos(data || []);
     }
     setLoading(false);
   }, [supabase]);
