@@ -11,7 +11,8 @@ import {
   ArrowUpRight,
   Clock,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  BarChart3
 } from "lucide-react"
 
 export const dynamic = "force-dynamic"
@@ -109,6 +110,12 @@ export default async function DashboardPage() {
           <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-xs rounded-lg transition-all duration-200 shadow-md shadow-indigo-500/10">
             <Sparkles className="h-4 w-4" />
             <span>Presupuestar con IA</span>
+          </button>
+        </Link>
+        <Link href="/dashboard/gerencial">
+          <button className="flex items-center gap-2 px-4 py-2 bg-[#18181b] hover:bg-[#27272a] text-[#a1a1aa] hover:text-[#fafafa] font-medium text-xs rounded-lg transition-all duration-200 border border-[#27272a]/70">
+            <BarChart3 className="h-4 w-4" />
+            <span>Analytics</span>
           </button>
         </Link>
       </div>

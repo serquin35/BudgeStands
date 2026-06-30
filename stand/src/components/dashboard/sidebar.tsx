@@ -14,7 +14,8 @@ import {
   X, 
   User,
   Briefcase,
-  Receipt
+  Receipt,
+  BarChart3
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -65,6 +66,11 @@ export default function Sidebar({ user, empresa, onSignOut }: SidebarProps) {
       name: "Finanzas",
       href: "/dashboard/finanzas",
       icon: Receipt,
+    },
+    {
+      name: "Analytics Gerencial",
+      href: "/dashboard/gerencial",
+      icon: BarChart3,
     },
     {
       name: "Catálogos",
