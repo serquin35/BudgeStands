@@ -204,7 +204,7 @@ export default async function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="px-2 sm:px-6">
-            <OverviewChart />
+            <OverviewChart presupuestos={items} />
           </CardContent>
         </Card>
 
