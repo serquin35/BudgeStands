@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, Suspense } from "react"
+import { useState, Suspense, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
 import { Button } from "@/components/ui/button"
@@ -29,6 +29,25 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(searchParams.get('error'))
   const [success, setSuccess] = useState<string | null>(null)
 
+  useEffect(() => {
+    const code = searchParams.get('code')
+    if (code) {
+      const exchangeAndRedirect = async () => {
+        setLoading(true)
+        setError(null)
+        try {
+          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
+          if (exchangeError) throw exchangeError
+          router.push("/auth/update-password")
+        } catch (err: any) {
+          setError(err?.message || "El enlace de autenticación ha expirado o no es válido.")
+          setLoading(false)
+        }
+      }
+      exchangeAndRedirect()
+    }
+  }, [searchParams, supabase, router])
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -39,7 +58,7 @@ function LoginForm() {
       if (isForgotPassword) {
         // Enviar correo de recuperación
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${window.location.origin}/auth/update-password`,
+          redirectTo: `${window.location.origin}/auth/callback?next=/auth/update-password`,
         })
         if (error) throw error
         setSuccess("Te hemos enviado un correo con un enlace para recuperar tu contraseña.")
