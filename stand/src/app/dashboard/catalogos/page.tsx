@@ -154,6 +154,14 @@ export default function CatalogosPage() {
   // Sincronización con Qdrant
   const syncCatalogo = async (tipo: "b" | "c") => {
     if (!empresaId) return
+
+    // Validar que haya datos antes de sincronizar
+    const datosVacios = tipo === "b" ? elementos.length === 0 : servicios.length === 0
+    if (datosVacios) {
+      toast.warning(`No hay datos en Catálogo ${tipo.toUpperCase()} para sincronizar.`)
+      return
+    }
+
     const setSyncing = tipo === "b" ? setSyncingB : setSyncingC
     setSyncing(true)
     try {
@@ -163,11 +171,14 @@ export default function CatalogosPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id_empresa: empresaId })
       })
-      if (!res.ok) throw new Error("Error en sync")
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        throw new Error(errData.error || "Error en sync")
+      }
       const data = await res.json()
       toast.success(`✅ ${data.elementos_indexados ?? 'Todos los'} elementos sincronizados con Qdrant`)
-    } catch {
-      toast.error("Error al sincronizar con Qdrant. Inténtalo de nuevo.")
+    } catch (err: any) {
+      toast.error(err.message || "Error al sincronizar con Qdrant. Inténtalo de nuevo.")
     } finally {
       setSyncing(false)
     }
@@ -472,8 +483,9 @@ export default function CatalogosPage() {
               size="sm"
               variant="outline"
               onClick={() => syncCatalogo("b")}
-              disabled={syncingB}
-              className="text-xs border-[#27272a] text-[#a1a1aa] hover:text-[#fafafa]"
+              disabled={syncingB || elementos.length === 0}
+              title={elementos.length === 0 ? "No hay elementos en el catálogo B para sincronizar" : undefined}
+              className="text-xs border-[#27272a] text-[#a1a1aa] hover:text-[#fafafa] disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {syncingB ? <><RotateCcw className="h-3 w-3 mr-1 animate-spin" /> Sincronizando...</> : "Sync Qdrant Catálogo B"}
             </Button>
@@ -483,8 +495,9 @@ export default function CatalogosPage() {
               size="sm"
               variant="outline"
               onClick={() => syncCatalogo("c")}
-              disabled={syncingC}
-              className="text-xs border-[#27272a] text-[#a1a1aa] hover:text-[#fafafa]"
+              disabled={syncingC || servicios.length === 0}
+              title={servicios.length === 0 ? "No hay tarifas en catálogo C para sincronizar" : undefined}
+              className="text-xs border-[#27272a] text-[#a1a1aa] hover:text-[#fafafa] disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {syncingC ? <><RotateCcw className="h-3 w-3 mr-1 animate-spin" /> Sincronizando...</> : "Sync Qdrant Catálogo C"}
             </Button>
