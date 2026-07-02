@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { toast } from "sonner"
-import { Search, Plus, Edit2, Loader2, Database, DollarSign, Tag, Layers, Wrench, RotateCcw } from "lucide-react"
+import { Search, Plus, Edit2, Loader2, Database, DollarSign, Tag, Layers, Wrench, RotateCcw, HelpCircle } from "lucide-react"
 
 import type { TarifaMacro, ElementoCatalogo, TarifaServicio, CategoriaMatriz } from "@/types"
 import { TIPO_STAND_LIST, NIVEL_DENSIDAD_LIST } from "@/constants"
@@ -477,34 +477,48 @@ export default function CatalogosPage() {
 
       {/* Sync buttons */}
       {activeCatalog !== "basea" && (
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end items-center gap-2">
           {activeCatalog === "baseb" && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => syncCatalogo("b")}
-              disabled={syncingB || elementos.length === 0}
-              title={elementos.length === 0 
-                ? "Primero debes añadir elementos al catálogo B antes de sincronizar" 
-                : "Actualiza la base de datos del motor de estimación con los elementos del catálogo"}
-              className="text-xs border-[#27272a] text-[#a1a1aa] hover:text-[#fafafa] disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              {syncingB ? <><RotateCcw className="h-3 w-3 mr-1 animate-spin" /> Sincronizando...</> : "Sincronizar Catálogo B"}
-            </Button>
+            <>
+              <span className="relative group">
+                <HelpCircle className="h-4 w-4 text-[#71717a] hover:text-[#a1a1aa] cursor-help" />
+                <span className="absolute right-0 top-6 z-50 w-56 p-2 text-xs text-[#fafafa] bg-zinc-800 border border-[#27272a] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                  {elementos.length === 0 
+                    ? "Primero debes añadir elementos al catálogo B. Usa el botón '+ Añadir Elemento'." 
+                    : "Actualiza la base de datos del motor de estimación con los elementos del catálogo."}
+                </span>
+              </span>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => syncCatalogo("b")}
+                disabled={syncingB || elementos.length === 0}
+                className="text-xs border-[#27272a] text-[#a1a1aa] hover:text-[#fafafa] disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {syncingB ? <><RotateCcw className="h-3 w-3 mr-1 animate-spin" /> Sincronizando...</> : "Sincronizar Catálogo B"}
+              </Button>
+            </>
           )}
           {activeCatalog === "basec" && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => syncCatalogo("c")}
-              disabled={syncingC || servicios.length === 0}
-              title={servicios.length === 0 
-                ? "Primero debes añadir tarifas al catálogo C antes de sincronizar" 
-                : "Actualiza la base de datos del motor de estimación con las tarifas de despiece"}
-              className="text-xs border-[#27272a] text-[#a1a1aa] hover:text-[#fafafa] disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              {syncingC ? <><RotateCcw className="h-3 w-3 mr-1 animate-spin" /> Sincronizando...</> : "Sincronizar Catálogo C"}
-            </Button>
+            <>
+              <span className="relative group">
+                <HelpCircle className="h-4 w-4 text-[#71717a] hover:text-[#a1a1aa] cursor-help" />
+                <span className="absolute right-0 top-6 z-50 w-56 p-2 text-xs text-[#fafafa] bg-zinc-800 border border-[#27272a] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                  {servicios.length === 0 
+                    ? "Primero debes añadir tarifas al catálogo C. Usa el botón '+ Añadir Tarifa Despiece'." 
+                    : "Actualiza la base de datos del motor de estimación con las tarifas de despiece."}
+                </span>
+              </span>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => syncCatalogo("c")}
+                disabled={syncingC || servicios.length === 0}
+                className="text-xs border-[#27272a] text-[#a1a1aa] hover:text-[#fafafa] disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {syncingC ? <><RotateCcw className="h-3 w-3 mr-1 animate-spin" /> Sincronizando...</> : "Sincronizar Catálogo C"}
+              </Button>
+            </>
           )}
         </div>
       )}
