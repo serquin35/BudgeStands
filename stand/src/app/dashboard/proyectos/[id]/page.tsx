@@ -339,11 +339,11 @@ const getSemaforoHito = (hito: ProyectoHito) => {
         {/* Contenido Pestañas */}
         <div className="md:col-span-2 space-y-6">
           {/* Navegación de pestañas */}
-          <div className="flex border-b border-[#27272a]/70 gap-2 mb-6">
+          <div className="flex border-b border-[#27272a]/70 gap-2 mb-6 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setActiveTab("hitos")}
               className={cn(
-                "px-4 py-2 text-sm font-medium transition-all border-b-2 -mb-[2px]",
+                "px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-all border-b-2 -mb-[2px] whitespace-nowrap",
                 activeTab === "hitos"
                   ? "border-indigo-500 text-white"
                   : "border-transparent text-[#a1a1aa] hover:text-[#fafafa]"
@@ -354,7 +354,7 @@ const getSemaforoHito = (hito: ProyectoHito) => {
             <button
               onClick={() => setActiveTab("b2b")}
               className={cn(
-                "px-4 py-2 text-sm font-medium transition-all border-b-2 -mb-[2px] flex items-center gap-2 relative",
+                "px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-all border-b-2 -mb-[2px] flex items-center gap-2 relative whitespace-nowrap",
                 activeTab === "b2b"
                   ? "border-indigo-500 text-white"
                   : "border-transparent text-[#a1a1aa] hover:text-[#fafafa]"
@@ -371,7 +371,7 @@ const getSemaforoHito = (hito: ProyectoHito) => {
             <button
               onClick={() => setActiveTab("facturas")}
               className={cn(
-                "px-4 py-2 text-sm font-medium transition-all border-b-2 -mb-[2px]",
+                "px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-all border-b-2 -mb-[2px] whitespace-nowrap",
                 activeTab === "facturas"
                   ? "border-indigo-500 text-white"
                   : "border-transparent text-[#a1a1aa] hover:text-[#fafafa]"

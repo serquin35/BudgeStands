@@ -480,19 +480,19 @@ export default function CanalB2B({ idProyecto, idEmpresa, usuario }: CanalB2BPro
   }
 
   return (
-    <div className="border border-[#27272a]/70 rounded-xl bg-[#09090b] flex flex-col h-[650px] shadow-2xl relative overflow-hidden">
+    <div className="border border-[#27272a]/70 rounded-xl bg-[#09090b] flex flex-col h-[50vh] sm:h-[600px] md:h-[650px] shadow-2xl relative overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-[#27272a]/70 flex items-center justify-between bg-zinc-950/40">
-        <div className="flex items-center gap-3">
+      <div className="p-3 sm:p-4 border-b border-[#27272a]/70 flex items-center justify-between bg-zinc-950/40">
+        <div className="flex items-center gap-2 sm:gap-3">
           <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse" />
           <div>
-            <h3 className="font-semibold text-sm text-[#fafafa] flex items-center gap-2">
+            <h3 className="font-semibold text-xs sm:text-sm text-[#fafafa] flex items-center gap-2">
               Canal B2B Taller-Oficina
             </h3>
             <p className="text-[10px] text-slate-500">Historial inmutable • RLS activo</p>
           </div>
         </div>
-        <div className="flex items-center gap-1 text-slate-400 text-xs bg-slate-900 px-2 py-1 rounded border border-slate-800">
+        <div className="hidden sm:flex items-center gap-1 text-slate-400 text-xs bg-slate-900 px-2 py-1 rounded border border-slate-800">
           <Lock className="h-3 w-3" />
           <span>Encriptación TLS</span>
         </div>
@@ -501,7 +501,7 @@ export default function CanalB2B({ idProyecto, idEmpresa, usuario }: CanalB2BPro
       {/* Message Feed */}
       <div 
         ref={feedRef}
-        className="flex-1 p-4 overflow-y-auto space-y-4 bg-zinc-950/20"
+        className="flex-1 p-3 sm:p-4 overflow-y-auto space-y-4 bg-zinc-950/20"
         onDragEnter={handleDrag}
         onDragOver={handleDrag}
         onDragLeave={handleDrag}
@@ -534,7 +534,7 @@ export default function CanalB2B({ idProyecto, idEmpresa, usuario }: CanalB2BPro
                 {/* Content Body */}
                 <div className="space-y-1.5">
                   {/* Meta */}
-                  <div className={`flex items-center gap-2 text-[10px] text-slate-500 ${isMe ? "justify-end" : ""}`}>
+                  <div className={`flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] text-slate-500 ${isMe ? "justify-end" : ""}`}>
                     <span className="font-semibold text-slate-400">
                       {msg.usuarios?.nombre_completo || "Usuario B2B"}
                     </span>
@@ -573,10 +573,10 @@ export default function CanalB2B({ idProyecto, idEmpresa, usuario }: CanalB2BPro
                           </div>
                         )}
 
-                        <div className="flex items-center justify-between gap-4 p-2 bg-black/40 rounded-lg border border-[#27272a] hover:border-slate-700 transition-colors">
-                          <div className="flex items-center gap-2 overflow-hidden min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2 bg-black/40 rounded-lg border border-[#27272a] hover:border-slate-700 transition-colors">
+                          <div className="flex items-center gap-2 min-w-0">
                             <Icon className="h-4 w-4 shrink-0 text-slate-400" />
-                            <span className="text-xs text-slate-300 truncate font-mono">
+                            <span className="text-xs text-slate-300 break-all sm:truncate font-mono">
                               {msg.ruta_archivo_servidor.split("-").slice(1).join("-") || "archivo_b2b"}
                             </span>
                           </div>
@@ -584,7 +584,7 @@ export default function CanalB2B({ idProyecto, idEmpresa, usuario }: CanalB2BPro
                             variant="outline" 
                             size="icon" 
                             onClick={() => descargarArchivo(msg.ruta_archivo_servidor!, msg.ruta_archivo_servidor!.split("-").slice(1).join("-"))}
-                            className="h-7 w-7 border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-white"
+                            className="h-7 w-7 sm:shrink-0 border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-white"
                           >
                             <Download className="h-3.5 w-3.5" />
                           </Button>
@@ -609,20 +609,20 @@ export default function CanalB2B({ idProyecto, idEmpresa, usuario }: CanalB2BPro
       </div>
 
       {/* Input Composer */}
-      <form onSubmit={handleSend} className="p-4 border-t border-[#27272a]/70 bg-zinc-950/40 space-y-3">
+      <form onSubmit={handleSend} className="p-3 sm:p-4 border-t border-[#27272a]/70 bg-zinc-950/40 space-y-2 sm:space-y-3">
         {uploading && (
           <div className="flex items-center gap-2 text-xs text-indigo-400 bg-indigo-950/30 p-2 rounded border border-indigo-900/30 animate-pulse">
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            <span>Subiendo archivo técnico al taller ferial...</span>
+            <span>Subiendo archivo...</span>
           </div>
         )}
 
         <div className="flex items-center gap-2">
-          {/* Selector de tipo */}
+          {/* Selector de tipo - oculto en móvil muy pequeño, visible desde sm */}
           <select
             value={tipo}
             onChange={(e) => setTipo(e.target.value as TipoMensaje)}
-            className="h-10 px-2.5 rounded-lg border border-[#27272a] bg-slate-950 text-[#a1a1aa] text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-indigo-500 hover:border-slate-700 transition-colors"
+            className="hidden sm:block h-10 px-2.5 rounded-lg border border-[#27272a] bg-slate-950 text-[#a1a1aa] text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-indigo-500 hover:border-slate-700 transition-colors"
           >
             <option value="mensaje">💬 Mensaje</option>
             <option value="plano_autocad">📐 Plano CAD</option>
@@ -635,11 +635,11 @@ export default function CanalB2B({ idProyecto, idEmpresa, usuario }: CanalB2BPro
           <div className="flex-1 relative">
             <Input
               type="text"
-              placeholder="Escribe un mensaje o instrucciones para el taller..."
+              placeholder="Escribe un mensaje..."
               value={text}
               onChange={(e) => setText(e.target.value)}
               disabled={sending || uploading}
-              className="bg-slate-950 border-[#27272a] text-[#fafafa] placeholder-slate-500 pr-10 focus-visible:ring-indigo-500"
+              className="bg-slate-950 border-[#27272a] text-[#fafafa] placeholder-slate-500 pr-10 focus-visible:ring-indigo-500 text-sm"
             />
 
             {/* Clip de adjuntar */}
@@ -666,7 +666,7 @@ export default function CanalB2B({ idProyecto, idEmpresa, usuario }: CanalB2BPro
           <Button 
             type="submit"
             disabled={!text.trim() || sending || uploading}
-            className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg shrink-0 px-4 gap-2"
+            className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg shrink-0 px-3 sm:px-4 gap-2 h-10"
           >
             {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             <span className="hidden sm:inline">Enviar</span>
