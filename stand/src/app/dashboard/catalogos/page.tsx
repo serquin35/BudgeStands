@@ -158,7 +158,7 @@ export default function CatalogosPage() {
     // Validar que haya datos antes de sincronizar
     const datosVacios = tipo === "b" ? elementos.length === 0 : servicios.length === 0
     if (datosVacios) {
-      toast.warning(`No hay datos en Catálogo ${tipo.toUpperCase()} para sincronizar.`)
+      toast.warning(`Añade elementos al Catálogo ${tipo.toUpperCase()} antes de sincronizar.`)
       return
     }
 
@@ -173,12 +173,12 @@ export default function CatalogosPage() {
       })
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}))
-        throw new Error(errData.error || "Error en sync")
+        throw new Error(errData.error || "Error al sincronizar")
       }
       const data = await res.json()
-      toast.success(`✅ ${data.elementos_indexados ?? 'Todos los'} elementos sincronizados con Qdrant`)
+      toast.success(`✅ Catálogo ${tipo.toUpperCase()} sincronizado correctamente (${data.elementos_indexados ?? 0} elementos)`)
     } catch (err: any) {
-      toast.error(err.message || "Error al sincronizar con Qdrant. Inténtalo de nuevo.")
+      toast.error(err.message || "Error al sincronizar. Inténtalo de nuevo.")
     } finally {
       setSyncing(false)
     }
@@ -484,10 +484,12 @@ export default function CatalogosPage() {
               variant="outline"
               onClick={() => syncCatalogo("b")}
               disabled={syncingB || elementos.length === 0}
-              title={elementos.length === 0 ? "No hay elementos en el catálogo B para sincronizar" : undefined}
+              title={elementos.length === 0 
+                ? "Primero debes añadir elementos al catálogo B antes de sincronizar" 
+                : "Actualiza la base de datos del motor de estimación con los elementos del catálogo"}
               className="text-xs border-[#27272a] text-[#a1a1aa] hover:text-[#fafafa] disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {syncingB ? <><RotateCcw className="h-3 w-3 mr-1 animate-spin" /> Sincronizando...</> : "Sync Qdrant Catálogo B"}
+              {syncingB ? <><RotateCcw className="h-3 w-3 mr-1 animate-spin" /> Sincronizando...</> : "Sincronizar Catálogo B"}
             </Button>
           )}
           {activeCatalog === "basec" && (
@@ -496,10 +498,12 @@ export default function CatalogosPage() {
               variant="outline"
               onClick={() => syncCatalogo("c")}
               disabled={syncingC || servicios.length === 0}
-              title={servicios.length === 0 ? "No hay tarifas en catálogo C para sincronizar" : undefined}
+              title={servicios.length === 0 
+                ? "Primero debes añadir tarifas al catálogo C antes de sincronizar" 
+                : "Actualiza la base de datos del motor de estimación con las tarifas de despiece"}
               className="text-xs border-[#27272a] text-[#a1a1aa] hover:text-[#fafafa] disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {syncingC ? <><RotateCcw className="h-3 w-3 mr-1 animate-spin" /> Sincronizando...</> : "Sync Qdrant Catálogo C"}
+              {syncingC ? <><RotateCcw className="h-3 w-3 mr-1 animate-spin" /> Sincronizando...</> : "Sincronizar Catálogo C"}
             </Button>
           )}
         </div>
