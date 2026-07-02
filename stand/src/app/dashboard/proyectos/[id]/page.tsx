@@ -8,16 +8,36 @@ import { StatusBadge } from "@/components/shared/status-badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { CheckCircle2, Clock, AlertCircle, ArrowLeft, Building2, Calendar, MapPin, Maximize, HelpCircle, Receipt, Plus, ExternalLink } from "lucide-react"
+import { cn } from "@/lib/utils"
+import CanalB2B from "@/components/dashboard/canal-b2b"
 
 export default function ProyectoDetallePage({ params }: { params: { id: string } }) {
   const router = useRouter()
   const [proyecto, setProyecto] = useState<ProyectoOperacion | null>(null)
   const [loading, setLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState<"hitos" | "b2b" | "facturas">("hitos")
+  const [unreadCount, setUnreadCount] = useState(0)
+  const [vinculoId, setVinculoId] = useState<string | null>(null)
+  const [usuarioLogueado, setUsuarioLogueado] = useState<{ id: string; nombre_completo: string; rol: string; id_empresa: string } | null>(null)
 
   const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     const fetchProyecto = async () => {
+      // 1. Obtener perfil del usuario logueado
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: profile } = await supabase
+          .from("usuarios")
+          .select("id, nombre_completo, rol, id_empresa")
+          .eq("id", user.id)
+          .single()
+        if (profile) {
+          setUsuarioLogueado(profile as any)
+        }
+      }
+
+      // 2. Obtener detalles del proyecto
       const { data, error } = await supabase
         .from("proyectos_operaciones")
         .select(`
@@ -71,6 +91,104 @@ export default function ProyectoDetallePage({ params }: { params: { id: string }
 
     fetchProyecto()
   }, [params.id, supabase])
+
+  // Obtener VinculoB2B e inicializar contador de mensajes no leídos
+  useEffect(() => {
+    const fetchVinculo = async () => {
+      const { data: vinculo } = await supabase
+        .from("proyectos_vinculos_b2b")
+        .select("id")
+        .eq("id_proyecto", params.id)
+        .maybeSingle()
+      
+      if (vinculo) {
+        setVinculoId(vinculo.id)
+        const lastSeen = localStorage.getItem(`canal_b2b_last_seen_${params.id}`)
+        if (lastSeen) {
+          const lastSeenDate = new Date(Number(lastSeen)).toISOString()
+          const { count } = await supabase
+            .from("proyectos_canal_intercambio")
+            .select("*", { count: "exact", head: true })
+            .eq("id_vinculo_b2b", vinculo.id)
+            .gt("fecha_registro", lastSeenDate)
+          
+          setUnreadCount(count || 0)
+        } else {
+          // Si nunca lo ha visto, contamos todos
+          const { count } = await supabase
+            .from("proyectos_canal_intercambio")
+            .select("*", { count: "exact", head: true })
+            .eq("id_vinculo_b2b", vinculo.id)
+          
+          setUnreadCount(count || 0)
+        }
+      }
+    }
+    
+    if (proyecto) {
+      fetchVinculo()
+    }
+  }, [proyecto, params.id, supabase])
+
+  // Suscribirse a nuevos mensajes para actualizar el badge de no leídos
+  useEffect(() => {
+    if (!vinculoId) return
+    
+    const channel = supabase
+      .channel("b2b-badge-realtime")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "proyectos_canal_intercambio",
+          filter: `id_vinculo_b2b=eq.${vinculoId}`
+        },
+        () => {
+          if (activeTab !== "b2b") {
+            setUnreadCount(prev => prev + 1)
+          }
+        }
+      )
+      .subscribe()
+      
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [vinculoId, activeTab, supabase])
+
+  // Limpiar el contador de no leídos al abrir la pestaña b2b
+  useEffect(() => {
+    if (activeTab === "b2b") {
+      setUnreadCount(0)
+      localStorage.setItem(`canal_b2b_last_seen_${params.id}`, Date.now().toString())
+      window.dispatchEvent(new Event("storage"))
+    }
+  }, [activeTab, params.id])
+
+  // Sincronizar lectura a través de pestañas o del propio componente
+  useEffect(() => {
+    const handleStorageChange = () => {
+      if (activeTab === "b2b") {
+        setUnreadCount(0)
+      } else {
+        const lastSeen = localStorage.getItem(`canal_b2b_last_seen_${params.id}`)
+        if (lastSeen && vinculoId) {
+          const lastSeenDate = new Date(Number(lastSeen)).toISOString()
+          supabase
+            .from("proyectos_canal_intercambio")
+            .select("*", { count: "exact", head: true })
+            .eq("id_vinculo_b2b", vinculoId)
+            .gt("fecha_registro", lastSeenDate)
+            .then(({ count }) => {
+              setUnreadCount(count || 0)
+            })
+        }
+      }
+    }
+    window.addEventListener("storage", handleStorageChange)
+    return () => window.removeEventListener("storage", handleStorageChange)
+  }, [activeTab, params.id, vinculoId, supabase])
 
   const formatCurrency = (amount: number | null | undefined) => {
   if (amount == null) return "0,00 €"
@@ -181,7 +299,8 @@ const getSemaforoHito = (hito: ProyectoHito) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="md:col-span-1 bg-slate-900 border-slate-800">
+        {/* Detalles Generales */}
+        <Card className="md:col-span-1 bg-slate-900 border-slate-800 h-fit">
           <CardHeader>
             <CardTitle className="text-lg text-slate-100">Detalles Generales</CardTitle>
           </CardHeader>
@@ -217,221 +336,281 @@ const getSemaforoHito = (hito: ProyectoHito) => {
           </CardContent>
         </Card>
 
-        <Card className="md:col-span-2 bg-slate-900 border-slate-800">
-          <CardHeader>
-            <CardTitle className="text-lg text-slate-100">Línea de Tiempo - Producción</CardTitle>
-            <CardDescription className="text-slate-400">Seguimiento cronológico y estado de los hitos del proyecto</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {proyecto.proyectos_hitos?.map((hito, index) => {
-                const colorClass = getSemaforoHito(hito)
-                const isCompletado = hito.estado_hito === "completado"
-                
-                return (
-                  <div key={hito.id} className="relative pl-8 pb-4">
-                    {/* Line connection */}
-                    {index !== (proyecto.proyectos_hitos?.length || 0) - 1 && (
-                      <div className="absolute left-[11px] top-6 bottom-0 w-0.5 bg-slate-800"></div>
-                    )}
-                    
-                    {/* Dot */}
-                    <div className={`absolute left-0 top-1 w-6 h-6 rounded-full border-2 flex items-center justify-center ${colorClass}`}>
-                      {isCompletado ? <CheckCircle2 className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
-                    </div>
+        {/* Contenido Pestañas */}
+        <div className="md:col-span-2 space-y-6">
+          {/* Navegación de pestañas */}
+          <div className="flex border-b border-[#27272a]/70 gap-2 mb-6">
+            <button
+              onClick={() => setActiveTab("hitos")}
+              className={cn(
+                "px-4 py-2 text-sm font-medium transition-all border-b-2 -mb-[2px]",
+                activeTab === "hitos"
+                  ? "border-indigo-500 text-white"
+                  : "border-transparent text-[#a1a1aa] hover:text-[#fafafa]"
+              )}
+            >
+              🏗️ Hitos de Producción
+            </button>
+            <button
+              onClick={() => setActiveTab("b2b")}
+              className={cn(
+                "px-4 py-2 text-sm font-medium transition-all border-b-2 -mb-[2px] flex items-center gap-2 relative",
+                activeTab === "b2b"
+                  ? "border-indigo-500 text-white"
+                  : "border-transparent text-[#a1a1aa] hover:text-[#fafafa]"
+              )}
+            >
+              💬 Canal B2B
+              {unreadCount > 0 && (
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-450 bg-rose-500 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab("facturas")}
+              className={cn(
+                "px-4 py-2 text-sm font-medium transition-all border-b-2 -mb-[2px]",
+                activeTab === "facturas"
+                  ? "border-indigo-500 text-white"
+                  : "border-transparent text-[#a1a1aa] hover:text-[#fafafa]"
+              )}
+            >
+              💳 Facturación y Cobros
+            </button>
+          </div>
 
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-950 p-4 rounded-lg border border-slate-800 shadow-sm">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h4 className="text-sm font-medium text-slate-200">{formatTipoHito(hito.tipo_hito)}</h4>
-                          <div className="group relative flex items-center">
-                            <HelpCircle className="h-4 w-4 text-slate-500 cursor-help hover:text-slate-300 transition-colors" />
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-48 sm:w-64 p-2.5 bg-slate-800 text-xs text-slate-200 rounded-md shadow-xl z-50 border border-slate-700 pointer-events-none">
-                              {descripcionesHitos[hito.tipo_hito] || "Sin descripción disponible."}
-                              {/* Triángulo del tooltip */}
-                              <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+          {/* Hitos Tab */}
+          {activeTab === "hitos" && (
+            <Card className="bg-slate-900 border-slate-800">
+              <CardHeader>
+                <CardTitle className="text-lg text-slate-100">Línea de Tiempo - Hitos</CardTitle>
+                <CardDescription className="text-slate-400">Seguimiento cronológico y estado de los hitos del proyecto</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {proyecto.proyectos_hitos?.map((hito, index) => {
+                    const colorClass = getSemaforoHito(hito)
+                    const isCompletado = hito.estado_hito === "completado"
+                    
+                    return (
+                      <div key={hito.id} className="relative pl-8 pb-4">
+                        {/* Line connection */}
+                        {index !== (proyecto.proyectos_hitos?.length || 0) - 1 && (
+                          <div className="absolute left-[11px] top-6 bottom-0 w-0.5 bg-slate-800"></div>
+                        )}
+                        
+                        {/* Dot */}
+                        <div className={`absolute left-0 top-1 w-6 h-6 rounded-full border-2 flex items-center justify-center ${colorClass}`}>
+                          {isCompletado ? <CheckCircle2 className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-950 p-4 rounded-lg border border-slate-800 shadow-sm">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h4 className="text-sm font-medium text-slate-200">{formatTipoHito(hito.tipo_hito)}</h4>
+                              <div className="group relative flex items-center">
+                                <HelpCircle className="h-4 w-4 text-slate-500 cursor-help hover:text-slate-300 transition-colors" />
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-48 sm:w-64 p-2.5 bg-slate-800 text-xs text-slate-200 rounded-md shadow-xl z-50 border border-slate-700 pointer-events-none">
+                                  {descripcionesHitos[hito.tipo_hito] || "Sin descripción disponible."}
+                                  {/* Triángulo del tooltip */}
+                                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-3 mt-1">
+                              <p className="text-xs text-slate-400">
+                                Programado: <span className="text-slate-300 font-medium">{hito.fecha_programada}</span>
+                              </p>
+                              {isCompletado && (
+                                <p className="text-xs font-medium text-green-400">
+                                  Realizado: {hito.fecha_real_ejecucion}
+                                </p>
+                              )}
                             </div>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-3 mt-1">
-                          <p className="text-xs text-slate-400">
-                            Programado: <span className="text-slate-300 font-medium">{hito.fecha_programada}</span>
-                          </p>
-                          {isCompletado && (
-                            <p className="text-xs font-medium text-green-400">
-                              Realizado: {hito.fecha_real_ejecucion}
-                            </p>
+                          
+                          {!isCompletado && (
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              className="w-full sm:w-auto border-indigo-500/30 hover:bg-indigo-500/10 text-indigo-400"
+                              onClick={() => alCompletarHito(hito)}
+                            >
+                              Marcar Completado
+                            </Button>
                           )}
                         </div>
                       </div>
-                      
-                      {!isCompletado && (
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className="w-full sm:w-auto border-indigo-500/30 hover:bg-indigo-500/10 text-indigo-400"
-                          onClick={() => alCompletarHito(hito)}
-                        >
-                          Marcar Completado
-                        </Button>
+                    )
+                  })}
+                  
+                  {(!proyecto.proyectos_hitos || proyecto.proyectos_hitos.length === 0) && (
+                    <div className="text-center p-8 text-slate-500 bg-slate-950 rounded-lg border border-dashed border-slate-800">
+                      <AlertCircle className="mx-auto h-8 w-8 mb-2 opacity-50" />
+                      <p>No hay hitos generados para este proyecto.</p>
+                      <p className="text-xs mt-1">El trigger SQL debería haberlos creado al aceptar el presupuesto.</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Canal B2B Tab */}
+          {activeTab === "b2b" && usuarioLogueado && (
+            <CanalB2B
+              idProyecto={proyecto.id}
+              idEmpresa={usuarioLogueado.id_empresa}
+              usuario={usuarioLogueado}
+            />
+          )}
+
+          {/* Facturas Tab */}
+          {activeTab === "facturas" && (
+            <Card className="bg-slate-900 border-slate-800 text-[#fafafa]">
+              <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6">
+                <div>
+                  <CardTitle className="text-lg text-slate-100 flex items-center gap-2">
+                    <Receipt className="w-5 h-5 text-indigo-400" /> Facturación y Cobros
+                  </CardTitle>
+                  <CardDescription className="text-slate-400">
+                    Resumen de facturas emitidas, cobradas e importes pendientes de cobro asociados a este proyecto.
+                  </CardDescription>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-xs"
+                    onClick={() => router.push(`/dashboard/finanzas?proyectoId=${proyecto.id}&new=true`)}
+                  >
+                    <Plus className="w-4 h-4 mr-1.5" /> Emitir Factura
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-slate-700 hover:bg-slate-800 text-xs text-slate-300"
+                    onClick={() => router.push(`/dashboard/finanzas?proyectoId=${proyecto.id}`)}
+                  >
+                    <ExternalLink className="w-4 h-4 mr-1.5" /> Ir a Finanzas
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {(() => {
+                  const facturas = (proyecto as any).facturas_proyectos || []
+                  const totalPresupuesto = pc?.total_presupuesto || 0
+                  const totalFacturado = facturas.reduce((sum: number, f: any) => sum + Number(f.total_factura_bruto), 0)
+                  const totalCobrado = facturas.filter((f: any) => f.estado_cobro === 'cobrada').reduce((sum: number, f: any) => sum + Number(f.total_factura_bruto), 0)
+                  const totalPendiente = facturas.filter((f: any) => f.estado_cobro !== 'cobrada').reduce((sum: number, f: any) => sum + Number(f.total_factura_bruto), 0)
+                  const pctFacturadoAcumulado = facturas.filter((f: any) => f.tipo_factura !== 'rectificativa').reduce((sum: number, f: any) => sum + Number(f.porcentaje_facturado), 0)
+
+                  return (
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase font-semibold">Presupuesto</p>
+                          <p className="text-sm font-bold text-white mt-0.5">{formatCurrency(totalPresupuesto)}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase font-semibold">Total Facturado</p>
+                          <p className="text-sm font-bold text-white mt-0.5">
+                            {formatCurrency(totalFacturado)} <span className="text-[10px] text-indigo-400 font-normal">({pctFacturadoAcumulado}%)</span>
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-green-400 uppercase font-semibold">Total Cobrado</p>
+                          <p className="text-sm font-bold text-green-400 mt-0.5">{formatCurrency(totalCobrado)}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-red-400 uppercase font-semibold">Pendiente Cobro</p>
+                          <p className="text-sm font-bold text-red-400 mt-0.5">{formatCurrency(totalPendiente)}</p>
+                        </div>
+                        <div className="col-span-2 md:col-span-1">
+                          <p className="text-[10px] text-slate-400 uppercase font-semibold">Progreso Facturación</p>
+                          <div className="flex items-center gap-2 mt-1.5">
+                            <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden border border-slate-700">
+                              <div 
+                                className="bg-indigo-500 h-full rounded-full transition-all duration-300"
+                                style={{ width: `${Math.min(pctFacturadoAcumulado, 100)}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-xs text-slate-300 font-semibold">{pctFacturadoAcumulado}%</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {facturas.length === 0 ? (
+                        <div className="text-center p-6 text-slate-500 bg-slate-950 rounded-lg border border-dashed border-slate-800">
+                          <p className="text-xs">No se han emitido facturas para este proyecto todavía.</p>
+                        </div>
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-xs text-left border-collapse">
+                            <thead>
+                              <tr className="border-b border-slate-800 text-slate-400 font-semibold">
+                                <th className="pb-3 text-left">Factura</th>
+                                <th className="pb-3 text-left">Tipo</th>
+                                <th className="pb-3 text-center">Porcentaje</th>
+                                <th className="pb-3 text-right">Base Imponible</th>
+                                <th className="pb-3 text-right">Total Bruto</th>
+                                <th className="pb-3 text-left pl-6">Vencimiento</th>
+                                <th className="pb-3 text-center">Estado</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-800/40">
+                              {facturas.map((factura: any) => {
+                                let badgeColor = "bg-zinc-800 text-zinc-400 border-zinc-700"
+                                let badgeLabel = "Pendiente"
+                                
+                                if (factura.estado_cobro === 'cobrada') {
+                                  badgeColor = "bg-green-500/10 text-green-400 border-green-500/20"
+                                  badgeLabel = "Cobrada"
+                                } else if (factura.estado_cobro === 'impagada_vencida') {
+                                  badgeColor = "bg-red-500/10 text-red-400 border-red-500/20"
+                                  badgeLabel = "Impagada"
+                                } else {
+                                  const hoy = new Date()
+                                  const venc = new Date(factura.fecha_vencimiento)
+                                  const diasRest = Math.ceil((venc.getTime() - hoy.getTime()) / 86400000)
+                                  if (diasRest < 0) {
+                                    badgeColor = "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                                    badgeLabel = "Vencida"
+                                  } else if (diasRest <= 7) {
+                                    badgeColor = "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
+                                    badgeLabel = `Vence en ${diasRest}d`
+                                  }
+                                }
+
+                                return (
+                                  <tr key={factura.id} className="hover:bg-slate-950/20">
+                                    <td className="py-3 font-mono font-semibold text-slate-200">{factura.numero_factura_legal}</td>
+                                    <td className="py-3 capitalize text-slate-300">{factura.tipo_factura}</td>
+                                    <td className="py-3 text-center text-slate-300 font-semibold">{factura.porcentaje_facturado}%</td>
+                                    <td className="py-3 text-right text-slate-300">{formatCurrency(factura.base_imponible)}</td>
+                                    <td className="py-3 text-right text-white font-semibold">{formatCurrency(factura.total_factura_bruto)}</td>
+                                    <td className="py-3 text-slate-400 pl-6">{factura.fecha_vencimiento}</td>
+                                    <td className="py-3 text-center">
+                                      <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${badgeColor}`}>
+                                        {badgeLabel}
+                                      </span>
+                                    </td>
+                                  </tr>
+                                )
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
                       )}
                     </div>
-                  </div>
-                )
-              })}
-              
-              {(!proyecto.proyectos_hitos || proyecto.proyectos_hitos.length === 0) && (
-                <div className="text-center p-8 text-slate-500 bg-slate-950 rounded-lg border border-dashed border-slate-800">
-                  <AlertCircle className="mx-auto h-8 w-8 mb-2 opacity-50" />
-                  <p>No hay hitos generados para este proyecto.</p>
-                  <p className="text-xs mt-1">El trigger SQL debería haberlos creado al aceptar el presupuesto.</p>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+                  )
+                })()}
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </div>
-
-      {/* Facturación y Cobros */}
-      <Card className="bg-slate-900 border-slate-800 text-[#fafafa] mt-6">
-        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6">
-          <div>
-            <CardTitle className="text-lg text-slate-100 flex items-center gap-2">
-              <Receipt className="w-5 h-5 text-indigo-400" /> Facturación y Cobros
-            </CardTitle>
-            <CardDescription className="text-slate-400">
-              Resumen de facturas emitidas, cobradas e importes pendientes de cobro asociados a este proyecto.
-            </CardDescription>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              className="bg-indigo-600 hover:bg-indigo-700 text-xs"
-              onClick={() => router.push(`/dashboard/finanzas?proyectoId=${proyecto.id}&new=true`)}
-            >
-              <Plus className="w-4 h-4 mr-1.5" /> Emitir Factura
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="border-slate-700 hover:bg-slate-800 text-xs text-slate-300"
-              onClick={() => router.push(`/dashboard/finanzas?proyectoId=${proyecto.id}`)}
-            >
-              <ExternalLink className="w-4 h-4 mr-1.5" /> Ir a Finanzas
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {(() => {
-            const facturas = (proyecto as any).facturas_proyectos || []
-            const totalPresupuesto = pc?.total_presupuesto || 0
-            const totalFacturado = facturas.reduce((sum: number, f: any) => sum + Number(f.total_factura_bruto), 0)
-            const totalCobrado = facturas.filter((f: any) => f.estado_cobro === 'cobrada').reduce((sum: number, f: any) => sum + Number(f.total_factura_bruto), 0)
-            const totalPendiente = facturas.filter((f: any) => f.estado_cobro !== 'cobrada').reduce((sum: number, f: any) => sum + Number(f.total_factura_bruto), 0)
-            const pctFacturadoAcumulado = facturas.filter((f: any) => f.tipo_factura !== 'rectificativa').reduce((sum: number, f: any) => sum + Number(f.porcentaje_facturado), 0)
-
-            return (
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <div>
-                    <p className="text-[10px] text-slate-400 uppercase font-semibold">Presupuesto</p>
-                    <p className="text-sm font-bold text-white mt-0.5">{formatCurrency(totalPresupuesto)}</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-slate-400 uppercase font-semibold">Total Facturado</p>
-                    <p className="text-sm font-bold text-white mt-0.5">
-                      {formatCurrency(totalFacturado)} <span className="text-[10px] text-indigo-400 font-normal">({pctFacturadoAcumulado}%)</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-green-400 uppercase font-semibold">Total Cobrado</p>
-                    <p className="text-sm font-bold text-green-400 mt-0.5">{formatCurrency(totalCobrado)}</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-red-400 uppercase font-semibold">Pendiente Cobro</p>
-                    <p className="text-sm font-bold text-red-400 mt-0.5">{formatCurrency(totalPendiente)}</p>
-                  </div>
-                  <div className="col-span-2 md:col-span-1">
-                    <p className="text-[10px] text-slate-400 uppercase font-semibold">Progreso Facturación</p>
-                    <div className="flex items-center gap-2 mt-1.5">
-                      <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden border border-slate-700">
-                        <div 
-                          className="bg-indigo-500 h-full rounded-full transition-all duration-300"
-                          style={{ width: `${Math.min(pctFacturadoAcumulado, 100)}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-xs text-slate-300 font-semibold">{pctFacturadoAcumulado}%</span>
-                    </div>
-                  </div>
-                </div>
-
-                {facturas.length === 0 ? (
-                  <div className="text-center p-6 text-slate-500 bg-slate-950 rounded-lg border border-dashed border-slate-800">
-                    <p className="text-xs">No se han emitido facturas para este proyecto todavía.</p>
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-xs text-left border-collapse">
-                      <thead>
-                        <tr className="border-b border-slate-800 text-slate-400 font-semibold">
-                          <th className="pb-3 text-left">Factura</th>
-                          <th className="pb-3 text-left">Tipo</th>
-                          <th className="pb-3 text-center">Porcentaje</th>
-                          <th className="pb-3 text-right">Base Imponible</th>
-                          <th className="pb-3 text-right">Total Bruto</th>
-                          <th className="pb-3 text-left pl-6">Vencimiento</th>
-                          <th className="pb-3 text-center">Estado</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-800/40">
-                        {facturas.map((factura: any) => {
-                          let badgeColor = "bg-zinc-800 text-zinc-400 border-zinc-700"
-                          let badgeLabel = "Pendiente"
-                          
-                          if (factura.estado_cobro === 'cobrada') {
-                            badgeColor = "bg-green-500/10 text-green-400 border-green-500/20"
-                            badgeLabel = "Cobrada"
-                          } else if (factura.estado_cobro === 'impagada_vencida') {
-                            badgeColor = "bg-red-500/10 text-red-400 border-red-500/20"
-                            badgeLabel = "Impagada"
-                          } else {
-                            const hoy = new Date()
-                            const venc = new Date(factura.fecha_vencimiento)
-                            const diasRest = Math.ceil((venc.getTime() - hoy.getTime()) / 86400000)
-                            if (diasRest < 0) {
-                              badgeColor = "bg-rose-500/10 text-rose-400 border-rose-500/20"
-                              badgeLabel = "Vencida"
-                            } else if (diasRest <= 7) {
-                              badgeColor = "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
-                              badgeLabel = `Vence en ${diasRest}d`
-                            }
-                          }
-
-                          return (
-                            <tr key={factura.id} className="hover:bg-slate-950/20">
-                              <td className="py-3 font-mono font-semibold text-slate-200">{factura.numero_factura_legal}</td>
-                              <td className="py-3 capitalize text-slate-300">{factura.tipo_factura}</td>
-                              <td className="py-3 text-center text-slate-300 font-semibold">{factura.porcentaje_facturado}%</td>
-                              <td className="py-3 text-right text-slate-300">{formatCurrency(factura.base_imponible)}</td>
-                              <td className="py-3 text-right text-white font-semibold">{formatCurrency(factura.total_factura_bruto)}</td>
-                              <td className="py-3 text-slate-400 pl-6">{factura.fecha_vencimiento}</td>
-                              <td className="py-3 text-center">
-                                <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${badgeColor}`}>
-                                  {badgeLabel}
-                                </span>
-                              </td>
-                            </tr>
-                          )
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-            )
-          })()}
-        </CardContent>
-      </Card>
     </div>
   )
 }

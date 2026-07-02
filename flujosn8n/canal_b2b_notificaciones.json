@@ -1,0 +1,260 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "canal-b2b-notificacion",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "15375681-4126-452b-96c9-182da106b67d",
+      "name": "Supabase Trigger B2B",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        192
+      ],
+      "webhookId": "canal-b2b-notificacion"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body.record.tipo_notificacion }}",
+              "operation": "regex",
+              "value2": "orden_cnc|aprobacion_cambio"
+            }
+          ]
+        }
+      },
+      "id": "58ee0a02-6d74-4fba-8783-552c16ae91f2",
+      "name": "Filtrar CNC y Aprobación",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        64,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{$vars.SUPABASE_URL}}/rest/v1/proyectos_vinculos_b2b",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,id_proyecto,proyectos_operaciones(id,codigo_proyecto_interno,id_director_obra,usuarios:id_director_obra(nombre_completo))"
+            },
+            {
+              "name": "id",
+              "value": "=eq.{{$json.body.record.id_vinculo_b2b}}"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "95283bb9-572d-4ba6-a8e1-10a0acd443cb",
+      "name": "GET Detalles Proyecto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        272,
+        80
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "av5OrE4cZ9VGfbFz",
+          "name": "Supabase Stands"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$vars.SUPABASE_URL}}/rest/v1/rpc/get_user_email",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_user_id\": \"{{ $json.proyectos_operaciones.id_director_obra }}\"\n}",
+        "options": {}
+      },
+      "id": "15370c55-4c38-4473-8d98-aca3d90a54db",
+      "name": "GET Email Director",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        496,
+        80
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "av5OrE4cZ9VGfbFz",
+          "name": "Supabase Stands"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{$vars.SUPABASE_URL}}/rest/v1/usuarios",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "nombre_completo,rol"
+            },
+            {
+              "name": "id",
+              "value": "=eq.{{ $('Supabase Trigger B2B').item.json.body.record.id_usuario_emisor }}"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5d91a50d-5956-4f6c-9462-7eed40b880ef",
+      "name": "GET Emisor",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        80
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "av5OrE4cZ9VGfbFz",
+          "name": "Supabase Stands"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"notification_processed\"\n}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "0baa0968-fc96-490e-a01e-d889440ad90f",
+      "name": "Responder Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        272,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "from": "administracion@cheosdesign.info",
+        "to": "={{ $('GET Email Director').item.json }}",
+        "subject": "=Canal B2B - {{ $('Supabase Trigger B2B').item.json.body.record.tipo_notificacion === 'orden_cnc' ? 'Nueva Orden CNC' : 'Aprobacion de Cambio' }} | {{ $('GET Detalles Proyecto').item.json[0].proyectos_operaciones.codigo_proyecto_interno }}",
+        "html": "=<!DOCTYPE html>\n<html>\n<body style=\"font-family: 'Outfit', 'Inter', -apple-system, sans-serif; background-color: #ffffff; margin: 0; padding: 30px 10px;\">\n  <div style=\"max-width: 550px; margin: 0 auto; background-color: #09090b; border: 1px solid #27272a; padding: 40px 30px; border-radius: 12px; color: #fafafa; box-shadow: 0 4px 30px rgba(0,0,0,0.15);\">\n\n    <table style=\"border-collapse: collapse; margin-bottom: 25px;\">\n      <tr>\n        <td><div style=\"width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #6366f1, #a855f7); text-align: center; line-height: 36px; font-weight: 900; font-size: 16px; color: #fff;\">T</div></td>\n        <td style=\"padding-left: 12px;\">\n          <div style=\"font-weight: 800; font-size: 14px; color: #fafafa;\">The Titan</div>\n          <div style=\"font-size: 9px; color: #818cf8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;\">Canal B2B</div>\n        </td>\n      </tr>\n    </table>\n\n    <p style=\"font-size: 13px; color: #a1a1aa; line-height: 1.6; margin: 0 0 20px 0;\">Hola <strong style=\"color:#fafafa;\">{{ $('GET Detalles Proyecto').item.json[0].proyectos_operaciones.usuarios.nombre_completo }}</strong>,</p>\n    <p style=\"font-size: 13px; color: #a1a1aa; line-height: 1.6; margin: 0 0 24px 0;\">Se ha registrado una nueva actividad en el <strong style=\"color:#818cf8;\">Canal B2B</strong> del proyecto que diriges:</p>\n\n    <div style=\"background-color: #18181b; border: 1px solid #27272a; border-radius: 10px; padding: 20px; margin-bottom: 28px;\">\n      <table style=\"width: 100%; border-collapse: collapse; font-size: 13px;\">\n        <tr style=\"border-bottom: 1px solid #27272a;\">\n          <td style=\"padding: 10px 0; color: #71717a; width: 40%;\">Proyecto:</td>\n          <td style=\"padding: 10px 0; color: #fafafa; font-weight: 600; font-family: monospace;\">{{ $('GET Detalles Proyecto').item.json[0].proyectos_operaciones.codigo_proyecto_interno }}</td>\n        </tr>\n        <tr style=\"border-bottom: 1px solid #27272a;\">\n          <td style=\"padding: 10px 0; color: #71717a;\">Tipo:</td>\n          <td style=\"padding: 10px 0; color: #fafafa; font-weight: 600;\">{{ $('Supabase Trigger B2B').item.json.body.record.tipo_notificacion === 'orden_cnc' ? 'Orden CNC' : 'Aprobacion de Cambio' }}</td>\n        </tr>\n        <tr style=\"border-bottom: 1px solid #27272a;\">\n          <td style=\"padding: 10px 0; color: #71717a;\">Emisor:</td>\n          <td style=\"padding: 10px 0; color: #fafafa;\">{{ $json[0].nombre_completo }} ({{ $json[0].rol }})</td>\n        </tr>\n        <tr>\n          <td style=\"padding: 10px 0; color: #71717a; vertical-align: top;\">Mensaje:</td>\n          <td style=\"padding: 10px 0; color: #fafafa;\">{{ $('Supabase Trigger B2B').item.json.body.record.contenido_texto || 'Sin texto adjunto' }}</td>\n        </tr>\n      </table>\n    </div>\n\n    <div style=\"text-align: center; margin-bottom: 32px;\">\n      <a href=\"https://the-titan.cheosdesign.info/dashboard/proyectos/{{ $('GET Detalles Proyecto').item.json[0].proyectos_operaciones.id }}\" target=\"_blank\" style=\"background: linear-gradient(135deg, #6366f1, #a855f7); color: #fff; padding: 13px 30px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 13px; display: inline-block;\">Ver Canal B2B del Proyecto</a>\n    </div>\n\n    <p style=\"font-size: 11px; color: #71717a; line-height: 1.5; margin: 0; padding-top: 15px; border-top: 1px solid #27272a;\">Notificacion automatica generada por The Titan Stands ERP.</p>\n  </div>\n</body>\n</html>\n",
+        "additionalOptions": {}
+      },
+      "type": "n8n-nodes-resend.resend",
+      "typeVersion": 1,
+      "position": [912, 80],
+      "id": "799753af-3654-4d66-9251-f3b46c5097eb",
+      "name": "Send a new email",
+      "webhookId": "64546e49-6dc6-4997-9e4d-3abf0cd1a872",
+      "credentials": {
+        "resendApi": {
+          "id": "KlCWE2beyn3UfY4b",
+          "name": "Resend presustand"
+        }
+      }
+    }
+  ],
+
+  "connections": {
+    "Supabase Trigger B2B": {
+      "main": [
+        [
+          {
+            "node": "Filtrar CNC y Aprobación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar CNC y Aprobación": {
+      "main": [
+        [
+          {
+            "node": "GET Detalles Proyecto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Detalles Proyecto": {
+      "main": [
+        [
+          {
+            "node": "GET Email Director",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Email Director": {
+      "main": [
+        [
+          {
+            "node": "GET Emisor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Emisor": {
+      "main": [
+        [
+          {
+            "node": "Send a new email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "13031a7f8278891f0885fdb5e98e31adeb0766c6b92c822b393433419b9dbfcd"
+  }
+}

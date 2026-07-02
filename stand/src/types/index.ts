@@ -230,3 +230,29 @@ export interface CierreProyecto {
   lecciones_aprendidas?: string
   fecha_cierre_oficial: string
 }
+
+// ─── Canal B2B ──────────────────────────────────────────────────────────────
+
+export interface VinculoB2B {
+  id: string
+  id_proyecto: string
+  id_empresa_origen: string
+  id_empresa_destino: string
+  token_canal_seguro: string
+  fecha_activacion_canal: string
+  estado_canal: boolean
+}
+
+export interface MensajeB2B {
+  id: string
+  id_vinculo_b2b: string
+  id_usuario_emisor: string
+  tipo_notificacion: "mensaje" | "plano_autocad" | "orden_cnc" | "grafica_arte" | "aprobacion_cambio"
+  contenido_texto: string | null
+  ruta_archivo_servidor: string | null
+  fecha_registro: string
+  usuarios?: {
+    nombre_completo: string
+    rol: string
+  }
+}

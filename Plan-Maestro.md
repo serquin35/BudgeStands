@@ -1,5 +1,5 @@
 # THE TITAN — Documento Maestro de Arquitectura
-## Versión 1.9 | Documento de Referencia para Desarrollo con IA
+## Versión 2.0 | Documento de Referencia para Desarrollo con IA
 
 > **Instrucción para el modelo de IA:** Este documento es la fuente de verdad absoluta del proyecto. Antes de generar cualquier código, componente, query o flujo, consulta este documento. Respeta los nombres de tablas, campos, enums y convenciones exactamente como están definidos aquí. Cuando un requerimiento no esté cubierto, pregunta antes de inventar.
 
@@ -1168,9 +1168,8 @@ Porcentaje:  valor.toFixed(2) + '%'
 - [x] Widget de hitos próximos en dashboard principal
       → Implementado con carga dinámica desde Supabase en tiempo real (vencidos o programados para ≤7 días) y enlaces directos al proyecto. (Completado: 30-Jun-2026)
 
-- [ ] Canal B2B básico
-      → Mensajería + adjuntos por proyecto (taller ↔ oficina técnica)
-        (Diferido de Fase 2.5)
+- [x] Canal B2B básico
+      → Mensajería + adjuntos por proyecto (taller ↔ oficina técnica). Integración de subidas de archivos técnicos (DWG, DXF, PDF, ZIP), previsualización de imágenes, RLS de inmutabilidad y notificaciones n8n activadas por disparador de base de datos. (Completado: 01-Jul-2026)
 
 - [ ] API pública documentada (baja prioridad)
       → REST endpoints + API Key + Swagger. Solo si hay clientes que lo pidan.
@@ -1223,7 +1222,7 @@ budgeStands/
 | **Fase 2** | Gestión de Proyectos (kanban, hitos, timeline, trigger SQL) | ✅ **Completada** |
 | **Fase 2.5** | Infraestructura n8n/Qdrant (workflows activos, Tool Base C, DB Webhooks) | ✅ **Completada** |
 | **Fase 3** | Módulo Financiero (facturas, cash flow, cierre) | ✅ **Completada** |
-| **Fase 4** | SaaS multi-tenant y escala | ⏳ Pendiente |
+| **Fase 4** | SaaS multi-tenant y escala | ⏳ En desarrollo (Canal B2B completado) |
 
 ---
 
