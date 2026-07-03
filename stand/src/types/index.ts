@@ -51,6 +51,26 @@ export interface PresupuestoLinea {
   total_linea: number
 }
 
+export interface PartidaPresupuesto {
+  numero: number
+  concepto: string
+  cantidad: number
+  unidad: string
+  precio_unitario: number
+  total: number
+  categoria: 'construccion' | 'servicios' | 'diseno' | 'transporte_mo'
+}
+
+export interface JarvisOutput {
+  mensaje_cliente: string
+  partidas: PartidaPresupuesto[]
+  subtotal_construccion: number
+  subtotal_servicios: number
+  subtotal_diseno: number
+  subtotal_transporte_mo: number
+  imagen_url: string
+}
+
 export interface Proveedor {
   id: string
   razon_social: string

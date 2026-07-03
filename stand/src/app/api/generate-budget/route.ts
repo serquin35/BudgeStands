@@ -1,5 +1,16 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/utils/supabase/server"
+import type { JarvisOutput, PartidaPresupuesto } from "@/types"
+
+const mapearCategoria = (categoria: string): number => {
+  const mapa: Record<string, number> = {
+    construccion: 1,
+    servicios: 12,
+    diseno: 14,
+    transporte_mo: 10
+  }
+  return mapa[categoria] ?? 15
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -131,24 +142,23 @@ export async function POST(request: NextRequest) {
     }
     console.log("Respuesta de n8n recibida exitosamente:", aiResult)
 
-    let parsedOutput = aiResult.output;
+    let parsedOutput: JarvisOutput | string = aiResult.output;
     if (typeof parsedOutput === 'string') {
       try {
-        parsedOutput = JSON.parse(parsedOutput);
+        parsedOutput = JSON.parse(parsedOutput) as JarvisOutput;
       } catch (e) {
         console.warn("No se pudo parsear el output como JSON, se usará como texto", e);
       }
     }
 
-    // Insertar el presupuesto en Supabase directamente desde Next.js
-    // Esto es mucho más robusto que depender de la IA de n8n para hacer la inserción HTTP
-    
+    const output = typeof parsedOutput === 'object' ? parsedOutput : null
+
     // Fallbacks en caso de que la IA no devuelva el JSON perfecto
-    const subConstruccion = Number(parsedOutput?.subtotal_construccion || 0)
-    const subServicios = Number(parsedOutput?.subtotal_servicios || 0)
-    const subDiseno = Number(parsedOutput?.subtotal_diseno || 0)
-    const subTransporte = Number(parsedOutput?.subtotal_transporte || 0)
-    
+    const subConstruccion = Number(output?.subtotal_construccion || 0)
+    const subServicios = Number(output?.subtotal_servicios || 0)
+    const subDiseno = Number(output?.subtotal_diseno || 0)
+    const subTransporte = Number(output?.subtotal_transporte_mo || output?.subtotal_transporte || 0)
+
     const baseImponible = subConstruccion + subServicios + subDiseno + subTransporte
     const importeIva = baseImponible * 0.21
     const total = baseImponible + importeIva
@@ -177,7 +187,7 @@ export async function POST(request: NextRequest) {
         importe_iva: importeIva,
         total_presupuesto: total,
         estado_presupuesto: "borrador",
-        notas_internas: typeof parsedOutput === 'object' ? parsedOutput.mensaje_cliente : parsedOutput
+        notas_internas: output?.mensaje_cliente || parsedOutput
       })
       .select()
       .single()
@@ -187,23 +197,20 @@ export async function POST(request: NextRequest) {
       throw new Error(`No se pudo guardar el presupuesto en la base de datos: ${presError.message || JSON.stringify(presError)}`)
     }
 
-    // Procesar partidas/líneas si vienen en la respuesta de Jarvis
-    const partidas = parsedOutput?.partidas || parsedOutput?.lineas || []
-    if (Array.isArray(partidas) && partidas.length > 0) {
-      const lineasPayload = partidas.map((p: any, idx: number) => ({
+    // Procesar partidas individuales del output de Jarvis
+    const partidas: PartidaPresupuesto[] = output?.partidas ?? []
+    if (partidas.length > 0) {
+      const lineasPayload = partidas.map((p) => ({
         id_presupuesto: presCabecera.id,
-        orden: idx + 1,
-        id_categoria_matriz: p.id_categoria_matriz || null,
-        origen_concepto: (p.origen === "base_a" || p.origen === "base_b" || p.origen === "base_c")
-          ? `base_${p.origen.slice(-1)}` : "ia_generado",
-        concepto_descripcion: p.concepto || p.descripcion || p.nombre || "Concepto sin descripción",
-        cantidad: Number(p.cantidad || p.cant || 1),
+        orden: p.numero,
+        id_categoria_matriz: mapearCategoria(p.categoria),
+        origen_concepto: "ia_generado",
+        concepto_descripcion: p.concepto,
+        cantidad: Number(p.cantidad || 1),
         unidad: p.unidad || "ud",
-        precio_unitario_venta: Number(p.precio_unitario || p.precio || p.precio_venta || 0),
-        descuento_linea_pct: Number(p.descuento || 0),
-        total_linea: Number(p.total || (Number(p.cantidad || p.cant || 1) * Number(p.precio_unitario || p.precio || 0))),
-        es_concepto_nuevo: p.origen === "ia_generado" || !p.origen,
-        notas_linea: p.notas || null,
+        precio_unitario_venta: Number(p.precio_unitario || 0),
+        total_linea: Number(p.total || 0),
+        es_concepto_nuevo: true,
       }))
 
       const { error: lineasError } = await supabase
@@ -216,12 +223,12 @@ export async function POST(request: NextRequest) {
         console.log(`${lineasPayload.length} líneas insertadas correctamente`)
       }
     } else {
-      // Si no vienen partidas, insertar líneas macro de resumen
+      // Fallback: insertar líneas macro de resumen cuando no vienen partidas detalladas
       const lineasMacro = [
-        { concepto: `Construcción y estructura stand`, total: subConstruccion, catId: 1 },
+        { concepto: "Construcción y estructura stand", total: subConstruccion, catId: 1 },
         { concepto: "Servicios técnicos feriales", total: subServicios, catId: 12 },
         { concepto: "Diseño, gráfica y renders 3D", total: subDiseno, catId: 14 },
-        { concepto: "Transporte, logística y montaje", total: subTransporte, catId: 11 },
+        { concepto: "Transporte, logística y montaje", total: subTransporte, catId: 10 },
       ].filter(l => l.total > 0)
 
       if (lineasMacro.length > 0) {
@@ -264,10 +271,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ 
       success: true, 
-      output: typeof parsedOutput === 'object' ? parsedOutput.mensaje_cliente : parsedOutput,
-      imagen_url: imageUrl || parsedOutput?.imagen_url || null,
+      output: output?.mensaje_cliente || parsedOutput,
+      imagen_url: imageUrl || output?.imagen_url || null,
       presupuestoId: presCabecera.id,
-      lineasInsertadas: Array.isArray(partidas) ? partidas.length : 0
+      lineasInsertadas: partidas.length || 0
     })
   } catch (error: any) {
     console.error("Error en API generate-budget:", error)
