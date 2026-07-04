@@ -415,10 +415,10 @@ export default function CatalogosPage() {
       {/* Header section */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-[#fafafa] to-[#a1a1aa]">
+          <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-foreground to-muted-foreground">
             Catálogos Técnicos
           </h1>
-          <p className="text-xs text-[#a1a1aa] mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Parámetros base del motor de estimación macro e inventario de elementos constructivos (Base A y B).
           </p>
         </div>
@@ -433,13 +433,13 @@ export default function CatalogosPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-[#27272a]/70 pb-px">
+      <div className="flex gap-2 border-b border-border/70 pb-px">
         <button
           onClick={() => setActiveCatalog("basea")}
           className={`px-4 py-2 text-xs font-semibold border-b-2 transition-all duration-200 ${
             activeCatalog === "basea" 
               ? "border-indigo-500 text-indigo-400" 
-              : "border-transparent text-[#71717a] hover:text-[#fafafa]"
+              : "border-transparent text-muted-foreground hover:text-foreground"
           }`}
         >
           <div className="flex items-center gap-2">
@@ -452,7 +452,7 @@ export default function CatalogosPage() {
           className={`px-4 py-2 text-xs font-semibold border-b-2 transition-all duration-200 ${
             activeCatalog === "baseb" 
               ? "border-indigo-500 text-indigo-400" 
-              : "border-transparent text-[#71717a] hover:text-[#fafafa]"
+              : "border-transparent text-muted-foreground hover:text-foreground"
           }`}
         >
           <div className="flex items-center gap-2">
@@ -465,7 +465,7 @@ export default function CatalogosPage() {
           className={`px-4 py-2 text-xs font-semibold border-b-2 transition-all duration-200 ${
             activeCatalog === "basec" 
               ? "border-indigo-500 text-indigo-400" 
-              : "border-transparent text-[#71717a] hover:text-[#fafafa]"
+              : "border-transparent text-muted-foreground hover:text-foreground"
           }`}
         >
           <div className="flex items-center gap-2">
@@ -481,8 +481,8 @@ export default function CatalogosPage() {
           {activeCatalog === "baseb" && (
             <>
               <span className="relative group">
-                <HelpCircle className="h-4 w-4 text-[#71717a] hover:text-[#a1a1aa] cursor-help" />
-                <span className="absolute right-0 top-6 z-50 w-56 p-2 text-xs text-[#fafafa] bg-zinc-800 border border-[#27272a] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-muted-foreground cursor-help" />
+                <span className="absolute right-0 top-6 z-50 w-56 p-2 text-xs text-foreground bg-zinc-100 border border-border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                   {elementos.length === 0 
                     ? "Primero debes añadir elementos al catálogo B. Usa el botón '+ Añadir Elemento'." 
                     : "Actualiza la base de datos del motor de estimación con los elementos del catálogo."}
@@ -493,7 +493,7 @@ export default function CatalogosPage() {
                 variant="outline"
                 onClick={() => syncCatalogo("b")}
                 disabled={syncingB || elementos.length === 0}
-                className="text-xs border-[#27272a] text-[#a1a1aa] hover:text-[#fafafa] disabled:opacity-40 disabled:cursor-not-allowed"
+                className="text-xs border-border text-muted-foreground hover:text-foreground disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {syncingB ? <><RotateCcw className="h-3 w-3 mr-1 animate-spin" /> Sincronizando...</> : "Sincronizar Catálogo B"}
               </Button>
@@ -502,8 +502,8 @@ export default function CatalogosPage() {
           {activeCatalog === "basec" && (
             <>
               <span className="relative group">
-                <HelpCircle className="h-4 w-4 text-[#71717a] hover:text-[#a1a1aa] cursor-help" />
-                <span className="absolute right-0 top-6 z-50 w-56 p-2 text-xs text-[#fafafa] bg-zinc-800 border border-[#27272a] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-muted-foreground cursor-help" />
+                <span className="absolute right-0 top-6 z-50 w-56 p-2 text-xs text-foreground bg-zinc-100 border border-border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                   {servicios.length === 0 
                     ? "Primero debes añadir tarifas al catálogo C. Usa el botón '+ Añadir Tarifa Despiece'." 
                     : "Actualiza la base de datos del motor de estimación con las tarifas de despiece."}
@@ -514,7 +514,7 @@ export default function CatalogosPage() {
                 variant="outline"
                 onClick={() => syncCatalogo("c")}
                 disabled={syncingC || servicios.length === 0}
-                className="text-xs border-[#27272a] text-[#a1a1aa] hover:text-[#fafafa] disabled:opacity-40 disabled:cursor-not-allowed"
+                className="text-xs border-border text-muted-foreground hover:text-foreground disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {syncingC ? <><RotateCcw className="h-3 w-3 mr-1 animate-spin" /> Sincronizando...</> : "Sincronizar Catálogo C"}
               </Button>
@@ -524,16 +524,16 @@ export default function CatalogosPage() {
       )}
 
       {/* Filters Card */}
-      <Card className="border-[#27272a]/70 bg-[#09090b]/40">
+      <Card className="border-border/70 bg-card/80">
         <CardContent className="p-4">
           {activeCatalog === "basea" ? (
             <div className="flex items-center gap-2">
-              <Label htmlFor="filter-tipo" className="text-xs text-[#a1a1aa]">Tipo de Stand:</Label>
+              <Label htmlFor="filter-tipo" className="text-xs text-muted-foreground">Tipo de Stand:</Label>
               <select
                 id="filter-tipo"
                 value={filterTipoProyecto}
                 onChange={(e) => setFilterTipoProyecto(e.target.value)}
-                className="bg-[#09090b]/80 border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3 w-48"
+                className="bg-background border-border text-xs text-foreground rounded-md h-9 px-3 w-48"
               >
                 <option value="todos">Todos los tipos</option>
                 {tipoProyectoList.map(t => (
@@ -544,18 +544,18 @@ export default function CatalogosPage() {
           ) : activeCatalog === "basec" ? (
             <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
               <div className="relative w-full sm:max-w-xs">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#71717a]" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input 
                   placeholder="Buscar por nombre técnico..."
                   value={searchSKU}
                   onChange={(e) => setSearchSKU(e.target.value)}
-                  className="pl-9 bg-[#09090b]/80 border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa]"
+                  className="pl-9 bg-background border-border focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-foreground"
                 />
               </div>
               <select
                 value={filterCategoriaC}
                 onChange={(e) => setFilterCategoriaC(e.target.value)}
-                className="bg-[#09090b]/80 border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3 w-48"
+                className="bg-background border-border text-xs text-foreground rounded-md h-9 px-3 w-48"
               >
                 <option value="todos">Todas las categorías</option>
                 {categorias.map(cat => (
@@ -565,12 +565,12 @@ export default function CatalogosPage() {
             </div>
           ) : (
             <div className="relative w-full sm:max-w-xs">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#71717a]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input 
                 placeholder="Buscar por SKU o Nombre..."
                 value={searchSKU}
                 onChange={(e) => setSearchSKU(e.target.value)}
-                className="pl-9 bg-[#09090b]/80 border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa]"
+                className="pl-9 bg-background border-border focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-foreground"
               />
             </div>
           )}
@@ -586,19 +586,19 @@ export default function CatalogosPage() {
         // Base A Render
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredTarifas.length === 0 ? (
-            <div className="col-span-full p-12 text-center text-xs text-[#71717a]">
+            <div className="col-span-full p-12 text-center text-xs text-muted-foreground">
               No hay ratios m² registrados. Crea tarifas macros para habilitar la estimación rápida.
             </div>
           ) : (
             filteredTarifas.map((tarifa) => (
-              <Card key={tarifa.id} className="border-[#27272a]/70 bg-[#09090b]/30 hover:border-indigo-500/30 transition-all duration-300 flex flex-col justify-between">
+              <Card key={tarifa.id} className="border-border/70 bg-card/60 hover:border-indigo-500/30 transition-all duration-300 flex flex-col justify-between">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="font-extrabold text-sm text-[#fafafa] capitalize">
+                      <h3 className="font-extrabold text-sm text-foreground capitalize">
                         Stand {tarifa.tipo_proyecto.replace("_", " ")}
                       </h3>
-                      <p className="text-[10px] text-[#71717a] font-medium uppercase tracking-wider mt-0.5">
+                      <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider mt-0.5">
                         Densidad: {tarifa.nivel_densidad.replace("_", " ")}
                       </p>
                     </div>
@@ -606,22 +606,22 @@ export default function CatalogosPage() {
                       variant="ghost"
                       size="icon"
                       onClick={() => handleEditA(tarifa)}
-                      className="h-7 w-7 text-[#71717a] hover:text-[#fafafa] hover:bg-[#18181b]"
+                      className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted"
                     >
                       <Edit2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3 pb-4">
-                  <p className="text-xs text-[#e4e4e7] line-clamp-3 min-h-[48px] leading-relaxed">
+                  <p className="text-xs text-muted-foreground line-clamp-3 min-h-[48px] leading-relaxed">
                     {tarifa.descripcion_incluido || "Sin descripción de partidas incluidas."}
                   </p>
                   
-                  <div className="flex items-end justify-between pt-3 border-t border-[#27272a]/30">
-                    <div className="text-xs font-semibold text-[#fafafa] flex items-center gap-0.5">
-                      <DollarSign className="h-4 w-4 text-[#71717a]" />
+                  <div className="flex items-end justify-between pt-3 border-t border-border/30">
+                    <div className="text-xs font-semibold text-foreground flex items-center gap-0.5">
+                      <DollarSign className="h-4 w-4 text-muted-foreground" />
                       <span className="text-lg font-bold text-indigo-400">{Number(tarifa.precio_venta_m2).toLocaleString()}</span>
-                      <span className="text-[10px] text-[#71717a]">/m²</span>
+                      <span className="text-[10px] text-muted-foreground">/m²</span>
                     </div>
                     
                     <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
@@ -635,12 +635,12 @@ export default function CatalogosPage() {
         </div>
       ) : activeCatalog === "basec" ? (
         // Base C Render (Table)
-        <Card className="border-[#27272a]/70 bg-[#09090b]/40">
+        <Card className="border-border/70 bg-card/80">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="border-b border-[#27272a]/70 text-[#a1a1aa] font-medium">
+                  <tr className="border-b border-border/70 text-muted-foreground font-medium">
                     <th className="py-3 px-4">Nombre Técnico</th>
                     <th className="py-3 px-2">Categoría</th>
                     <th className="py-3 px-2 text-right w-20">Coste/ud</th>
@@ -651,10 +651,10 @@ export default function CatalogosPage() {
                     <th className="py-3 px-4 text-center w-12">Acción</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#27272a]/40">
+                <tbody className="divide-y divide-border/40">
                   {filteredServicios.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="py-6 text-center text-[#71717a]">
+                      <td colSpan={8} className="py-6 text-center text-muted-foreground">
                         No hay tarifas de despiece registradas en Base C.
                       </td>
                     </tr>
@@ -662,30 +662,30 @@ export default function CatalogosPage() {
                     filteredServicios.map((serv) => {
                       const catName = categorias.find(c => c.id === serv.id_categoria_matriz)?.nombre_categoria || "Varios"
                       return (
-                        <tr key={serv.id} className="hover:bg-[#18181b]/30">
+                        <tr key={serv.id} className="hover:bg-muted/50">
                           <td className="py-3.5 px-4">
-                            <div className="font-medium text-[#fafafa]">{serv.nombre_tecnico}</div>
-                            <div className="text-[10px] text-[#71717a] font-normal mt-0.5 line-clamp-1">{serv.descripcion_compra}</div>
+                            <div className="font-medium text-foreground">{serv.nombre_tecnico}</div>
+                            <div className="text-[10px] text-muted-foreground font-normal mt-0.5 line-clamp-1">{serv.descripcion_compra}</div>
                           </td>
                           <td className="py-3.5 px-2">
                             <span className="text-[10px] font-semibold text-zinc-400 bg-zinc-500/10 border border-zinc-500/20 px-1.5 py-0.5 rounded">
                               {catName}
                             </span>
                           </td>
-                          <td className="py-3.5 px-2 text-right font-mono text-[#fafafa] font-semibold">
+                          <td className="py-3.5 px-2 text-right font-mono text-foreground font-semibold">
                             {Number(serv.precio_coste_unidad_medida).toFixed(2)} €
                           </td>
-                          <td className="py-3.5 px-2 text-center font-bold text-[#fafafa] uppercase text-[10px]">
+                          <td className="py-3.5 px-2 text-center font-bold text-foreground uppercase text-[10px]">
                             {serv.unidad_medida}
                             {serv.unidad_tiempo && (
-                              <span className="block text-[9px] text-[#71717a] font-normal">{serv.unidad_tiempo.replace("_", " ")}</span>
+                              <span className="block text-[9px] text-muted-foreground font-normal">{serv.unidad_tiempo.replace("_", " ")}</span>
                             )}
                           </td>
-                          <td className="py-3.5 px-2 text-right text-[#a1a1aa]">
+                          <td className="py-3.5 px-2 text-right text-muted-foreground">
                             {serv.precio_unidad_tiempo > 0 ? (
                               <span className="font-mono">{Number(serv.precio_unidad_tiempo).toFixed(2)} €</span>
                             ) : (
-                              <span className="text-[#52525b]">—</span>
+                              <span className="text-muted-foreground">—</span>
                             )}
                           </td>
                           <td className="py-3.5 px-2 text-center">
@@ -694,7 +694,7 @@ export default function CatalogosPage() {
                                 ×{Number(serv.coeficiente_desperdicio).toFixed(2)}
                               </span>
                             ) : (
-                              <span className="text-[#52525b]">—</span>
+                              <span className="text-muted-foreground">—</span>
                             )}
                           </td>
                           <td className="py-3.5 px-2 text-center">
@@ -709,7 +709,7 @@ export default function CatalogosPage() {
                               variant="ghost"
                               size="icon"
                               onClick={() => handleEditC(serv)}
-                              className="h-7 w-7 text-[#71717a] hover:text-[#fafafa] hover:bg-[#18181b]"
+                              className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted"
                             >
                               <Edit2 className="h-3.5 w-3.5" />
                             </Button>
@@ -725,12 +725,12 @@ export default function CatalogosPage() {
         </Card>
       ) : (
         // Base B Render (Table)
-        <Card className="border-[#27272a]/70 bg-[#09090b]/40">
+        <Card className="border-border/70 bg-card/80">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="border-b border-[#27272a]/70 text-[#a1a1aa] font-medium">
+                  <tr className="border-b border-border/70 text-muted-foreground font-medium">
                     <th className="py-3 px-4 w-28">SKU / Código</th>
                     <th className="py-3 px-2">Nombre Elemento</th>
                     <th className="py-3 px-2">Categoría Matriz</th>
@@ -740,10 +740,10 @@ export default function CatalogosPage() {
                     <th className="py-3 px-4 text-center w-12">Acción</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#27272a]/40">
+                <tbody className="divide-y divide-border/40">
                   {filteredElementos.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="py-6 text-center text-[#71717a]">
+                      <td colSpan={7} className="py-6 text-center text-muted-foreground">
                         No hay elementos registrados en el catálogo Base B.
                       </td>
                     </tr>
@@ -751,13 +751,13 @@ export default function CatalogosPage() {
                     filteredElementos.map((elem) => {
                       const catName = categorias.find(c => c.id === elem.id_categoria_matriz)?.nombre_categoria || "Varios"
                       return (
-                        <tr key={elem.id} className="hover:bg-[#18181b]/30">
+                        <tr key={elem.id} className="hover:bg-muted/50">
                           <td className="py-3.5 px-4 font-bold text-indigo-400">
                             {elem.codigo_sku}
                           </td>
-                          <td className="py-3.5 px-2 font-medium text-[#fafafa]">
+                          <td className="py-3.5 px-2 font-medium text-foreground">
                             {elem.nombre_elemento}
-                            <div className="text-[10px] text-[#71717a] font-normal mt-0.5 line-clamp-1">{elem.descripcion_comercial}</div>
+                            <div className="text-[10px] text-muted-foreground font-normal mt-0.5 line-clamp-1">{elem.descripcion_comercial}</div>
                           </td>
                           <td className="py-3.5 px-2">
                             <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-zinc-400 bg-zinc-500/10 border border-zinc-500/20 px-1.5 py-0.5 rounded">
@@ -765,13 +765,13 @@ export default function CatalogosPage() {
                               <span>{catName}</span>
                             </span>
                           </td>
-                          <td className="py-3.5 px-2 text-right font-mono text-[#a1a1aa]">
+                          <td className="py-3.5 px-2 text-right font-mono text-muted-foreground">
                             {elem.ancho_estandar_mm}x{elem.fondo_estandar_mm}x{elem.alto_estandar_mm}
                           </td>
-                          <td className="py-3.5 px-2 text-center font-bold text-[#fafafa] uppercase">
+                          <td className="py-3.5 px-2 text-center font-bold text-foreground uppercase">
                             {elem.unidad_medida_bloque}
                           </td>
-                          <td className="py-3.5 px-2 text-right font-extrabold text-[#fafafa]">
+                          <td className="py-3.5 px-2 text-right font-extrabold text-foreground">
                             {Number(elem.precio_venta_unitario || elem.precio_venta_unidad).toLocaleString("es-ES")} €
                           </td>
                           <td className="py-3.5 px-4 text-center">
@@ -779,7 +779,7 @@ export default function CatalogosPage() {
                               variant="ghost"
                               size="icon"
                               onClick={() => handleEditB(elem)}
-                              className="h-7 w-7 text-[#71717a] hover:text-[#fafafa] hover:bg-[#18181b]"
+                              className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted"
                             >
                               <Edit2 className="h-3.5 w-3.5" />
                             </Button>
@@ -797,16 +797,16 @@ export default function CatalogosPage() {
 
       {/* Editor Sheet */}
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent className="bg-[#09090b] text-[#fafafa] border-l border-[#27272a] sm:max-w-md overflow-y-auto">
+        <SheetContent className="bg-background text-foreground border-l border-border sm:max-w-md overflow-y-auto">
           <SheetHeader>
-            <SheetTitle className="text-[#fafafa]">
+            <SheetTitle className="text-foreground">
               {editingItemType === "basea" 
                 ? editingTarifa ? "Editar Tarifa m²" : "Nueva Tarifa m²" 
                 : editingItemType === "basec"
                 ? editingServicio ? "Editar Tarifa Despiece" : "Nueva Tarifa Despiece"
                 : editingElemento ? "Editar Elemento" : "Nuevo Elemento"}
             </SheetTitle>
-            <SheetDescription className="text-[#a1a1aa]">
+            <SheetDescription className="text-muted-foreground">
               {editingItemType === "basec"
                 ? "Costes reales de materiales, MO y servicios para despiece técnico (Base C)."
                 : "Ingresa los costes y especificaciones técnicas para los cálculos del sistema."}
@@ -825,7 +825,7 @@ export default function CatalogosPage() {
                     onChange={(e) => setFormC(prev => ({ ...prev, nombre_tecnico: e.target.value }))}
                     required
                     placeholder="Ej: Tablero DM 19mm lacado blanco"
-                    className="bg-[#09090b] border-[#27272a] text-xs"
+                    className="bg-background border-border text-xs"
                   />
                 </div>
                 <div className="space-y-2">
@@ -836,7 +836,7 @@ export default function CatalogosPage() {
                     required
                     rows={3}
                     placeholder="Texto descriptivo que se vectorizará para búsquedas semánticas en Qdrant..."
-                    className="w-full bg-[#09090b] border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa] p-3 rounded-md"
+                    className="w-full bg-background border-border focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-foreground p-3 rounded-md"
                   />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -845,7 +845,7 @@ export default function CatalogosPage() {
                     <select
                       value={formC.id_categoria_matriz}
                       onChange={(e) => setFormC(prev => ({ ...prev, id_categoria_matriz: Number(e.target.value) }))}
-                      className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                      className="w-full bg-background border-border text-xs text-foreground rounded-md h-9 px-3"
                     >
                       {categorias.map(cat => (
                         <option key={cat.id} value={cat.id}>{cat.nombre_categoria}</option>
@@ -857,7 +857,7 @@ export default function CatalogosPage() {
                     <select
                       value={formC.unidad_medida}
                       onChange={(e) => setFormC(prev => ({ ...prev, unidad_medida: e.target.value as TarifaServicio["unidad_medida"] }))}
-                      className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                      className="w-full bg-background border-border text-xs text-foreground rounded-md h-9 px-3"
                     >
                       <option value="ud">Unidad (ud)</option>
                       <option value="m2">Metro Cuadrado (m²)</option>
@@ -876,7 +876,7 @@ export default function CatalogosPage() {
                       value={formC.precio_coste_unidad_medida}
                       onChange={(e) => setFormC(prev => ({ ...prev, precio_coste_unidad_medida: Number(e.target.value) }))}
                       required
-                      className="bg-[#09090b] border-[#27272a] text-xs"
+                      className="bg-background border-border text-xs"
                     />
                   </div>
                   <div className="space-y-2">
@@ -886,20 +886,20 @@ export default function CatalogosPage() {
                       step="0.01"
                       value={formC.rendimiento_mecanico_hora}
                       onChange={(e) => setFormC(prev => ({ ...prev, rendimiento_mecanico_hora: Number(e.target.value) }))}
-                      className="bg-[#09090b] border-[#27272a] text-xs"
+                      className="bg-background border-border text-xs"
                     />
                   </div>
                 </div>
 
-                <div className="border-t border-[#27272a]/50 my-4 pt-4 space-y-4">
-                  <h4 className="text-xs font-bold text-[#fafafa] uppercase tracking-wider">Unidad de Tiempo (MO / Alquileres)</h4>
+                <div className="border-t border-border/50 my-4 pt-4 space-y-4">
+                  <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">Unidad de Tiempo (MO / Alquileres)</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label className="text-xs">Tipo de Tiempo</Label>
                       <select
                         value={formC.unidad_tiempo || ""}
                         onChange={(e) => setFormC(prev => ({ ...prev, unidad_tiempo: (e.target.value || null) as TarifaServicio["unidad_tiempo"] }))}
-                        className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                        className="w-full bg-background border-border text-xs text-foreground rounded-md h-9 px-3"
                       >
                         <option value="">Sin tiempo asociado</option>
                         <option value="hora">Por Hora</option>
@@ -915,22 +915,22 @@ export default function CatalogosPage() {
                         step="0.01"
                         value={formC.precio_unidad_tiempo}
                         onChange={(e) => setFormC(prev => ({ ...prev, precio_unidad_tiempo: Number(e.target.value) }))}
-                        className="bg-[#09090b] border-[#27272a] text-xs"
+                        className="bg-background border-border text-xs"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-[#27272a]/50 my-4 pt-4 space-y-4">
-                  <h4 className="text-xs font-bold text-[#fafafa] uppercase tracking-wider">Parámetros de Producción</h4>
+                <div className="border-t border-border/50 my-4 pt-4 space-y-4">
+                  <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">Parámetros de Producción</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex items-center gap-3 p-3 rounded-lg bg-[#18181b]/40 border border-[#27272a]/30">
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/40 border border-border/30">
                       <input
                         type="checkbox"
                         id="aplica_desp"
                         checked={formC.aplica_coeficiente_desperdicio}
                         onChange={(e) => setFormC(prev => ({ ...prev, aplica_coeficiente_desperdicio: e.target.checked }))}
-                        className="rounded border-[#27272a] bg-[#09090b] text-indigo-500 focus:ring-indigo-500"
+                        className="rounded border-border bg-background text-indigo-500 focus:ring-indigo-500"
                       />
                       <Label htmlFor="aplica_desp" className="text-xs">Aplica Coeficiente de Desperdicio</Label>
                     </div>
@@ -942,7 +942,7 @@ export default function CatalogosPage() {
                         value={formC.coeficiente_desperdicio}
                         onChange={(e) => setFormC(prev => ({ ...prev, coeficiente_desperdicio: Number(e.target.value) }))}
                         disabled={!formC.aplica_coeficiente_desperdicio}
-                        className="bg-[#09090b] border-[#27272a] text-xs"
+                        className="bg-background border-border text-xs"
                       />
                     </div>
                   </div>
@@ -953,7 +953,7 @@ export default function CatalogosPage() {
                         type="number"
                         value={formC.medida_ancho_mm}
                         onChange={(e) => setFormC(prev => ({ ...prev, medida_ancho_mm: Number(e.target.value) }))}
-                        className="bg-[#09090b] border-[#27272a] text-xs"
+                        className="bg-background border-border text-xs"
                       />
                     </div>
                     <div className="space-y-2">
@@ -962,7 +962,7 @@ export default function CatalogosPage() {
                         type="number"
                         value={formC.medida_fondo_mm}
                         onChange={(e) => setFormC(prev => ({ ...prev, medida_fondo_mm: Number(e.target.value) }))}
-                        className="bg-[#09090b] border-[#27272a] text-xs"
+                        className="bg-background border-border text-xs"
                       />
                     </div>
                   </div>
@@ -973,7 +973,7 @@ export default function CatalogosPage() {
                         type="number"
                         value={formC.medida_alto_mm}
                         onChange={(e) => setFormC(prev => ({ ...prev, medida_alto_mm: Number(e.target.value) }))}
-                        className="bg-[#09090b] border-[#27272a] text-xs"
+                        className="bg-background border-border text-xs"
                       />
                     </div>
                     <div className="space-y-2">
@@ -981,7 +981,7 @@ export default function CatalogosPage() {
                       <select
                         value={formC.estado_tarifa}
                         onChange={(e) => setFormC(prev => ({ ...prev, estado_tarifa: e.target.value as TarifaServicio["estado_tarifa"] }))}
-                        className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                        className="w-full bg-background border-border text-xs text-foreground rounded-md h-9 px-3"
                       >
                         <option value="activa">Activa</option>
                         <option value="inactiva">Inactiva</option>
@@ -999,7 +999,7 @@ export default function CatalogosPage() {
                     <select
                       value={formA.tipo_proyecto}
                       onChange={(e) => setFormA(prev => ({ ...prev, tipo_proyecto: e.target.value as TarifaMacro["tipo_proyecto"] }))}
-                      className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                      className="w-full bg-background border-border text-xs text-foreground rounded-md h-9 px-3"
                     >
                       {tipoProyectoList.map(t => (
                         <option key={t} value={t} className="capitalize">{t.replace("_", " ")}</option>
@@ -1011,7 +1011,7 @@ export default function CatalogosPage() {
                     <select
                       value={formA.nivel_densidad}
                       onChange={(e) => setFormA(prev => ({ ...prev, nivel_densidad: e.target.value as TarifaMacro["nivel_densidad"] }))}
-                      className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                      className="w-full bg-background border-border text-xs text-foreground rounded-md h-9 px-3"
                     >
                       {nivelDensidadList.map(n => (
                         <option key={n} value={n} className="capitalize">{n.replace("_", " ")}</option>
@@ -1028,7 +1028,7 @@ export default function CatalogosPage() {
                       value={formA.precio_venta_m2}
                       onChange={(e) => setFormA(prev => ({ ...prev, precio_venta_m2: Number(e.target.value) }))}
                       required
-                      className="bg-[#09090b] border-[#27272a] text-xs"
+                      className="bg-background border-border text-xs"
                     />
                   </div>
                   <div className="space-y-2">
@@ -1038,7 +1038,7 @@ export default function CatalogosPage() {
                       value={formA.margen_beneficio_sugerido}
                       onChange={(e) => setFormA(prev => ({ ...prev, margen_beneficio_sugerido: Number(e.target.value) }))}
                       required
-                      className="bg-[#09090b] border-[#27272a] text-xs"
+                      className="bg-background border-border text-xs"
                     />
                   </div>
                 </div>
@@ -1050,7 +1050,7 @@ export default function CatalogosPage() {
                     onChange={(e) => setFormA(prev => ({ ...prev, descripcion_incluido: e.target.value }))}
                     rows={4}
                     placeholder="Describe detalladamente qué partidas cubre esta tarifa..."
-                    className="w-full bg-[#09090b] border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa] p-3 rounded-md"
+                    className="w-full bg-background border-border focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-foreground p-3 rounded-md"
                   />
                 </div>
               </>
@@ -1064,7 +1064,7 @@ export default function CatalogosPage() {
                       value={formB.codigo_sku}
                       onChange={(e) => setFormB(prev => ({ ...prev, codigo_sku: e.target.value }))}
                       required
-                      className="bg-[#09090b] border-[#27272a] text-xs"
+                      className="bg-background border-border text-xs"
                     />
                   </div>
                   <div className="space-y-2">
@@ -1072,7 +1072,7 @@ export default function CatalogosPage() {
                     <select
                       value={formB.id_categoria_matriz}
                       onChange={(e) => setFormB(prev => ({ ...prev, id_categoria_matriz: Number(e.target.value) }))}
-                      className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                      className="w-full bg-background border-border text-xs text-foreground rounded-md h-9 px-3"
                     >
                       {categorias.map(cat => (
                         <option key={cat.id} value={cat.id}>{cat.nombre_categoria}</option>
@@ -1088,7 +1088,7 @@ export default function CatalogosPage() {
                     onChange={(e) => setFormB(prev => ({ ...prev, nombre_elemento: e.target.value }))}
                     required
                     placeholder="Ej: Mostrador curvo de madera DM"
-                    className="bg-[#09090b] border-[#27272a] text-xs"
+                    className="bg-background border-border text-xs"
                   />
                 </div>
 
@@ -1100,7 +1100,7 @@ export default function CatalogosPage() {
                     required
                     rows={3}
                     placeholder="Introduce la descripción vectorizada para búsquedas semánticas..."
-                    className="w-full bg-[#09090b] border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa] p-3 rounded-md"
+                    className="w-full bg-background border-border focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-foreground p-3 rounded-md"
                   />
                 </div>
 
@@ -1111,7 +1111,7 @@ export default function CatalogosPage() {
                       type="number"
                       value={formB.ancho_estandar_mm}
                       onChange={(e) => setFormB(prev => ({ ...prev, ancho_estandar_mm: Number(e.target.value) }))}
-                      className="bg-[#09090b] border-[#27272a] text-xs"
+                      className="bg-background border-border text-xs"
                     />
                   </div>
                   <div className="space-y-1">
@@ -1120,7 +1120,7 @@ export default function CatalogosPage() {
                       type="number"
                       value={formB.fondo_estandar_mm}
                       onChange={(e) => setFormB(prev => ({ ...prev, fondo_estandar_mm: Number(e.target.value) }))}
-                      className="bg-[#09090b] border-[#27272a] text-xs"
+                      className="bg-background border-border text-xs"
                     />
                   </div>
                   <div className="space-y-1">
@@ -1129,7 +1129,7 @@ export default function CatalogosPage() {
                       type="number"
                       value={formB.alto_estandar_mm}
                       onChange={(e) => setFormB(prev => ({ ...prev, alto_estandar_mm: Number(e.target.value) }))}
-                      className="bg-[#09090b] border-[#27272a] text-xs"
+                      className="bg-background border-border text-xs"
                     />
                   </div>
                 </div>
@@ -1140,7 +1140,7 @@ export default function CatalogosPage() {
                     <select
                       value={formB.unidad_medida_bloque}
                       onChange={(e) => setFormB(prev => ({ ...prev, unidad_medida_bloque: e.target.value as ElementoCatalogo["unidad_medida_bloque"] }))}
-                      className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                      className="w-full bg-background border-border text-xs text-foreground rounded-md h-9 px-3"
                     >
                       <option value="ud">Unidad (ud)</option>
                       <option value="ml">Metro Lineal (ml)</option>
@@ -1154,7 +1154,7 @@ export default function CatalogosPage() {
                       value={formB.precio_venta_unidad}
                       onChange={(e) => setFormB(prev => ({ ...prev, precio_venta_unidad: Number(e.target.value) }))}
                       required
-                      className="bg-[#09090b] border-[#27272a] text-xs"
+                      className="bg-background border-border text-xs"
                     />
                   </div>
                 </div>
@@ -1172,7 +1172,7 @@ export default function CatalogosPage() {
                 type="button"
                 variant="outline"
                 onClick={() => setIsSheetOpen(false)}
-                className="w-1/3 bg-transparent border-[#27272a] hover:bg-[#18181b] text-[#fafafa]"
+                className="w-1/3 bg-transparent border-border hover:bg-muted text-foreground"
               >
                 Cancelar
               </Button>

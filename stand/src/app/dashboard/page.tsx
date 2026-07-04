@@ -92,99 +92,99 @@ export default async function DashboardPage() {
     ? (items.reduce((sum, p) => sum + Number(p.m2_superficie), 0) / totalPresupuestos).toFixed(1)
     : "0"
 
-  // Helper para pintar badges de estado
-
   return (
     <div className="space-y-6 w-full max-w-full overflow-hidden">
       {/* Header section */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-[#fafafa] to-[#a1a1aa]">
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
             Resumen Operativo
           </h1>
-          <p className="text-xs text-[#a1a1aa] mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Métricas clave y estado de las propuestas feriales activas.
           </p>
         </div>
-        <Link href="/dashboard/presustand">
-          <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-xs rounded-lg transition-all duration-200 shadow-md shadow-indigo-500/10">
-            <Sparkles className="h-4 w-4" />
-            <span>Presupuestar con IA</span>
-          </button>
-        </Link>
-        <Link href="/dashboard/gerencial">
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#18181b] hover:bg-[#27272a] text-[#a1a1aa] hover:text-[#fafafa] font-medium text-xs rounded-lg transition-all duration-200 border border-[#27272a]/70">
-            <BarChart3 className="h-4 w-4" />
-            <span>Analytics</span>
-          </button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="/dashboard/presustand">
+            <button className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-semibold text-xs rounded-lg transition-all duration-200 shadow-sm hover:opacity-90">
+              <Sparkles className="h-4 w-4" />
+              <span>Presupuestar con IA</span>
+            </button>
+          </Link>
+          <Link href="/dashboard/gerencial">
+            <button className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold text-xs rounded-lg transition-all duration-200 border border-border">
+              <BarChart3 className="h-4 w-4" />
+              <span>Analytics</span>
+            </button>
+          </Link>
+        </div>
       </div>
 
       {/* KPI Grid */}
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 w-full">
         {/* KPI 1 */}
-        <Card className="border-[#27272a]/70 bg-[#09090b]/40 hover:border-indigo-500/30 transition-all duration-300">
+        <Card className="card-elevated border-border bg-card hover:border-primary/30 transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-semibold text-[#a1a1aa] uppercase tracking-wider">
+            <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Aceptado (Facturado)
             </CardTitle>
-            <TrendingUp className="h-4 w-4 text-emerald-400" />
+            <TrendingUp className="h-4 w-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#fafafa]">
+            <div className="text-2xl font-bold text-foreground">
               {totalFacturado.toLocaleString("es-ES")} €
             </div>
-            <p className="text-[10px] text-[#71717a] mt-1">
+            <p className="text-[10px] text-muted-foreground mt-1">
               Presupuestos ganados y aprobados
             </p>
           </CardContent>
         </Card>
 
         {/* KPI 2 */}
-        <Card className="border-[#27272a]/70 bg-[#09090b]/40 hover:border-indigo-500/30 transition-all duration-300">
+        <Card className="card-elevated border-border bg-card hover:border-primary/30 transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-semibold text-[#a1a1aa] uppercase tracking-wider">
+            <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               En Negociación / Presentados
             </CardTitle>
-            <Clock className="h-4 w-4 text-indigo-400" />
+            <Clock className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#fafafa]">
+            <div className="text-2xl font-bold text-foreground">
               {totalPendientes.toLocaleString("es-ES")} €
             </div>
-            <p className="text-[10px] text-[#71717a] mt-1">
+            <p className="text-[10px] text-muted-foreground mt-1">
               Cartera activa en seguimiento
             </p>
           </CardContent>
         </Card>
 
         {/* KPI 3 */}
-        <Card className="border-[#27272a]/70 bg-[#09090b]/40 hover:border-indigo-500/30 transition-all duration-300">
+        <Card className="card-elevated border-border bg-card hover:border-primary/30 transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-semibold text-[#a1a1aa] uppercase tracking-wider">
+            <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Propuestas Generadas
             </CardTitle>
-            <FileText className="h-4 w-4 text-purple-400" />
+            <FileText className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#fafafa]">{totalPresupuestos}</div>
-            <p className="text-[10px] text-[#71717a] mt-1">
+            <div className="text-2xl font-bold text-foreground">{totalPresupuestos}</div>
+            <p className="text-[10px] text-muted-foreground mt-1">
               Total de presupuestos registrados
             </p>
           </CardContent>
         </Card>
 
         {/* KPI 4 */}
-        <Card className="border-[#27272a]/70 bg-[#09090b]/40 hover:border-indigo-500/30 transition-all duration-300">
+        <Card className="card-elevated border-border bg-card hover:border-primary/30 transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-semibold text-[#a1a1aa] uppercase tracking-wider">
+            <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Superficie Media Stand
             </CardTitle>
-            <Layers className="h-4 w-4 text-amber-400" />
+            <Layers className="h-4 w-4 text-amber-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#fafafa]">{m2Medio} m²</div>
-            <p className="text-[10px] text-[#71717a] mt-1">
+            <div className="text-2xl font-bold text-foreground">{m2Medio} m²</div>
+            <p className="text-[10px] text-muted-foreground mt-1">
               Superficie promedio solicitada
             </p>
           </CardContent>
@@ -194,12 +194,12 @@ export default async function DashboardPage() {
       {/* Grid Chart + Side Panel */}
       <div className="grid gap-4 grid-cols-1 md:grid-cols-7 w-full max-w-full overflow-hidden">
         {/* Main Chart */}
-        <Card className="md:col-span-4 border-[#27272a]/70 bg-[#09090b]/40 w-full min-w-0 overflow-hidden">
+        <Card className="md:col-span-4 card-elevated border-border bg-card w-full min-w-0 overflow-hidden">
           <CardHeader>
-            <CardTitle className="text-base font-bold text-[#fafafa]">
+            <CardTitle className="text-base font-bold text-foreground">
               Evolución Mensual (2026)
             </CardTitle>
-            <CardDescription className="text-xs text-[#a1a1aa]">
+            <CardDescription className="text-xs text-muted-foreground">
               Comparativa entre facturación aprobada y volumen de presupuestos presentados.
             </CardDescription>
           </CardHeader>
@@ -209,28 +209,28 @@ export default async function DashboardPage() {
         </Card>
 
         {/* Action Panel / Alertas */}
-        <Card className="md:col-span-3 border-[#27272a]/70 bg-[#09090b]/40 flex flex-col justify-between">
+        <Card className="md:col-span-3 card-elevated border-border bg-card flex flex-col justify-between">
           <CardHeader>
-            <CardTitle className="text-base font-bold text-[#fafafa]">
+            <CardTitle className="text-base font-bold text-foreground">
               Panel de Control Rápido
             </CardTitle>
-            <CardDescription className="text-xs text-[#a1a1aa]">
+            <CardDescription className="text-xs text-muted-foreground">
               Acciones de IA y alertas de presupuestos pendientes.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 flex-1">
             {/* AI Prompts Widget */}
-            <div className="p-4 rounded-lg bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20">
+            <div className="p-4 rounded-lg bg-primary/5 border border-primary/15">
               <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="h-4 w-4 text-indigo-400" />
-                <span className="text-xs font-bold text-indigo-300 uppercase tracking-wide">Jarvis IA Stand Constructor</span>
+                <Sparkles className="h-4 w-4 text-primary" />
+                <span className="text-xs font-bold text-primary uppercase tracking-wide">Jarvis IA Stand Constructor</span>
               </div>
-              <p className="text-xs text-[#e4e4e7] leading-relaxed">
+              <p className="text-xs text-foreground/90 leading-relaxed">
                 &quot;Diseña un stand de 80m² para Iberia en FITUR con estilo rústico y sostenible usando madera reciclada.&quot;
               </p>
               <div className="mt-3 flex justify-end">
                 <Link href="/dashboard/presustand">
-                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 cursor-pointer">
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:opacity-85 cursor-pointer">
                     Ir a generar <ArrowUpRight className="h-3 w-3" />
                   </span>
                 </Link>
@@ -239,12 +239,12 @@ export default async function DashboardPage() {
 
             {/* Hitos Críticos y Alertas */}
             <div className="space-y-2.5 pt-2">
-              <div className="text-xs font-bold text-[#fafafa] uppercase tracking-wider">
+              <div className="text-xs font-bold text-foreground uppercase tracking-wider">
                 Hitos Críticos (Próximos 7 días)
               </div>
               {hitosAlertas.length === 0 ? (
-                <div className="flex items-center gap-2.5 p-3 rounded-lg bg-[#18181b]/30 border border-[#27272a]/20 text-xs text-[#a1a1aa]">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <div className="flex items-center gap-2.5 p-3 rounded-lg bg-secondary/20 border border-border/20 text-xs text-muted-foreground">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                   <span>No hay hitos críticos programados para esta semana.</span>
                 </div>
               ) : (
@@ -255,16 +255,16 @@ export default async function DashboardPage() {
                   const isOverdue = diasRestantes < 0
                   const isToday = diasRestantes === 0
 
-                  let colorText = "text-amber-400"
+                  let colorText = "text-amber-500"
                   let colorBg = "bg-amber-500/10 border-amber-500/20"
                   let labelTime = `Quedan ${diasRestantes} días`
                   
                   if (isOverdue) {
-                    colorText = "text-red-400"
-                    colorBg = "bg-red-500/10 border-red-500/20"
+                    colorText = "text-rose-500"
+                    colorBg = "bg-rose-500/10 border-rose-500/20"
                     labelTime = `Retrasado (${Math.abs(diasRestantes)}d)`
                   } else if (isToday) {
-                    colorText = "text-orange-400"
+                    colorText = "text-orange-500"
                     colorBg = "bg-orange-500/10 border-orange-500/20"
                     labelTime = "Hoy"
                   } else if (diasRestantes === 1) {
@@ -277,13 +277,13 @@ export default async function DashboardPage() {
 
                   return (
                     <Link href={`/dashboard/proyectos/${hito.id_proyecto}`} key={hito.id}>
-                      <div className={`flex items-start justify-between gap-3 p-3 rounded-lg border transition-all hover:bg-[#18181b]/80 text-xs cursor-pointer ${colorBg}`}>
+                      <div className={`flex items-start justify-between gap-3 p-3 rounded-lg border transition-all hover:bg-secondary/40 text-xs cursor-pointer ${colorBg}`}>
                         <div className="min-w-0 flex-1">
-                          <div className="font-semibold text-[#fafafa] flex items-center gap-1.5 flex-wrap">
+                          <div className="font-semibold text-foreground flex items-center gap-1.5 flex-wrap">
                             <span className="capitalize">{hito.tipo_hito.replace(/_/g, " ")}</span>
-                            <span className="text-[10px] text-indigo-400 font-mono">({proyecto?.codigo_proyecto_interno})</span>
+                            <span className="text-[10px] text-primary font-mono">({proyecto?.codigo_proyecto_interno})</span>
                           </div>
-                          <div className="text-[#a1a1aa] text-[10px] mt-0.5 truncate">
+                          <div className="text-muted-foreground text-[10px] mt-0.5 truncate">
                             {client?.nombre_comercial} — {feria || "Feria"}
                           </div>
                         </div>
@@ -297,7 +297,7 @@ export default async function DashboardPage() {
               )}
               {hitosAlertas.length > 3 && (
                 <div className="text-right">
-                  <Link href="/dashboard/proyectos" className="text-[10px] text-indigo-400 hover:underline">
+                  <Link href="/dashboard/proyectos" className="text-[10px] text-primary hover:underline">
                     Ver {hitosAlertas.length - 3} alertas más en Kanban →
                   </Link>
                 </div>
@@ -308,13 +308,13 @@ export default async function DashboardPage() {
       </div>
 
       {/* Recent Budgets Table */}
-      <Card className="border-[#27272a]/70 bg-[#09090b]/40">
+      <Card className="card-elevated border-border bg-card">
         <CardHeader className="flex flex-row items-center justify-between pb-3">
           <div>
-            <CardTitle className="text-base font-bold text-[#fafafa]">
+            <CardTitle className="text-base font-bold text-foreground">
               Presupuestos Recientes
             </CardTitle>
-            <CardDescription className="text-xs text-[#a1a1aa]">
+            <CardDescription className="text-xs text-muted-foreground">
               Lista de propuestas enviadas o generadas recientemente.
             </CardDescription>
           </div>
@@ -323,7 +323,7 @@ export default async function DashboardPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="border-b border-[#27272a]/70 text-[#a1a1aa] font-medium">
+                <tr className="border-b border-border text-muted-foreground font-medium">
                   <th className="py-3 px-2">Referencia</th>
                   <th className="py-3 px-2">Cliente</th>
                   <th className="py-3 px-2">Feria / Evento</th>
@@ -333,35 +333,35 @@ export default async function DashboardPage() {
                   <th className="py-3 px-2 text-right">Fecha Emisión</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#27272a]/40">
+              <tbody className="divide-y divide-border/40">
                 {items.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="py-6 text-center text-[#71717a]">
+                    <td colSpan={7} className="py-6 text-center text-muted-foreground/60">
                       No hay presupuestos generados en la base de datos.
                     </td>
                   </tr>
                 ) : (
                   items.map((item) => (
-                    <tr key={item.id} className="hover:bg-[#18181b]/30 transition-colors">
-                      <td className="py-3.5 px-2 font-bold text-indigo-400">
+                    <tr key={item.id} className="hover:bg-secondary/20 transition-colors">
+                      <td className="py-3.5 px-2 font-bold text-primary">
                         {item.numero_presupuesto}
                       </td>
-                      <td className="py-3.5 px-2 font-medium text-[#fafafa]">
+                      <td className="py-3.5 px-2 font-medium text-foreground">
                         {item.clientes?.nombre_comercial || "Cliente Desconocido"}
                       </td>
-                      <td className="py-3.5 px-2 text-[#e4e4e7]">
+                      <td className="py-3.5 px-2 text-foreground/80">
                         {item.nombre_feria}
                       </td>
-                      <td className="py-3.5 px-2 text-right font-medium text-[#e4e4e7]">
+                      <td className="py-3.5 px-2 text-right font-medium text-foreground/80">
                         {Number(item.m2_superficie).toFixed(0)} m²
                       </td>
-                      <td className="py-3.5 px-2 text-right font-bold text-[#fafafa]">
+                      <td className="py-3.5 px-2 text-right font-bold text-foreground">
                         {Number(item.total_presupuesto).toLocaleString("es-ES")} €
                       </td>
                       <td className="py-3.5 px-2 text-center">
                         <StatusBadge estado={item.estado_presupuesto} />
                       </td>
-                      <td className="py-3.5 px-2 text-right text-[#a1a1aa]">
+                      <td className="py-3.5 px-2 text-right text-muted-foreground">
                         {new Date(item.created_at).toLocaleDateString("es-ES")}
                       </td>
                     </tr>

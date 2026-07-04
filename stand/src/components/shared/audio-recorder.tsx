@@ -109,9 +109,9 @@ export function AudioRecorder({ value, onUpload, disabled }: Props) {
 
   return (
     <div className="space-y-2">
-      <label className="text-xs text-[#a1a1aa] font-medium">Audio descriptivo (opcional)</label>
+      <label className="text-xs text-muted-foreground font-medium">Audio descriptivo (opcional)</label>
 
-      <div className="flex items-center gap-2 p-2.5 rounded-md border border-[#27272a] bg-[#09090b]/60">
+      <div className="flex items-center gap-2 p-2.5 rounded-md border border-border bg-muted/40">
         {state === "idle" && !audioUrl && (
           <button
             type="button"
@@ -149,7 +149,7 @@ export function AudioRecorder({ value, onUpload, disabled }: Props) {
               <button
                 type="button"
                 onClick={handleRemove}
-                className="p-1.5 rounded-md text-[#a1a1aa] hover:text-rose-400 hover:bg-rose-500/10 transition-colors shrink-0"
+                className="p-1.5 rounded-md text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-colors shrink-0"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -158,7 +158,7 @@ export function AudioRecorder({ value, onUpload, disabled }: Props) {
         )}
       </div>
 
-      <p className="text-[10px] text-[#52525b]">
+      <p className="text-[10px] text-muted-foreground">
         Describe verbalmente el stand que necesitas. El audio se subirá a n8n para procesamiento.
       </p>
     </div>

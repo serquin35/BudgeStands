@@ -5,19 +5,18 @@ import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Calendar, ChevronDown, MapPin, MoreHorizontal, Plus, Star, RotateCcw } from "lucide-react";
+import { AlertCircle, Calendar, ChevronDown, MapPin, MoreHorizontal, Plus, Star, RotateCcw, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { ProyectoOperacion, EstadoProyecto } from "@/types";
-import { KANBAN_COLUMNAS } from "@/constants";
 
 const KANBAN_COLUMNS = [
-  { id: "pendiente",   title: "Pendiente",   dot: "bg-slate-400",   border: "border-slate-400/30",   bg: "bg-slate-800/30" },
-  { id: "diseno",      title: "Diseño",      dot: "bg-blue-400",    border: "border-blue-400/30",    bg: "bg-blue-900/20"  },
-  { id: "fabricacion", title: "Fabricación", dot: "bg-amber-400",   border: "border-amber-400/30",   bg: "bg-amber-900/20" },
-  { id: "montaje",     title: "Montaje",     dot: "bg-purple-400",  border: "border-purple-400/30",  bg: "bg-purple-900/20"},
-  { id: "finalizado",  title: "Finalizado",  dot: "bg-emerald-400", border: "border-emerald-400/30", bg: "bg-emerald-900/20"},
+  { id: "pendiente",   title: "Pendiente",   dot: "bg-slate-400",   border: "border-slate-300 dark:border-slate-800/30",   bg: "bg-slate-100/40 dark:bg-slate-900/10" },
+  { id: "diseno",      title: "Diseño",      dot: "bg-blue-500",    border: "border-blue-200 dark:border-blue-800/30",     bg: "bg-blue-50/40 dark:bg-blue-900/10"  },
+  { id: "fabricacion", title: "Fabricación", dot: "bg-amber-500",   border: "border-amber-200 dark:border-amber-800/30",   bg: "bg-amber-50/40 dark:bg-amber-900/10" },
+  { id: "montaje",     title: "Montaje",     dot: "bg-purple-500",  border: "border-purple-200 dark:border-purple-800/30", bg: "bg-purple-50/40 dark:bg-purple-900/10"},
+  { id: "finalizado",  title: "Finalizado",  dot: "bg-emerald-500", border: "border-emerald-200 dark:border-emerald-800/30", bg: "bg-emerald-50/40 dark:bg-emerald-900/10"},
 ];
 
 const MOCK_PROYECTOS: ProyectoOperacion[] = [
@@ -29,7 +28,7 @@ const MOCK_PROYECTOS: ProyectoOperacion[] = [
     fecha_creacion_proyecto: new Date().toISOString(),
     id_director_obra: null,
     estado_proyecto: "pendiente" as EstadoProyecto,
-    notas_produccion: null,
+    notes_produccion: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     presupuestos_cabecera: {
@@ -48,7 +47,7 @@ const MOCK_PROYECTOS: ProyectoOperacion[] = [
     fecha_creacion_proyecto: new Date().toISOString(),
     id_director_obra: null,
     estado_proyecto: "diseno" as EstadoProyecto,
-    notas_produccion: null,
+    notes_produccion: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     presupuestos_cabecera: {
@@ -67,7 +66,7 @@ const MOCK_PROYECTOS: ProyectoOperacion[] = [
     fecha_creacion_proyecto: new Date().toISOString(),
     id_director_obra: null,
     estado_proyecto: "fabricacion" as EstadoProyecto,
-    notas_produccion: null,
+    notes_produccion: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     presupuestos_cabecera: {
@@ -90,10 +89,10 @@ function ProyectoCard({ proyecto, onDragStart }: { proyecto: ProyectoOperacion; 
     <Card
       draggable={!!onDragStart}
       onDragStart={onDragStart ? (e) => onDragStart(e, proyecto.id) : undefined}
-      className="cursor-grab active:cursor-grabbing border border-white/5 bg-[#18181b] shadow-sm hover:shadow-lg hover:border-white/10 transition-all group"
+      className="cursor-grab active:cursor-grabbing border border-border bg-card shadow-sm hover:shadow-md hover:border-primary/20 transition-all group"
     >
       {presu.imagen_stand_url && (
-        <div className="h-24 w-full bg-muted rounded-t-lg overflow-hidden border-b border-white/5 relative">
+        <div className="h-24 w-full bg-muted rounded-t-lg overflow-hidden border-b border-border relative">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={presu.imagen_stand_url}
@@ -104,19 +103,19 @@ function ProyectoCard({ proyecto, onDragStart }: { proyecto: ProyectoOperacion; 
       )}
       <CardContent className="p-4">
         <div className="flex justify-between items-start mb-2">
-          <span className="text-xs font-mono font-medium text-indigo-400 bg-indigo-400/10 px-2 py-0.5 rounded border border-indigo-400/20">
+          <span className="text-xs font-mono font-medium text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
             {proyecto.codigo_proyecto_interno || "PRJ-XXX"}
           </span>
-          <Link href={`/dashboard/proyectos/${proyecto.id}`} className="text-muted-foreground hover:text-indigo-400 transition-colors z-10">
+          <Link href={`/dashboard/proyectos/${proyecto.id}`} className="text-muted-foreground hover:text-primary transition-colors z-10">
             <MoreHorizontal className="h-4 w-4" />
           </Link>
         </div>
-        <Link href={`/dashboard/proyectos/${proyecto.id}`} className="hover:underline text-[#fafafa] z-10 block">
+        <Link href={`/dashboard/proyectos/${proyecto.id}`} className="hover:underline text-foreground z-10 block">
           <h4 className="font-semibold text-sm line-clamp-2 leading-tight mb-3">
             {presu.nombre_feria || "Stand sin nombre"}
           </h4>
         </Link>
-        <div className="space-y-1.5 text-xs text-[#71717a]">
+        <div className="space-y-1.5 text-xs text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <MapPin className="h-3.5 w-3.5 shrink-0" />
             <span className="truncate">{presu.recinto_ferial || presu.nombre_feria || "Sin recinto"}</span>
@@ -131,9 +130,9 @@ function ProyectoCard({ proyecto, onDragStart }: { proyecto: ProyectoOperacion; 
           </div>
         </div>
         {presu.total_presupuesto && (
-          <div className="mt-3 pt-3 border-t border-white/5 flex justify-between items-center">
-            <span className="text-xs text-[#52525b]">Presupuesto</span>
-            <span className="font-semibold text-sm text-[#fafafa]">{formatMoney(presu.total_presupuesto)}</span>
+          <div className="mt-3 pt-3 border-t border-border/60 flex justify-between items-center">
+            <span className="text-xs text-muted-foreground/60">Presupuesto</span>
+            <span className="font-semibold text-sm text-foreground">{formatMoney(presu.total_presupuesto)}</span>
           </div>
         )}
       </CardContent>
@@ -143,7 +142,7 @@ function ProyectoCard({ proyecto, onDragStart }: { proyecto: ProyectoOperacion; 
 
 // ─── Vista MÓVIL: acordeón por fase ─────────────────────────────────────────
 function MobileView({ proyectos, onStatusChange }: { proyectos: ProyectoOperacion[]; onStatusChange: (id: string, newStatus: string) => void }) {
-  const [openSection, setOpenSection] = useState<string | null>("Pendiente");
+  const [openSection, setOpenSection] = useState<string | null>("pendiente");
 
   return (
     <div className="space-y-3 pb-6">
@@ -159,20 +158,20 @@ function MobileView({ proyectos, onStatusChange }: { proyectos: ProyectoOperacio
             >
               <div className="flex items-center gap-2.5">
                 <span className={`w-2 h-2 rounded-full ${col.dot}`} />
-                <span className="font-semibold text-sm text-[#fafafa]">{col.title}</span>
-                <span className="text-xs bg-white/10 text-[#a1a1aa] px-2 py-0.5 rounded-full font-medium">
+                <span className="font-semibold text-sm text-foreground">{col.title}</span>
+                <span className="text-xs bg-foreground/5 text-muted-foreground px-2 py-0.5 rounded-full font-medium border border-border/10">
                   {items.length}
                 </span>
               </div>
-              <ChevronDown className={`h-4 w-4 text-[#71717a] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+              <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
             </button>
 
             {/* Contenido del acordeón */}
             {isOpen && (
-              <div className="p-3 space-y-3 bg-[#09090b]/50">
+              <div className="p-3 space-y-3 bg-card/50">
                 {items.length === 0 ? (
-                  <div className="h-16 flex items-center justify-center border-2 border-dashed border-white/10 rounded-lg">
-                    <span className="text-xs text-[#52525b] flex items-center gap-1">
+                  <div className="h-16 flex items-center justify-center border-2 border-dashed border-border rounded-lg">
+                    <span className="text-xs text-muted-foreground/60 flex items-center gap-1">
                       <AlertCircle className="h-3 w-3" /> Sin proyectos en esta fase
                     </span>
                   </div>
@@ -186,7 +185,7 @@ function MobileView({ proyectos, onStatusChange }: { proyectos: ProyectoOperacio
                           <button
                             key={c.id}
                             onClick={() => onStatusChange(p.id, c.id)}
-                            className="text-[10px] px-2 py-0.5 rounded border border-white/10 text-[#71717a] hover:text-[#fafafa] hover:border-white/30 transition-colors"
+                            className="text-[10px] px-2 py-0.5 rounded border border-border text-muted-foreground hover:text-foreground hover:bg-secondary/40 transition-colors"
                           >
                             → {c.title}
                           </button>
@@ -230,24 +229,24 @@ function DesktopView({
             onDrop={(e) => onDrop(e, col.id)}
           >
             {/* Cabecera columna */}
-            <div className="p-3 flex items-center justify-between border-b border-white/5 bg-[#09090b]/40 backdrop-blur-sm rounded-t-xl shrink-0">
+            <div className="p-3 flex items-center justify-between border-b border-border/10 bg-background/40 backdrop-blur-sm rounded-t-xl shrink-0">
               <div className="flex items-center gap-2">
                 <span className={`w-2 h-2 rounded-full ${col.dot}`} />
-                <h3 className="font-semibold text-sm text-[#fafafa]">{col.title}</h3>
+                <h3 className="font-semibold text-sm text-foreground">{col.title}</h3>
               </div>
-              <span className="bg-white/5 text-xs font-medium px-2 py-0.5 rounded-full border border-white/10 text-[#a1a1aa]">
+              <span className="bg-foreground/5 text-xs font-medium px-2 py-0.5 rounded-full border border-border/15 text-muted-foreground">
                 {items.length}
               </span>
             </div>
 
             {/* Cards */}
-            <div className="flex-1 p-2.5 overflow-y-auto flex flex-col gap-2.5">
+            <div className="flex-1 p-2.5 overflow-y-auto flex flex-col gap-2.5 scrollbar-hide">
               {items.map((p) => (
                 <ProyectoCard key={p.id} proyecto={p} onDragStart={onDragStart} />
               ))}
               {items.length === 0 && (
-                <div className={`flex-1 min-h-[80px] flex items-center justify-center border-2 border-dashed border-white/10 rounded-lg transition-colors ${draggedItem ? "border-white/20 bg-white/5" : ""}`}>
-                  <span className="text-xs text-[#52525b] flex items-center gap-1">
+                <div className={`flex-1 min-h-[80px] flex items-center justify-center border-2 border-dashed border-border/30 rounded-lg transition-colors ${draggedItem ? "border-primary/45 bg-primary/5" : ""}`}>
+                  <span className="text-xs text-muted-foreground/60 flex items-center gap-1">
                     <AlertCircle className="h-3 w-3" /> Soltar aquí
                   </span>
                 </div>
@@ -262,13 +261,11 @@ function DesktopView({
 
 // ─── Página principal ────────────────────────────────────────────────────────
 export default function ProyectosPage() {
-  // CRÍTICO: el cliente debe crearse dentro del componente para tener sesión disponible
   const supabase = useMemo(() => createClient(), []);
 
   const [proyectos, setProyectos] = useState<ProyectoOperacion[]>([]);
   const [loading, setLoading] = useState(true);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
-
 
   const fetchProyectos = useCallback(async () => {
     setLoading(true);
@@ -300,15 +297,12 @@ export default function ProyectosPage() {
     const proyectoActual = proyectos.find((p) => p.id === id);
     const estadoAnterior = proyectoActual?.estado_proyecto;
 
-    // Evitar actualización innecesaria si el estado es el mismo
     if (estadoAnterior === nuevoEstado) return;
 
     console.log(`[Kanban] Actualizando proyecto ${id}: ${estadoAnterior} → ${nuevoEstado}`);
 
-    // Optimistic update en UI
     setProyectos((prev) => prev.map((p) => (p.id === id ? { ...p, estado_proyecto: nuevoEstado } : p)));
 
-    // Verificar sesión antes de ejecutar el UPDATE
     const { data: sessionData } = await supabase.auth.getSession();
     if (!sessionData.session) {
       console.error("[Kanban] ERROR: No hay sesión activa. El UPDATE no se ejecutará.");
@@ -330,7 +324,6 @@ export default function ProyectosPage() {
 
     if (error) {
       console.error("[Kanban] Error al persistir en Supabase:", error);
-      // Rollback al estado anterior
       if (estadoAnterior) {
         setProyectos((prev) => prev.map((p) => (p.id === id ? { ...p, estado_proyecto: estadoAnterior } : p)));
       }
@@ -426,7 +419,7 @@ export default function ProyectosPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500" />
+        <Loader2 className="animate-spin h-8 w-8 text-primary" />
       </div>
     );
   }
@@ -436,14 +429,14 @@ export default function ProyectosPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 shrink-0">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#fafafa]">Proyectos en Curso</h1>
-          <p className="text-[#71717a] mt-1 text-sm">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Proyectos en Curso</h1>
+          <p className="text-muted-foreground mt-1 text-sm">
             Gestiona las fases de producción y montaje de los stands aprobados.
           </p>
         </div>
         <Link
           href="/dashboard/presustand"
-          className="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors shadow-sm shadow-indigo-500/20"
+          className="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:opacity-90 text-primary-foreground text-sm font-semibold transition-all shadow-sm"
         >
           <Plus className="h-4 w-4" />
           <span className="hidden sm:inline">Nuevo Proyecto</span>
@@ -469,10 +462,10 @@ export default function ProyectosPage() {
 
       {/* ─── Modal de cierre de proyecto ────────────────────────── */}
       <Dialog open={showCloseModal} onOpenChange={setShowCloseModal}>
-        <DialogContent className="bg-[#09090b] border-[#27272a] text-[#fafafa] max-w-lg">
+        <DialogContent className="bg-card border-border text-foreground max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold">Cerrar Proyecto</DialogTitle>
-            <DialogDescription className="text-xs text-[#a1a1aa]">
+            <DialogTitle className="text-lg font-bold text-foreground">Cerrar Proyecto</DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
               {closingProject?.presupuestos_cabecera?.nombre_feria || "Sin nombre"} — {closingProject?.codigo_proyecto_interno || ""}
             </DialogDescription>
           </DialogHeader>
@@ -480,11 +473,11 @@ export default function ProyectosPage() {
           <div className="space-y-4 py-2">
             {/* Valoración cliente */}
             <div>
-              <Label className="text-xs text-[#a1a1aa] mb-2 block">Valoración del cliente</Label>
+              <Label className="text-xs text-muted-foreground mb-2 block">Valoración del cliente</Label>
               <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button key={star} type="button" onClick={() => setCloseForm((f) => ({ ...f, valoracion_cliente: star }))}>
-                    <Star className={`h-5 w-5 ${star <= closeForm.valoracion_cliente ? "text-amber-400 fill-amber-400" : "text-[#52525b]"}`} />
+                    <Star className={`h-5 w-5 ${star <= closeForm.valoracion_cliente ? "text-amber-500 fill-amber-500" : "text-muted-foreground/30"}`} />
                   </button>
                 ))}
               </div>
@@ -492,10 +485,10 @@ export default function ProyectosPage() {
 
             {/* Lecciones aprendidas */}
             <div>
-              <Label htmlFor="lecciones" className="text-xs text-[#a1a1aa]">Lecciones aprendidas</Label>
+              <Label htmlFor="lecciones" className="text-xs text-muted-foreground">Lecciones aprendidas</Label>
               <textarea
                 id="lecciones"
-                className="w-full mt-1 px-3 py-2 text-xs bg-[#18181b] border border-[#27272a] rounded-lg text-[#fafafa] focus:outline-none focus:border-indigo-500/50 resize-none"
+                className="w-full mt-1 px-3 py-2 text-xs bg-background border border-border rounded-lg text-foreground focus:outline-none focus:border-primary/50 resize-none"
                 rows={3}
                 value={closeForm.lecciones_aprendidas}
                 onChange={(e) => setCloseForm((f) => ({ ...f, lecciones_aprendidas: e.target.value }))}
@@ -506,21 +499,21 @@ export default function ProyectosPage() {
             {/* Ingreso y gasto real */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label htmlFor="ingreso" className="text-xs text-[#a1a1aa]">Ingreso real (€)</Label>
+                <Label htmlFor="ingreso" className="text-xs text-muted-foreground">Ingreso real (€)</Label>
                 <Input
                   id="ingreso"
                   type="number"
-                  className="mt-1 text-xs bg-[#18181b] border-[#27272a]"
+                  className="mt-1 text-xs bg-background border-border text-foreground"
                   value={closeForm.ingreso_total_real}
                   onChange={(e) => setCloseForm((f) => ({ ...f, ingreso_total_real: Number(e.target.value) }))}
                 />
               </div>
               <div>
-                <Label htmlFor="gasto" className="text-xs text-[#a1a1aa]">Gasto real (€)</Label>
+                <Label htmlFor="gasto" className="text-xs text-muted-foreground">Gasto real (€)</Label>
                 <Input
                   id="gasto"
                   type="number"
-                  className="mt-1 text-xs bg-[#18181b] border-[#27272a]"
+                  className="mt-1 text-xs bg-background border-border text-foreground"
                   value={closeForm.gasto_total_real}
                   onChange={(e) => setCloseForm((f) => ({ ...f, gasto_total_real: Number(e.target.value) }))}
                 />
@@ -535,22 +528,22 @@ export default function ProyectosPage() {
               const mp = i > 0 ? ((mb / i) * 100).toFixed(1) : "0.0";
               const po = Number(closingProject?.presupuestos_cabecera?.total_presupuesto || 0);
               return (
-                <div className="p-3 rounded-lg bg-[#18181b] border border-[#27272a] space-y-1.5">
+                <div className="p-3 rounded-lg bg-secondary/20 border border-border space-y-1.5">
                   <div className="flex justify-between text-xs">
-                    <span className="text-[#71717a]">Margen bruto</span>
-                    <span className={`font-semibold ${mb >= 0 ? "text-emerald-400" : "text-rose-400"}`}>{mb.toLocaleString("es-ES")} €</span>
+                    <span className="text-muted-foreground">Margen bruto</span>
+                    <span className={`font-semibold ${mb >= 0 ? "text-emerald-500" : "text-rose-500"}`}>{mb.toLocaleString("es-ES")} €</span>
                   </div>
                   <div className="flex justify-between text-xs">
-                    <span className="text-[#71717a]">Margen %</span>
-                    <span className={`font-semibold ${Number(mp) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>{mp}%</span>
+                    <span className="text-muted-foreground">Margen %</span>
+                    <span className={`font-semibold ${Number(mp) >= 0 ? "text-emerald-500" : "text-rose-500"}`}>{mp}%</span>
                   </div>
                   <div className="flex justify-between text-xs">
-                    <span className="text-[#71717a]">Presupuesto original</span>
-                    <span className="font-semibold text-[#fafafa]">{po.toLocaleString("es-ES")} €</span>
+                    <span className="text-muted-foreground">Presupuesto original</span>
+                    <span className="font-semibold text-foreground">{po.toLocaleString("es-ES")} €</span>
                   </div>
-                  <div className="flex justify-between text-xs pt-1.5 border-t border-[#27272a]">
-                    <span className="text-[#71717a]">Desviación vs presupuesto</span>
-                    <span className={`font-semibold ${mb >= po ? "text-emerald-400" : "text-rose-400"}`}>
+                  <div className="flex justify-between text-xs pt-1.5 border-t border-border">
+                    <span className="text-muted-foreground">Desviación vs presupuesto</span>
+                    <span className={`font-semibold ${mb >= po ? "text-emerald-500" : "text-rose-500"}`}>
                       {po > 0 ? `${((mb - po) / po * 100).toFixed(1)}%` : "—"}
                     </span>
                   </div>
@@ -563,9 +556,9 @@ export default function ProyectosPage() {
             <Button variant="outline" size="sm" onClick={() => setShowCloseModal(false)} disabled={savingClose}>
               Cancelar
             </Button>
-            <Button size="sm" onClick={handleCloseProject} disabled={savingClose}>
+            <Button size="sm" className="bg-primary text-primary-foreground hover:opacity-90 font-semibold" onClick={handleCloseProject} disabled={savingClose}>
               {savingClose ? (
-                <><RotateCcw className="h-3 w-3 mr-1 animate-spin" /> Guardando...</>
+                <>Loader...<RotateCcw className="h-3 w-3 mr-1 animate-spin" /> Guardando...</>
               ) : "Cerrar proyecto"}
             </Button>
           </DialogFooter>

@@ -169,7 +169,7 @@ export default function PerfilPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
         <Loader2 className="h-8 w-8 text-indigo-500 animate-spin" />
-        <p className="text-xs text-[#a1a1aa] uppercase tracking-wider font-semibold">Cargando perfil...</p>
+        <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Cargando perfil...</p>
       </div>
     )
   }
@@ -179,10 +179,10 @@ export default function PerfilPage() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
       <div>
-        <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-[#fafafa] to-[#a1a1aa]">
+        <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-foreground to-muted-foreground">
           Mi Cuenta y Organización
         </h1>
-        <p className="text-xs text-[#a1a1aa] mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           Configura tus datos personales, las credenciales comerciales de tu empresa y el estado de la suscripción.
         </p>
       </div>
@@ -190,44 +190,44 @@ export default function PerfilPage() {
       <div className="grid gap-6 md:grid-cols-12 items-start">
         {/* Left: User Profile Form */}
         <div className="md:col-span-5 space-y-6">
-          <Card className="border-[#27272a]/70 bg-[#09090b]/40">
+          <Card className="border-border/70 bg-card/80">
             <CardHeader>
-              <CardTitle className="text-base text-[#fafafa] flex items-center gap-2">
+              <CardTitle className="text-base text-foreground flex items-center gap-2">
                 <User className="h-5 w-5 text-indigo-400" />
                 <span>Perfil de Usuario</span>
               </CardTitle>
-              <CardDescription className="text-xs text-[#a1a1aa]">
+              <CardDescription className="text-xs text-muted-foreground">
                 Tus datos de acceso y tu rol asignado dentro de la plataforma.
               </CardDescription>
             </CardHeader>
             <form onSubmit={handleSaveUser}>
               <CardContent className="space-y-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="nombre_completo" className="text-xs text-[#a1a1aa]">Nombre Completo</Label>
+                  <Label htmlFor="nombre_completo" className="text-xs text-muted-foreground">Nombre Completo</Label>
                   <Input
                     id="nombre_completo"
                     value={nombreCompleto}
                     onChange={(e) => setNombreCompleto(e.target.value)}
                     required
-                    className="bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] focus:ring-indigo-500"
+                    className="bg-background border border-border text-xs text-foreground focus:ring-indigo-500"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="email" className="text-xs text-[#a1a1aa]">Email (Acceso)</Label>
+                  <Label htmlFor="email" className="text-xs text-muted-foreground">Email (Acceso)</Label>
                   <div className="relative">
                     <Input
                       id="email"
                       value={emailUser}
                       disabled
-                      className="bg-[#18181b]/50 border border-[#27272a]/50 text-xs text-[#71717a] cursor-not-allowed pr-8"
+                      className="bg-muted/50 border border-border/50 text-xs text-muted-foreground cursor-not-allowed pr-8"
                     />
-                    <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#71717a]" />
+                    <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs text-[#a1a1aa]">Rol en la Organización</Label>
+                  <Label className="text-xs text-muted-foreground">Rol en la Organización</Label>
                   <div className="flex items-center">
                     <span className={`px-2.5 py-1 rounded text-xs font-bold capitalize border ${
                       isUserAdmin 
@@ -250,7 +250,7 @@ export default function PerfilPage() {
                   </div>
                 )}
               </CardContent>
-              <CardFooter className="flex justify-end border-t border-[#27272a]/50 py-3 bg-[#09090b]/40">
+              <CardFooter className="flex justify-end border-t border-border/50 py-3 bg-card/80">
                 <Button
                   type="submit"
                   disabled={savingUser}
@@ -264,13 +264,13 @@ export default function PerfilPage() {
           </Card>
 
           {/* Subscription / Plan Card */}
-          <Card className="border-[#27272a]/70 bg-[#09090b]/40">
+          <Card className="border-border/70 bg-card/80">
             <CardHeader>
-              <CardTitle className="text-base text-[#fafafa] flex items-center gap-2">
+              <CardTitle className="text-base text-foreground flex items-center gap-2">
                 <CreditCard className="h-5 w-5 text-indigo-400" />
                 <span>Suscripción SaaS</span>
               </CardTitle>
-              <CardDescription className="text-xs text-[#a1a1aa]">
+              <CardDescription className="text-xs text-muted-foreground">
                 Control de cuotas y límites contratados en tu suscripción de The Titan.
               </CardDescription>
             </CardHeader>
@@ -278,7 +278,7 @@ export default function PerfilPage() {
               <div className="p-4 rounded-xl border border-indigo-500/30 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 flex items-center justify-between">
                 <div>
                   <div className="text-[10px] uppercase font-bold text-indigo-300 tracking-wider">Plan Activo</div>
-                  <div className="text-xl font-black text-[#fafafa] tracking-tight uppercase mt-0.5">
+                  <div className="text-xl font-black text-foreground tracking-tight uppercase mt-0.5">
                     Plan {empresaPlan}
                   </div>
                 </div>
@@ -314,12 +314,12 @@ export default function PerfilPage() {
                       {/* Jarvis AI */}
                       <div className="space-y-1">
                         <div className="flex justify-between text-xs font-semibold">
-                          <span className="text-[#a1a1aa] flex items-center gap-1.5">
+                          <span className="text-muted-foreground flex items-center gap-1.5">
                             <Sparkles className="h-3.5 w-3.5 text-indigo-400" /> Créditos Jarvis AI (Mes)
                           </span>
-                          <span className="text-[#fafafa]">{iaUsageText}</span>
+                          <span className="text-foreground">{iaUsageText}</span>
                         </div>
-                        <div className="h-2 w-full bg-[#27272a] rounded-full overflow-hidden">
+                        <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                           <div 
                             className="h-full bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full transition-all duration-500" 
                             style={{ width: `${limits.ia_calls_mes === -1 ? 100 : iaPct}%` }}
@@ -330,12 +330,12 @@ export default function PerfilPage() {
                       {/* Presupuestos */}
                       <div className="space-y-1">
                         <div className="flex justify-between text-xs font-semibold">
-                          <span className="text-[#a1a1aa] flex items-center gap-1.5">
+                          <span className="text-muted-foreground flex items-center gap-1.5">
                             <FileText className="h-3.5 w-3.5 text-indigo-400" /> Presupuestos (Mes)
                           </span>
-                          <span className="text-[#fafafa]">{presUsageText}</span>
+                          <span className="text-foreground">{presUsageText}</span>
                         </div>
-                        <div className="h-2 w-full bg-[#27272a] rounded-full overflow-hidden">
+                        <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                           <div 
                             className="h-full bg-indigo-500 rounded-full transition-all duration-500" 
                             style={{ width: `${limits.presupuestos_mes === -1 ? 100 : presPct}%` }}
@@ -346,12 +346,12 @@ export default function PerfilPage() {
                       {/* Proyectos */}
                       <div className="space-y-1">
                         <div className="flex justify-between text-xs font-semibold">
-                          <span className="text-[#a1a1aa] flex items-center gap-1.5">
+                          <span className="text-muted-foreground flex items-center gap-1.5">
                             <Briefcase className="h-3.5 w-3.5 text-indigo-400" /> Proyectos Activos
                           </span>
-                          <span className="text-[#fafafa]">{projUsageText}</span>
+                          <span className="text-foreground">{projUsageText}</span>
                         </div>
-                        <div className="h-2 w-full bg-[#27272a] rounded-full overflow-hidden">
+                        <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                           <div 
                             className="h-full bg-indigo-500 rounded-full transition-all duration-500" 
                             style={{ width: `${limits.proyectos_activos === -1 ? 100 : projPct}%` }}
@@ -362,12 +362,12 @@ export default function PerfilPage() {
                       {/* Usuarios */}
                       <div className="space-y-1">
                         <div className="flex justify-between text-xs font-semibold">
-                          <span className="text-[#a1a1aa] flex items-center gap-1.5">
+                          <span className="text-muted-foreground flex items-center gap-1.5">
                             <Users className="h-3.5 w-3.5 text-indigo-400" /> Usuarios del Equipo
                           </span>
-                          <span className="text-[#fafafa]">{userUsageText}</span>
+                          <span className="text-foreground">{userUsageText}</span>
                         </div>
-                        <div className="h-2 w-full bg-[#27272a] rounded-full overflow-hidden">
+                        <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                           <div 
                             className="h-full bg-indigo-500 rounded-full transition-all duration-500" 
                             style={{ width: `${limits.usuarios === -1 ? 100 : userPct}%` }}
@@ -388,13 +388,13 @@ export default function PerfilPage() {
 
         {/* Right: Company Profile Form */}
         <div className="md:col-span-7">
-          <Card className="border-[#27272a]/70 bg-[#09090b]/40">
+          <Card className="border-border/70 bg-card/80">
             <CardHeader>
-              <CardTitle className="text-base text-[#fafafa] flex items-center gap-2">
+              <CardTitle className="text-base text-foreground flex items-center gap-2">
                 <Building2 className="h-5 w-5 text-indigo-400" />
                 <span>Configuración de la Empresa</span>
               </CardTitle>
-              <CardDescription className="text-xs text-[#a1a1aa]">
+              <CardDescription className="text-xs text-muted-foreground">
                 Información fiscal y comercial corporativa que aparecerá en los presupuestos oficiales.
               </CardDescription>
             </CardHeader>
@@ -409,32 +409,32 @@ export default function PerfilPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="empresa_nombre" className="text-xs text-[#a1a1aa]">Nombre de Empresa / Razón Social *</Label>
+                    <Label htmlFor="empresa_nombre" className="text-xs text-muted-foreground">Nombre de Empresa / Razón Social *</Label>
                     <Input
                       id="empresa_nombre"
                       value={empresaNombre}
                       onChange={(e) => setEmpresaNombre(e.target.value)}
                       disabled={!isUserAdmin}
                       required
-                      className="bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="bg-background border border-border text-xs text-foreground focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="empresa_cif" className="text-xs text-[#a1a1aa]">CIF / NIF Identificación *</Label>
+                    <Label htmlFor="empresa_cif" className="text-xs text-muted-foreground">CIF / NIF Identificación *</Label>
                     <Input
                       id="empresa_cif"
                       value={empresaCif}
                       onChange={(e) => setEmpresaCif(e.target.value)}
                       disabled={!isUserAdmin}
                       required
-                      className="bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="bg-background border border-border text-xs text-foreground focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="empresa_domicilio" className="text-xs text-[#a1a1aa]">Domicilio Fiscal (Dirección completa)</Label>
+                  <Label htmlFor="empresa_domicilio" className="text-xs text-muted-foreground">Domicilio Fiscal (Dirección completa)</Label>
                   <div className="relative">
                     <Input
                       id="empresa_domicilio"
@@ -442,15 +442,15 @@ export default function PerfilPage() {
                       onChange={(e) => setEmpresaDomicilio(e.target.value)}
                       disabled={!isUserAdmin}
                       placeholder="Dirección, código postal, provincia, país"
-                      className="bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] focus:ring-indigo-500 pl-8 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="bg-background border border-border text-xs text-foreground focus:ring-indigo-500 pl-8 disabled:opacity-50 disabled:cursor-not-allowed"
                     />
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#71717a]" />
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="empresa_email" className="text-xs text-[#a1a1aa]">Email Principal de Contacto</Label>
+                    <Label htmlFor="empresa_email" className="text-xs text-muted-foreground">Email Principal de Contacto</Label>
                     <div className="relative">
                       <Input
                         id="empresa_email"
@@ -459,14 +459,14 @@ export default function PerfilPage() {
                         onChange={(e) => setEmpresaEmail(e.target.value)}
                         disabled={!isUserAdmin}
                         placeholder="contacto@miempresa.com"
-                        className="bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] focus:ring-indigo-500 pl-8 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="bg-background border border-border text-xs text-foreground focus:ring-indigo-500 pl-8 disabled:opacity-50 disabled:cursor-not-allowed"
                       />
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#71717a]" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="empresa_telefono" className="text-xs text-[#a1a1aa]">Teléfono Corporativo</Label>
+                    <Label htmlFor="empresa_telefono" className="text-xs text-muted-foreground">Teléfono Corporativo</Label>
                     <div className="relative">
                       <Input
                         id="empresa_telefono"
@@ -474,15 +474,15 @@ export default function PerfilPage() {
                         onChange={(e) => setEmpresaTelefono(e.target.value)}
                         disabled={!isUserAdmin}
                         placeholder="+34 900 000 000"
-                        className="bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] focus:ring-indigo-500 pl-8 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="bg-background border border-border text-xs text-foreground focus:ring-indigo-500 pl-8 disabled:opacity-50 disabled:cursor-not-allowed"
                       />
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#71717a]" />
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="empresa_logo" className="text-xs text-[#a1a1aa]">URL del Logotipo Corporativo</Label>
+                  <Label htmlFor="empresa_logo" className="text-xs text-muted-foreground">URL del Logotipo Corporativo</Label>
                   <div className="relative">
                     <Input
                       id="empresa_logo"
@@ -490,9 +490,9 @@ export default function PerfilPage() {
                       onChange={(e) => setEmpresaLogo(e.target.value)}
                       disabled={!isUserAdmin}
                       placeholder="https://miempresa.com/logo.png"
-                      className="bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] focus:ring-indigo-500 pl-8 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="bg-background border border-border text-xs text-foreground focus:ring-indigo-500 pl-8 disabled:opacity-50 disabled:cursor-not-allowed"
                     />
-                    <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#71717a]" />
+                    <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                   </div>
                 </div>
 
@@ -507,7 +507,7 @@ export default function PerfilPage() {
                   </div>
                 )}
               </CardContent>
-              <CardFooter className="flex justify-end border-t border-[#27272a]/50 py-3 bg-[#09090b]/40">
+              <CardFooter className="flex justify-end border-t border-border/50 py-3 bg-card/80">
                 <Button
                   type="submit"
                   disabled={savingEmpresa || !isUserAdmin}

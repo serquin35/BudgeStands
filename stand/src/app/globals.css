@@ -3,58 +3,119 @@
 @tailwind utilities;
 
 @layer base {
+  /* ─── LIGHT MODE — Titan Lumina (Stitch Design) ──────────────────────── */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
-    --radius: 0.5rem;
+    --background:             210 25% 98%;     /* #F7F9FB — cool white background */
+    --foreground:             200 9% 11%;      /* #191C1E — dark slate text */
+    --card:                   0 0% 100%;       /* #FFFFFF — white cards */
+    --card-foreground:        200 9% 11%;
+    --popover:                0 0% 100%;
+    --popover-foreground:     200 9% 11%;
+
+    /* Primario — Indigo-Purple corporativo de Stitch */
+    --primary:                239 63% 55%;     /* #4648D4 */
+    --primary-foreground:     0 0% 100%;
+
+    /* Secundario */
+    --secondary:              219 15% 39%;     /* #545F73 */
+    --secondary-foreground:   0 0% 100%;
+
+    /* Muted */
+    --muted:                  210 11% 93%;     /* #ECEEF0 */
+    --muted-foreground:       245 7% 30%;      /* #464554 */
+
+    /* Acento — Tinte índigo suave */
+    --accent:                 239 84% 95%;     /* #EEF0FE */
+    --accent-foreground:      239 63% 45%;
+
+    /* Destructivo */
+    --destructive:            0 75% 42%;       /* #BA1A1A */
+    --destructive-foreground: 0 0% 100%;
+
+    /* Bordes e inputs */
+    --border:                 245 7% 49%;      /* #767586 */
+    --input:                  250 18% 81%;     /* #C7C4D7 */
+    --ring:                   239 63% 55%;
+
+    /* Radio */
+    --radius:                 0.5rem;
+
+    /* Sidebar — Tonalidad gris-azulada suave de Stitch */
+    --sidebar:                210 11% 93%;     /* #ECEEF0 */
+    --sidebar-foreground:     200 9% 11%;      /* #191C1E */
+    --sidebar-border:         250 18% 81%;     /* #C7C4D7 */
+
+    /* Header */
+    --header:                 0 0% 100%;
+
+    /* Sombra de cards */
+    --card-shadow:            0 1px 3px rgba(25, 28, 30, 0.08), 0 1px 2px rgba(25, 28, 30, 0.04);
   }
 
+  /* ─── DARK MODE — Titan Lumina Dark (Derivado tonal de Stitch) ───────── */
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --background:             200 9% 8%;       /* #111416 — deep slate background */
+    --foreground:             210 25% 90%;     /* #E1E3E5 — light gray text */
+    --card:                   200 9% 11%;      /* #191C1E — card surface */
+    --card-foreground:        210 25% 90%;
+    --popover:                200 9% 11%;
+    --popover-foreground:     210 25% 90%;
+    --primary:                239 100% 87%;    /* #C0C1FF — soft purple */
+    --primary-foreground:     239 63% 20%;
+    --secondary:              219 12% 25%;     /* #353D4A */
+    --secondary-foreground:   210 25% 90%;
+    --muted:                  219 12% 18%;     /* #272C35 */
+    --muted-foreground:       219 10% 70%;
+    --accent:                 239 63% 20%;
+    --accent-foreground:      239 100% 87%;
+    --destructive:            0 75% 65%;       /* #FFB4AB */
+    --destructive-foreground: 0 0% 10%;
+    --border:                 219 12% 25%;
+    --input:                  219 12% 25%;
+    --ring:                   239 100% 87%;
+
+    /* Sidebar dark */
+    --sidebar:                200 9% 8%;
+    --sidebar-foreground:     210 25% 90%;
+    --sidebar-border:         219 12% 25%;
+
+    /* Header */
+    --header:                 200 9% 8%;
+    --card-shadow:            none;
   }
 }
 
 @layer base {
   * {
-    @apply border-[#27272a];
+    @apply border-border;
+  }
+  /* Transición suave al cambiar tema — solo propiedades visuales, no layout */
+  body, header, aside, main, nav, section, article, footer {
+    transition: background-color 250ms ease, border-color 250ms ease, color 150ms ease;
   }
   body {
-    @apply bg-[#09090b] text-[#fafafa];
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Cards con sombra sutil en light mode para efecto "flotante" */
+@layer utilities {
+  .card-elevated {
+    box-shadow: var(--card-shadow);
+  }
+}
+
+/* Forzar tema claro en páginas de impresión */
+@media print {
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    --background:   0 0% 100%;
+    --foreground:   200 9% 11%;
+    --card:         0 0% 100%;
+    --card-foreground: 200 9% 11%;
+    --border:       250 18% 81%;
   }
 }
 

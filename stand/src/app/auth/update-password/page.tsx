@@ -85,7 +85,7 @@ export default function UpdatePasswordPage() {
           <CardContent>
             <form onSubmit={handleUpdatePassword} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-xs font-medium text-[#e4e4e7]">
+                <Label htmlFor="password" className="text-xs font-medium text-foreground">
                   Nueva Contraseña
                 </Label>
                 <div className="relative">
@@ -110,7 +110,7 @@ export default function UpdatePasswordPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-xs font-medium text-[#e4e4e7]">
+                <Label htmlFor="confirmPassword" className="text-xs font-medium text-foreground">
                   Confirmar Nueva Contraseña
                 </Label>
                 <Input

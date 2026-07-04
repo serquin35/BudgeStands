@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import { createClient } from "@/utils/supabase/server"
 import Sidebar from "@/components/dashboard/sidebar"
+import { ThemeToggle } from "@/components/shared/theme-toggle"
 import { signOut } from "@/app/auth/actions"
 import Link from "next/link"
 
@@ -50,14 +51,14 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-[#fafafa] flex">
+    <div className="min-h-screen bg-background text-foreground flex">
       {/* Sidebar Nav */}
       <Sidebar user={userData} empresa={empresaData} onSignOut={signOut} />
 
       {/* Main Content Area */}
       <div className="flex-1 lg:pl-64 flex flex-col min-h-screen w-full max-w-full overflow-x-hidden">
         {/* Top Header Bar */}
-        <header className="h-14 border-b border-[#27272a]/70 flex items-center justify-between px-4 sm:px-6 bg-[#09090b]/80 backdrop-blur-md sticky top-0 z-20">
+        <header className="h-14 border-b border-border/70 flex items-center justify-between px-4 sm:px-6 bg-header/90 backdrop-blur-md sticky top-0 z-20">
           <div className="flex items-center gap-3">
             {/* Spacer for mobile hamburger button */}
             <div className="w-10 lg:hidden" />
@@ -66,13 +67,16 @@ export default async function DashboardLayout({
             </span>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle — siempre visible en header */}
+            <ThemeToggle />
+
             <Link 
               href="/dashboard/perfil" 
               className="text-right hidden sm:block hover:opacity-85 hover:text-indigo-400 transition-all duration-200"
             >
-              <div className="text-xs font-semibold text-[#fafafa]">{userData.nombre_completo}</div>
-              <div className="text-[10px] text-[#71717a] capitalize">{userData.rol}</div>
+              <div className="text-xs font-semibold text-foreground">{userData.nombre_completo}</div>
+              <div className="text-[10px] text-muted-foreground capitalize">{userData.rol}</div>
             </Link>
           </div>
         </header>

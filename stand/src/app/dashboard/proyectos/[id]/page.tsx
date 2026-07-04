@@ -216,7 +216,7 @@ const getSemaforoHito = (hito: ProyectoHito) => {
     
     if (diasRestantes < 0) return "text-red-500 bg-red-500/10 border-red-500/20" // Vencido
     if (diasRestantes <= 7) return "text-yellow-500 bg-yellow-500/10 border-yellow-500/20" // Próximo a vencer
-    return "text-slate-400 bg-slate-800/50 border-slate-700" // Pendiente con tiempo
+    return "text-muted-foreground bg-muted/50 border-border" // Pendiente con tiempo
   }
 
   const formatTipoHito = (tipo: string) => {
@@ -272,7 +272,7 @@ const getSemaforoHito = (hito: ProyectoHito) => {
   }
 
   if (loading) {
-    return <div className="p-8 text-center text-slate-400">Cargando detalles del proyecto...</div>
+    return <div className="p-8 text-center text-muted-foreground">Cargando detalles del proyecto...</div>
   }
 
   if (!proyecto) {
@@ -286,7 +286,7 @@ const getSemaforoHito = (hito: ProyectoHito) => {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={() => router.push("/dashboard/proyectos")} className="border-slate-800 hover:bg-slate-800">
+        <Button variant="outline" size="icon" onClick={() => router.push("/dashboard/proyectos")} className="border-border hover:bg-muted">
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
@@ -294,43 +294,43 @@ const getSemaforoHito = (hito: ProyectoHito) => {
             {proyecto.codigo_proyecto_interno}
             <StatusBadge estado={proyecto.estado_proyecto} />
           </h1>
-          <p className="text-slate-400">{pc?.numero_presupuesto} - {clienteNombre || "Cliente no asignado"}</p>
+          <p className="text-muted-foreground">{pc?.numero_presupuesto} - {clienteNombre || "Cliente no asignado"}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Detalles Generales */}
-        <Card className="md:col-span-1 bg-slate-900 border-slate-800 h-fit">
+        <Card className="md:col-span-1 bg-card border-border h-fit">
           <CardHeader>
-            <CardTitle className="text-lg text-slate-100">Detalles Generales</CardTitle>
+            <CardTitle className="text-lg text-foreground">Detalles Generales</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-start gap-3">
               <Calendar className="h-5 w-5 text-indigo-400 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-slate-300">Feria</p>
-                <p className="text-sm text-slate-400">{pc?.nombre_feria || "Sin nombre"} ({pc?.fecha_inicio_feria || "Sin fecha"})</p>
+                <p className="text-sm font-medium text-foreground">Feria</p>
+                <p className="text-sm text-muted-foreground">{pc?.nombre_feria || "Sin nombre"} ({pc?.fecha_inicio_feria || "Sin fecha"})</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <MapPin className="h-5 w-5 text-emerald-400 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-slate-300">Recinto</p>
-                <p className="text-sm text-slate-400">{pc?.recinto_ferial || pc?.nombre_feria || "Sin especificar"}</p>
+                <p className="text-sm font-medium text-foreground">Recinto</p>
+                <p className="text-sm text-muted-foreground">{pc?.recinto_ferial || pc?.nombre_feria || "Sin especificar"}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <Maximize className="h-5 w-5 text-orange-400 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-slate-300">Superficie</p>
-                <p className="text-sm text-slate-400">{pc?.m2_superficie ? `${pc.m2_superficie} m²` : "No especificado"} - {pc?.tipo_stand ? pc.tipo_stand.replace(/_/g, " ") : ""}</p>
+                <p className="text-sm font-medium text-foreground">Superficie</p>
+                <p className="text-sm text-muted-foreground">{pc?.m2_superficie ? `${pc.m2_superficie} m²` : "No especificado"} - {pc?.tipo_stand ? pc.tipo_stand.replace(/_/g, " ") : ""}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <Building2 className="h-5 w-5 text-blue-400 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-slate-300">Presupuesto Aprobado</p>
-                <p className="text-sm font-semibold text-slate-200">{formatCurrency(pc?.total_presupuesto)}</p>
+                <p className="text-sm font-medium text-foreground">Presupuesto Aprobado</p>
+                <p className="text-sm font-semibold text-foreground">{formatCurrency(pc?.total_presupuesto)}</p>
               </div>
             </div>
           </CardContent>
@@ -339,14 +339,14 @@ const getSemaforoHito = (hito: ProyectoHito) => {
         {/* Contenido Pestañas */}
         <div className="md:col-span-2 space-y-6">
           {/* Navegación de pestañas */}
-          <div className="flex border-b border-[#27272a]/70 gap-2 mb-6 overflow-x-auto scrollbar-hide">
+          <div className="flex border-b border-border/70 gap-2 mb-6 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setActiveTab("hitos")}
               className={cn(
                 "px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-all border-b-2 -mb-[2px] whitespace-nowrap",
                 activeTab === "hitos"
                   ? "border-indigo-500 text-white"
-                  : "border-transparent text-[#a1a1aa] hover:text-[#fafafa]"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >
               🏗️ Hitos de Producción
@@ -357,7 +357,7 @@ const getSemaforoHito = (hito: ProyectoHito) => {
                 "px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-all border-b-2 -mb-[2px] flex items-center gap-2 relative whitespace-nowrap",
                 activeTab === "b2b"
                   ? "border-indigo-500 text-white"
-                  : "border-transparent text-[#a1a1aa] hover:text-[#fafafa]"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >
               💬 Canal B2B
@@ -374,7 +374,7 @@ const getSemaforoHito = (hito: ProyectoHito) => {
                 "px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-all border-b-2 -mb-[2px] whitespace-nowrap",
                 activeTab === "facturas"
                   ? "border-indigo-500 text-white"
-                  : "border-transparent text-[#a1a1aa] hover:text-[#fafafa]"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >
               💳 Facturación y Cobros
@@ -383,10 +383,10 @@ const getSemaforoHito = (hito: ProyectoHito) => {
 
           {/* Hitos Tab */}
           {activeTab === "hitos" && (
-            <Card className="bg-slate-900 border-slate-800">
+            <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="text-lg text-slate-100">Línea de Tiempo - Hitos</CardTitle>
-                <CardDescription className="text-slate-400">Seguimiento cronológico y estado de los hitos del proyecto</CardDescription>
+                <CardTitle className="text-lg text-foreground">Línea de Tiempo - Hitos</CardTitle>
+                <CardDescription className="text-muted-foreground">Seguimiento cronológico y estado de los hitos del proyecto</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -398,7 +398,7 @@ const getSemaforoHito = (hito: ProyectoHito) => {
                       <div key={hito.id} className="relative pl-8 pb-4">
                         {/* Line connection */}
                         {index !== (proyecto.proyectos_hitos?.length || 0) - 1 && (
-                          <div className="absolute left-[11px] top-6 bottom-0 w-0.5 bg-slate-800"></div>
+                          <div className="absolute left-[11px] top-6 bottom-0 w-0.5 bg-muted"></div>
                         )}
                         
                         {/* Dot */}
@@ -406,22 +406,22 @@ const getSemaforoHito = (hito: ProyectoHito) => {
                           {isCompletado ? <CheckCircle2 className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
                         </div>
 
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-950 p-4 rounded-lg border border-slate-800 shadow-sm">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-muted/50 p-4 rounded-lg border border-border shadow-sm">
                           <div>
                             <div className="flex items-center gap-2">
-                              <h4 className="text-sm font-medium text-slate-200">{formatTipoHito(hito.tipo_hito)}</h4>
+                              <h4 className="text-sm font-medium text-foreground">{formatTipoHito(hito.tipo_hito)}</h4>
                               <div className="group relative flex items-center">
-                                <HelpCircle className="h-4 w-4 text-slate-500 cursor-help hover:text-slate-300 transition-colors" />
-                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-48 sm:w-64 p-2.5 bg-slate-800 text-xs text-slate-200 rounded-md shadow-xl z-50 border border-slate-700 pointer-events-none">
+                                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help hover:text-foreground transition-colors" />
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-48 sm:w-64 p-2.5 bg-muted text-xs text-foreground rounded-md shadow-xl z-50 border border-border pointer-events-none">
                                   {descripcionesHitos[hito.tipo_hito] || "Sin descripción disponible."}
                                   {/* Triángulo del tooltip */}
-                                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-border"></div>
                                 </div>
                               </div>
                             </div>
                             <div className="flex items-center gap-3 mt-1">
-                              <p className="text-xs text-slate-400">
-                                Programado: <span className="text-slate-300 font-medium">{hito.fecha_programada}</span>
+                              <p className="text-xs text-muted-foreground">
+                                Programado: <span className="text-foreground font-medium">{hito.fecha_programada}</span>
                               </p>
                               {isCompletado && (
                                 <p className="text-xs font-medium text-green-400">
@@ -447,7 +447,7 @@ const getSemaforoHito = (hito: ProyectoHito) => {
                   })}
                   
                   {(!proyecto.proyectos_hitos || proyecto.proyectos_hitos.length === 0) && (
-                    <div className="text-center p-8 text-slate-500 bg-slate-950 rounded-lg border border-dashed border-slate-800">
+                    <div className="text-center p-8 text-muted-foreground bg-muted/50 rounded-lg border border-dashed border-border">
                       <AlertCircle className="mx-auto h-8 w-8 mb-2 opacity-50" />
                       <p>No hay hitos generados para este proyecto.</p>
                       <p className="text-xs mt-1">El trigger SQL debería haberlos creado al aceptar el presupuesto.</p>
@@ -469,13 +469,13 @@ const getSemaforoHito = (hito: ProyectoHito) => {
 
           {/* Facturas Tab */}
           {activeTab === "facturas" && (
-            <Card className="bg-slate-900 border-slate-800 text-[#fafafa]">
+            <Card className="bg-card border-border text-foreground">
               <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6">
                 <div>
-                  <CardTitle className="text-lg text-slate-100 flex items-center gap-2">
+                  <CardTitle className="text-lg text-foreground flex items-center gap-2">
                     <Receipt className="w-5 h-5 text-indigo-400" /> Facturación y Cobros
                   </CardTitle>
-                  <CardDescription className="text-slate-400">
+                  <CardDescription className="text-muted-foreground">
                     Resumen de facturas emitidas, cobradas e importes pendientes de cobro asociados a este proyecto.
                   </CardDescription>
                 </div>
@@ -490,7 +490,7 @@ const getSemaforoHito = (hito: ProyectoHito) => {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="border-slate-700 hover:bg-slate-800 text-xs text-slate-300"
+                    className="border-border hover:bg-muted text-xs text-foreground"
                     onClick={() => router.push(`/dashboard/finanzas?proyectoId=${proyecto.id}`)}
                   >
                     <ExternalLink className="w-4 h-4 mr-1.5" /> Ir a Finanzas
@@ -508,13 +508,13 @@ const getSemaforoHito = (hito: ProyectoHito) => {
 
                   return (
                     <div className="space-y-6">
-                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 bg-slate-950 p-4 rounded-xl border border-slate-800">
+                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 bg-muted/50 p-4 rounded-xl border border-border">
                         <div>
-                          <p className="text-[10px] text-slate-400 uppercase font-semibold">Presupuesto</p>
+                          <p className="text-[10px] text-muted-foreground uppercase font-semibold">Presupuesto</p>
                           <p className="text-sm font-bold text-white mt-0.5">{formatCurrency(totalPresupuesto)}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] text-slate-400 uppercase font-semibold">Total Facturado</p>
+                          <p className="text-[10px] text-muted-foreground uppercase font-semibold">Total Facturado</p>
                           <p className="text-sm font-bold text-white mt-0.5">
                             {formatCurrency(totalFacturado)} <span className="text-[10px] text-indigo-400 font-normal">({pctFacturadoAcumulado}%)</span>
                           </p>
@@ -528,28 +528,28 @@ const getSemaforoHito = (hito: ProyectoHito) => {
                           <p className="text-sm font-bold text-red-400 mt-0.5">{formatCurrency(totalPendiente)}</p>
                         </div>
                         <div className="col-span-2 md:col-span-1">
-                          <p className="text-[10px] text-slate-400 uppercase font-semibold">Progreso Facturación</p>
+                          <p className="text-[10px] text-muted-foreground uppercase font-semibold">Progreso Facturación</p>
                           <div className="flex items-center gap-2 mt-1.5">
-                            <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden border border-slate-700">
+                            <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden border border-border">
                               <div 
                                 className="bg-indigo-500 h-full rounded-full transition-all duration-300"
                                 style={{ width: `${Math.min(pctFacturadoAcumulado, 100)}%` }}
                               ></div>
                             </div>
-                            <span className="text-xs text-slate-300 font-semibold">{pctFacturadoAcumulado}%</span>
+                            <span className="text-xs text-foreground font-semibold">{pctFacturadoAcumulado}%</span>
                           </div>
                         </div>
                       </div>
 
                       {facturas.length === 0 ? (
-                        <div className="text-center p-6 text-slate-500 bg-slate-950 rounded-lg border border-dashed border-slate-800">
+                        <div className="text-center p-6 text-muted-foreground bg-muted/50 rounded-lg border border-dashed border-border">
                           <p className="text-xs">No se han emitido facturas para este proyecto todavía.</p>
                         </div>
                       ) : (
                         <div className="overflow-x-auto">
                           <table className="w-full text-xs text-left border-collapse">
                             <thead>
-                              <tr className="border-b border-slate-800 text-slate-400 font-semibold">
+                              <tr className="border-b border-border text-muted-foreground font-semibold">
                                 <th className="pb-3 text-left">Factura</th>
                                 <th className="pb-3 text-left">Tipo</th>
                                 <th className="pb-3 text-center">Porcentaje</th>
@@ -559,9 +559,9 @@ const getSemaforoHito = (hito: ProyectoHito) => {
                                 <th className="pb-3 text-center">Estado</th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-800/40">
+                            <tbody className="divide-y divide-border/40">
                               {facturas.map((factura: any) => {
-                                let badgeColor = "bg-zinc-800 text-zinc-400 border-zinc-700"
+                                let badgeColor = "bg-muted text-muted-foreground border-border"
                                 let badgeLabel = "Pendiente"
                                 
                                 if (factura.estado_cobro === 'cobrada') {
@@ -584,13 +584,13 @@ const getSemaforoHito = (hito: ProyectoHito) => {
                                 }
 
                                 return (
-                                  <tr key={factura.id} className="hover:bg-slate-950/20">
-                                    <td className="py-3 font-mono font-semibold text-slate-200">{factura.numero_factura_legal}</td>
-                                    <td className="py-3 capitalize text-slate-300">{factura.tipo_factura}</td>
-                                    <td className="py-3 text-center text-slate-300 font-semibold">{factura.porcentaje_facturado}%</td>
-                                    <td className="py-3 text-right text-slate-300">{formatCurrency(factura.base_imponible)}</td>
+                                  <tr key={factura.id} className="hover:bg-muted/50/20">
+                                    <td className="py-3 font-mono font-semibold text-foreground">{factura.numero_factura_legal}</td>
+                                    <td className="py-3 capitalize text-foreground">{factura.tipo_factura}</td>
+                                    <td className="py-3 text-center text-foreground font-semibold">{factura.porcentaje_facturado}%</td>
+                                    <td className="py-3 text-right text-foreground">{formatCurrency(factura.base_imponible)}</td>
                                     <td className="py-3 text-right text-white font-semibold">{formatCurrency(factura.total_factura_bruto)}</td>
-                                    <td className="py-3 text-slate-400 pl-6">{factura.fecha_vencimiento}</td>
+                                    <td className="py-3 text-muted-foreground pl-6">{factura.fecha_vencimiento}</td>
                                     <td className="py-3 text-center">
                                       <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${badgeColor}`}>
                                         {badgeLabel}

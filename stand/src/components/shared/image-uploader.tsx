@@ -59,10 +59,10 @@ export function ImageUploader({ value, onUpload, disabled }: Props) {
 
   return (
     <div className="space-y-2">
-      <label className="text-xs text-[#a1a1aa] font-medium">Imagen de referencia (opcional)</label>
+      <label className="text-xs text-muted-foreground font-medium">Imagen de referencia (opcional)</label>
 
       {preview ? (
-        <div className="relative rounded-md overflow-hidden border border-[#27272a] aspect-video bg-[#09090b]">
+        <div className="relative rounded-md overflow-hidden border border-border aspect-video bg-muted/40">
           <img
             src={preview}
             alt="Preview"
@@ -87,15 +87,15 @@ export function ImageUploader({ value, onUpload, disabled }: Props) {
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={disabled || uploading}
-          className="w-full h-28 rounded-md border-2 border-dashed border-[#27272a] hover:border-indigo-500/50 transition-colors flex flex-col items-center justify-center gap-1.5 bg-[#09090b]/60 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full h-28 rounded-md border-2 border-dashed border-border hover:border-primary/50 transition-colors flex flex-col items-center justify-center gap-1.5 bg-muted/30 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {uploading ? (
             <Loader2 className="h-5 w-5 animate-spin text-indigo-400" />
           ) : (
             <>
-              <ImageUp className="h-5 w-5 text-[#a1a1aa]" />
-              <span className="text-[11px] text-[#a1a1aa]">Haz clic para subir o arrastra una imagen</span>
-              <span className="text-[10px] text-[#52525b]">PNG, JPG, WebP — Máx 10MB</span>
+              <ImageUp className="h-5 w-5 text-muted-foreground" />
+              <span className="text-[11px] text-muted-foreground">Haz clic para subir o arrastra una imagen</span>
+              <span className="text-[10px] text-muted-foreground">PNG, JPG, WebP — Máx 10MB</span>
             </>
           )}
         </button>

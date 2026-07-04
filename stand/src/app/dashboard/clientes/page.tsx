@@ -192,11 +192,11 @@ export default function ClientesPage() {
   const getStatusIcon = (estado: string) => {
     switch (estado) {
       case "activo":
-        return <CheckCircle className="h-4 w-4 text-emerald-400" />
+        return <CheckCircle className="h-4 w-4 text-emerald-500" />
       case "bloqueado_impagos":
         return <ShieldAlert className="h-4 w-4 text-rose-500 animate-pulse" />
       case "inactivo":
-        return <Ban className="h-4 w-4 text-zinc-400" />
+        return <Ban className="h-4 w-4 text-muted-foreground" />
       default:
         return null
     }
@@ -205,11 +205,11 @@ export default function ClientesPage() {
   const getStatusLabel = (estado: string) => {
     switch (estado) {
       case "activo":
-        return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Activo</span>
+        return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Activo</span>
       case "bloqueado_impagos":
         return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">Bloqueado Impagos</span>
       case "inactivo":
-        return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-zinc-500/10 text-zinc-400 border border-zinc-500/20">Inactivo</span>
+        return <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-secondary text-muted-foreground border border-border">Inactivo</span>
       default:
         return estado
     }
@@ -220,17 +220,17 @@ export default function ClientesPage() {
       {/* Header section */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-[#fafafa] to-[#a1a1aa]">
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
             Clientes CRM
           </h1>
-          <p className="text-xs text-[#a1a1aa] mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Gestión de datos de clientes, histórico de facturación y alertas comerciales.
           </p>
         </div>
         
         <Button 
           onClick={handleAddNewClick}
-          className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium text-xs rounded-lg transition-all duration-200"
+          className="bg-primary hover:opacity-90 text-primary-foreground font-semibold text-xs rounded-lg transition-all duration-200"
         >
           <Plus className="h-4 w-4 mr-2" />
           <span>Añadir Cliente</span>
@@ -238,29 +238,29 @@ export default function ClientesPage() {
       </div>
 
       {/* Filters Card */}
-      <Card className="border-[#27272a]/70 bg-[#09090b]/40">
+      <Card className="card-elevated border-border bg-card">
         <CardContent className="p-4 flex flex-col sm:flex-row gap-4 items-center justify-between">
           {/* Search bar */}
           <div className="relative w-full sm:max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#71717a]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input 
               placeholder="Buscar cliente, CIF..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 bg-[#09090b]/80 border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa]"
+              className="pl-9 bg-background border-border text-xs text-foreground focus-visible:ring-primary/30"
             />
           </div>
 
           {/* Sector filter */}
           <div className="flex items-center gap-2 w-full sm:w-auto">
-            <Label htmlFor="filter-sector" className="text-xs text-[#a1a1aa] shrink-0">
+            <Label htmlFor="filter-sector" className="text-xs text-muted-foreground shrink-0">
               Sector Industrial:
             </Label>
             <select
               id="filter-sector"
               value={selectedSector}
               onChange={(e) => setSelectedSector(e.target.value)}
-              className="w-full sm:w-44 bg-[#09090b]/80 border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa] rounded-md h-9 px-3"
+              className="w-full sm:w-44 bg-background border-border text-xs text-foreground rounded-md h-9 px-3 focus:outline-none focus:ring-1 focus:ring-primary/30"
             >
               <option value="todos">Todos los sectores</option>
               {sectores.map(s => (
@@ -274,34 +274,34 @@ export default function ClientesPage() {
       {/* Grid of Client Cards */}
       {loading ? (
         <div className="h-40 flex items-center justify-center">
-          <Loader2 className="h-8 w-8 text-indigo-500 animate-spin" />
+          <Loader2 className="h-8 w-8 text-primary animate-spin" />
         </div>
       ) : filteredClientes.length === 0 ? (
-        <div className="p-12 text-center rounded-xl border border-dashed border-[#27272a]/70 bg-[#09090b]/20">
-          <div className="text-sm font-semibold text-[#71717a]">No se encontraron clientes</div>
-          <div className="text-xs text-[#52525b] mt-1">Crea un cliente nuevo o ajusta los filtros de búsqueda</div>
+        <div className="p-12 text-center rounded-xl border border-dashed border-border bg-card/20">
+          <div className="text-sm font-semibold text-muted-foreground">No se encontraron clientes</div>
+          <div className="text-xs text-muted-foreground/60 mt-1">Crea un cliente nuevo o ajusta los filtros de búsqueda</div>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredClientes.map((cliente) => (
-            <Card key={cliente.id} className="border-[#27272a]/70 bg-[#09090b]/30 hover:border-indigo-500/30 transition-all duration-300 flex flex-col justify-between group">
+            <Card key={cliente.id} className="card-elevated border-border bg-card hover:border-primary/30 transition-all duration-300 flex flex-col justify-between group">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-sm text-[#fafafa] group-hover:text-indigo-400 transition-colors">
+                      <h3 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
                         {cliente.nombre_comercial}
                       </h3>
                       {getStatusIcon(cliente.estado_cliente)}
                     </div>
-                    <p className="text-[10px] text-[#71717a] font-medium leading-none">{cliente.razon_social}</p>
+                    <p className="text-[10px] text-muted-foreground font-medium leading-none">{cliente.razon_social}</p>
                   </div>
                   
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => handleEditClick(cliente)}
-                    className="h-7 w-7 text-[#71717a] hover:text-[#fafafa] hover:bg-[#18181b]"
+                    className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-secondary/40"
                   >
                     <Edit2 className="h-3.5 w-3.5" />
                   </Button>
@@ -309,23 +309,23 @@ export default function ClientesPage() {
               </CardHeader>
               <CardContent className="space-y-3 pb-4">
                 {/* Contact info list */}
-                <div className="space-y-2 text-xs border-t border-[#27272a]/40 pt-3">
-                  <div className="flex items-center gap-2 text-[#e4e4e7]">
-                    <User className="h-3.5 w-3.5 text-[#71717a] shrink-0" />
+                <div className="space-y-2 text-xs border-t border-border/40 pt-3">
+                  <div className="flex items-center gap-2 text-foreground/90">
+                    <User className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                     <span className="truncate">{cliente.nombre_contacto_principal || "Sin contacto principal"}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[#e4e4e7]">
-                    <Mail className="h-3.5 w-3.5 text-[#71717a] shrink-0" />
+                  <div className="flex items-center gap-2 text-foreground/90">
+                    <Mail className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                     <span className="truncate">{cliente.email_contacto || "Sin email"}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[#e4e4e7]">
-                    <Phone className="h-3.5 w-3.5 text-[#71717a] shrink-0" />
+                  <div className="flex items-center gap-2 text-foreground/90">
+                    <Phone className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                     <span>{cliente.telefono_contacto || "Sin teléfono"}</span>
                   </div>
                   {cliente.web_cliente && (
-                    <div className="flex items-center gap-2 text-[#e4e4e7]">
-                      <Globe className="h-3.5 w-3.5 text-[#71717a] shrink-0" />
-                      <a href={cliente.web_cliente} target="_blank" rel="noreferrer" className="text-indigo-400 hover:underline truncate">
+                    <div className="flex items-center gap-2 text-foreground/90">
+                      <Globe className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                      <a href={cliente.web_cliente} target="_blank" rel="noreferrer" className="text-primary hover:underline truncate">
                         {cliente.web_cliente}
                       </a>
                     </div>
@@ -333,14 +333,14 @@ export default function ClientesPage() {
                 </div>
 
                 {/* Sub info */}
-                <div className="flex items-center justify-between pt-2 border-t border-[#27272a]/30 text-[10px] text-[#71717a]">
+                <div className="flex items-center justify-between pt-2 border-t border-border/30 text-[10px] text-muted-foreground">
                   <span>CIF: {cliente.cif_nif}</span>
-                  <span>Tarifa: <b className="capitalize text-[#fafafa]">{cliente.tarifa_asignada}</b></span>
+                  <span>Tarifa: <b className="capitalize text-foreground">{cliente.tarifa_asignada}</b></span>
                 </div>
               </CardContent>
-              <div className="px-6 py-2.5 border-t border-[#27272a]/40 bg-[#09090b]/50 rounded-b-xl flex items-center justify-between">
+              <div className="px-6 py-2.5 border-t border-border/40 bg-muted/40 rounded-b-xl flex items-center justify-between">
                 {getStatusLabel(cliente.estado_cliente)}
-                <span className="text-[10px] font-semibold text-[#a1a1aa] bg-[#18181b] px-2 py-0.5 rounded border border-[#27272a]">
+                <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
                   {cliente.sector_industrial || "Otros"}
                 </span>
               </div>
@@ -351,10 +351,10 @@ export default function ClientesPage() {
 
       {/* Edit/Create Sheet */}
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent className="bg-[#09090b] text-[#fafafa] border-l border-[#27272a] sm:max-w-md overflow-y-auto">
+        <SheetContent className="bg-card text-foreground border-l border-border sm:max-w-md overflow-y-auto">
           <SheetHeader>
-            <SheetTitle className="text-[#fafafa]">{editingCliente ? "Editar Cliente" : "Nuevo Cliente"}</SheetTitle>
-            <SheetDescription className="text-[#a1a1aa]">
+            <SheetTitle className="text-foreground">{editingCliente ? "Editar Cliente" : "Nuevo Cliente"}</SheetTitle>
+            <SheetDescription className="text-muted-foreground">
               Ingresa los datos fiscales y de contacto comercial del cliente.
             </SheetDescription>
           </SheetHeader>
@@ -367,7 +367,7 @@ export default function ClientesPage() {
                 value={formData.nombre_comercial} 
                 onChange={handleFormChange}
                 required
-                className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                className="bg-background border-border text-xs text-foreground"
               />
             </div>
             <div className="space-y-2">
@@ -377,7 +377,7 @@ export default function ClientesPage() {
                 value={formData.razon_social} 
                 onChange={handleFormChange}
                 required
-                className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                className="bg-background border-border text-xs text-foreground"
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -388,7 +388,7 @@ export default function ClientesPage() {
                   value={formData.cif_nif} 
                   onChange={handleFormChange}
                   required
-                  className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                  className="bg-background border-border text-xs text-foreground"
                 />
               </div>
               <div className="space-y-2">
@@ -398,7 +398,7 @@ export default function ClientesPage() {
                   placeholder="Ej: Turismo"
                   value={formData.sector_industrial} 
                   onChange={handleFormChange}
-                  className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                  className="bg-background border-border text-xs text-foreground"
                 />
               </div>
             </div>
@@ -409,144 +409,148 @@ export default function ClientesPage() {
                 id="domicilio_fiscal" 
                 value={formData.domicilio_fiscal} 
                 onChange={handleFormChange}
-                className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                className="bg-background border-border text-xs text-foreground"
               />
             </div>
 
-            <div className="border-t border-[#27272a]/50 my-4 pt-4 space-y-4">
-              <h4 className="text-xs font-bold text-[#fafafa] uppercase tracking-wider">Contacto Principal</h4>
-              
+            <div className="space-y-2 pt-2 border-t border-border/20">
+              <h4 className="text-xs font-bold text-primary">Contacto Principal</h4>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="nombre_contacto_principal" className="text-xs">Nombre Completo</Label>
+              <Input 
+                id="nombre_contacto_principal" 
+                value={formData.nombre_contacto_principal} 
+                onChange={handleFormChange}
+                className="bg-background border-border text-xs text-foreground"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="nombre_contacto_principal" className="text-xs">Nombre</Label>
+                <Label htmlFor="email_contacto" className="text-xs">Email</Label>
                 <Input 
-                  id="nombre_contacto_principal" 
-                  value={formData.nombre_contacto_principal} 
+                  id="email_contacto" 
+                  type="email"
+                  value={formData.email_contacto} 
                   onChange={handleFormChange}
-                  className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                  className="bg-background border-border text-xs text-foreground"
                 />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email_contacto" className="text-xs">Correo Electrónico</Label>
-                  <Input 
-                    id="email_contacto" 
-                    type="email"
-                    value={formData.email_contacto} 
-                    onChange={handleFormChange}
-                    className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="telefono_contacto" className="text-xs">Teléfono</Label>
-                  <Input 
-                    id="telefono_contacto" 
-                    value={formData.telefono_contacto} 
-                    onChange={handleFormChange}
-                    className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
-                  />
-                </div>
-              </div>
               <div className="space-y-2">
-                <Label htmlFor="web_cliente" className="text-xs">Página Web</Label>
+                <Label htmlFor="telefono_contacto" className="text-xs">Teléfono</Label>
                 <Input 
-                  id="web_cliente" 
-                  value={formData.web_cliente} 
+                  id="telefono_contacto" 
+                  value={formData.telefono_contacto} 
                   onChange={handleFormChange}
-                  className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                  className="bg-background border-border text-xs text-foreground"
                 />
               </div>
             </div>
 
-            <div className="border-t border-[#27272a]/50 my-4 pt-4 space-y-4">
-              <h4 className="text-xs font-bold text-[#fafafa] uppercase tracking-wider">Financiero y Gestión</h4>
+            <div className="space-y-2">
+              <Label htmlFor="web_cliente" className="text-xs">Sitio Web</Label>
+              <Input 
+                id="web_cliente" 
+                placeholder="https://example.com"
+                value={formData.web_cliente} 
+                onChange={handleFormChange}
+                className="bg-background border-border text-xs text-foreground"
+              />
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="estado_cliente" className="text-xs">Estado Cliente</Label>
-                  <select
-                    id="estado_cliente"
-                    value={formData.estado_cliente}
-                    onChange={handleFormChange}
-                    className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
-                  >
-                    <option value="activo">Activo</option>
-                    <option value="bloqueado_impagos">Bloqueado Impagos</option>
-                    <option value="inactivo">Inactivo</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="tarifa_asignada" className="text-xs">Tarifa Asignada</Label>
-                  <select
-                    id="tarifa_asignada"
-                    value={formData.tarifa_asignada}
-                    onChange={handleFormChange}
-                    className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
-                  >
-                    <option value="estandar">Estándar</option>
-                    <option value="premium">Premium</option>
-                    <option value="distribuidor">Distribuidor</option>
-                  </select>
-                </div>
-              </div>
+            <div className="space-y-2 pt-2 border-t border-border/20">
+              <h4 className="text-xs font-bold text-primary">Configuración Comercial</h4>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="forma_pago_habitual" className="text-xs">Forma Pago</Label>
-                  <select
-                    id="forma_pago_habitual"
-                    value={formData.forma_pago_habitual}
-                    onChange={handleFormChange}
-                    className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
-                  >
-                    <option value="transferencia">Transferencia</option>
-                    <option value="confirming">Confirming</option>
-                    <option value="pagare">Pagaré</option>
-                    <option value="tarjeta">Tarjeta</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="plazo_pago_dias" className="text-xs">Plazo Pago (Días)</Label>
-                  <Input 
-                    id="plazo_pago_dias" 
-                    type="number"
-                    value={formData.plazo_pago_dias} 
-                    onChange={handleFormChange}
-                    className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
-                  />
-                </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="recinto_ferial_habitual" className="text-xs">Recinto Ferial Habitual</Label>
+                <Input 
+                  id="recinto_ferial_habitual" 
+                  placeholder="Ej: IFEMA"
+                  value={formData.recinto_ferial_habitual} 
+                  onChange={handleFormChange}
+                  className="bg-background border-border text-xs text-foreground"
+                />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="tarifa_asignada" className="text-xs">Tarifa Comercial *</Label>
+                <select
+                  id="tarifa_asignada"
+                  value={formData.tarifa_asignada}
+                  onChange={handleFormChange}
+                  className="w-full bg-background border-border text-xs text-foreground rounded-md h-9 px-3 focus:outline-none focus:ring-1 focus:ring-primary/30"
+                >
+                  <option value="estandar">Estándar</option>
+                  <option value="premium">Premium</option>
+                  <option value="distribuidor">Distribuidor</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="forma_pago_habitual" className="text-xs">Forma de Pago *</Label>
+                <select
+                  id="forma_pago_habitual"
+                  value={formData.forma_pago_habitual}
+                  onChange={handleFormChange}
+                  className="w-full bg-background border-border text-xs text-foreground rounded-md h-9 px-3 focus:outline-none focus:ring-1 focus:ring-primary/30"
+                >
+                  <option value="transferencia">Transferencia</option>
+                  <option value="confirming">Confirming</option>
+                  <option value="pagare">Pagaré</option>
+                  <option value="tarjeta">Tarjeta</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="plazo_pago_dias" className="text-xs">Plazo Pago (días)</Label>
+                <Input 
+                  id="plazo_pago_dias" 
+                  type="number"
+                  value={formData.plazo_pago_dias} 
+                  onChange={handleFormChange}
+                  className="bg-background border-border text-xs text-foreground"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="estado_cliente" className="text-xs">Estado Cliente *</Label>
+              <select
+                id="estado_cliente"
+                value={formData.estado_cliente}
+                onChange={handleFormChange}
+                className="w-full bg-background border-border text-xs text-foreground rounded-md h-9 px-3 focus:outline-none focus:ring-1 focus:ring-primary/30"
+              >
+                <option value="activo">Activo</option>
+                <option value="inactivo">Inactivo</option>
+                <option value="bloqueado_impagos">Bloqueado por impagos</option>
+              </select>
             </div>
 
             {formError && (
-              <div className="p-3 rounded bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs">
+              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-xs text-destructive">
                 {formError}
               </div>
             )}
 
-            <div className="flex gap-4 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsSheetOpen(false)}
-                className="w-1/3 bg-transparent border-[#27272a] hover:bg-[#18181b] text-[#fafafa]"
-              >
-                Cancelar
-              </Button>
-              <Button
-                type="submit"
-                disabled={saving}
-                className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium"
-              >
-                {saving ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Guardando...
-                  </>
-                ) : (
-                  "Guardar Cliente"
-                )}
-              </Button>
-            </div>
+            <Button 
+              type="submit" 
+              disabled={saving}
+              className="w-full bg-primary hover:opacity-90 text-primary-foreground font-semibold"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <span>Guardando...</span>
+                </>
+              ) : (
+                <span>Guardar Cliente</span>
+              )}
+            </Button>
           </form>
         </SheetContent>
       </Sheet>

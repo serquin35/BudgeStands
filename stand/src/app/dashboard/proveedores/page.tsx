@@ -180,10 +180,10 @@ export default function ProveedoresPage() {
       {/* Header section */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-[#fafafa] to-[#a1a1aa]">
+          <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-foreground to-muted-foreground">
             Proveedores
           </h1>
-          <p className="text-xs text-[#a1a1aa] mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Homologación de talleres externos, instaladores, transportistas y catálogos de servicios.
           </p>
         </div>
@@ -198,27 +198,27 @@ export default function ProveedoresPage() {
       </div>
 
       {/* Filters Card */}
-      <Card className="border-[#27272a]/70 bg-[#09090b]/40">
+      <Card className="border-border/70 bg-background/40">
         <CardContent className="p-4 flex flex-col sm:flex-row gap-4 items-center justify-between">
           <div className="relative w-full sm:max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#71717a]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input 
               placeholder="Buscar proveedor..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 bg-[#09090b]/80 border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa]"
+              className="pl-9 bg-background/80 border-border focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-foreground"
             />
           </div>
 
           <div className="flex items-center gap-2 w-full sm:w-auto">
-            <Label htmlFor="filter-esp" className="text-xs text-[#a1a1aa] shrink-0">
+            <Label htmlFor="filter-esp" className="text-xs text-muted-foreground shrink-0">
               Especialidad:
             </Label>
             <select
               id="filter-esp"
               value={selectedEsp}
               onChange={(e) => setSelectedEsp(e.target.value)}
-              className="w-full sm:w-48 bg-[#09090b]/80 border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa] rounded-md h-9 px-3"
+              className="w-full sm:w-48 bg-background/80 border-border focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-foreground rounded-md h-9 px-3"
             >
               <option value="todos">Todas las especialidades</option>
               {especialidadesList.map(e => (
@@ -235,56 +235,56 @@ export default function ProveedoresPage() {
           <Loader2 className="h-8 w-8 text-indigo-500 animate-spin" />
         </div>
       ) : filteredProveedores.length === 0 ? (
-        <div className="p-12 text-center rounded-xl border border-dashed border-[#27272a]/70 bg-[#09090b]/20">
-          <div className="text-sm font-semibold text-[#71717a]">No se encontraron proveedores</div>
-          <div className="text-xs text-[#52525b] mt-1">Crea un proveedor nuevo para empezar a homologar costes</div>
+        <div className="p-12 text-center rounded-xl border border-dashed border-border/70 bg-background/20">
+          <div className="text-sm font-semibold text-muted-foreground">No se encontraron proveedores</div>
+          <div className="text-xs text-muted-foreground mt-1">Crea un proveedor nuevo para empezar a homologar costes</div>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredProveedores.map((prov) => (
-            <Card key={prov.id} className="border-[#27272a]/70 bg-[#09090b]/30 hover:border-indigo-500/30 transition-all duration-300 flex flex-col justify-between group">
+            <Card key={prov.id} className="border-border/70 bg-background/30 hover:border-indigo-500/30 transition-all duration-300 flex flex-col justify-between group">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
-                    <h3 className="font-bold text-sm text-[#fafafa] group-hover:text-indigo-400 transition-colors">
+                    <h3 className="font-bold text-sm text-foreground group-hover:text-indigo-400 transition-colors">
                       {prov.nombre_comercial}
                     </h3>
-                    <p className="text-[10px] text-[#71717a] font-medium leading-none">{prov.razon_social}</p>
+                    <p className="text-[10px] text-muted-foreground font-medium leading-none">{prov.razon_social}</p>
                   </div>
                   
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => handleEditClick(prov)}
-                    className="h-7 w-7 text-[#71717a] hover:text-[#fafafa] hover:bg-[#18181b]"
+                    className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted"
                   >
                     <Edit2 className="h-3.5 w-3.5" />
                   </Button>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3 pb-4">
-                <div className="space-y-2 text-xs border-t border-[#27272a]/40 pt-3">
-                  <div className="flex items-center gap-2 text-[#e4e4e7]">
-                    <User className="h-3.5 w-3.5 text-[#71717a] shrink-0" />
+                <div className="space-y-2 text-xs border-t border-border/40 pt-3">
+                  <div className="flex items-center gap-2 text-foreground">
+                    <User className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                     <span>{prov.nombre_contacto || "Sin contacto"}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[#e4e4e7]">
-                    <Mail className="h-3.5 w-3.5 text-[#71717a] shrink-0" />
+                  <div className="flex items-center gap-2 text-foreground">
+                    <Mail className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                     <span className="truncate">{prov.email_contacto || "Sin email"}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[#e4e4e7]">
-                    <Phone className="h-3.5 w-3.5 text-[#71717a] shrink-0" />
+                  <div className="flex items-center gap-2 text-foreground">
+                    <Phone className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                     <span>{prov.telefono_contacto || "Sin teléfono"}</span>
                   </div>
                   {prov.domicilio_fiscal && (
-                    <div className="flex items-center gap-2 text-[#e4e4e7]">
-                      <MapPin className="h-3.5 w-3.5 text-[#71717a] shrink-0" />
+                    <div className="flex items-center gap-2 text-foreground">
+                      <MapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                       <span className="truncate">{prov.domicilio_fiscal}</span>
                     </div>
                   )}
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-[#27272a]/30 text-[10px] text-[#71717a]">
+                <div className="flex items-center justify-between pt-2 border-t border-border/30 text-[10px] text-muted-foreground">
                   <span>CIF: {prov.cif_nif}</span>
                   <div className="flex items-center gap-1">
                     <DollarSign className="h-3 w-3" />
@@ -292,12 +292,12 @@ export default function ProveedoresPage() {
                   </div>
                 </div>
               </CardContent>
-              <div className="px-6 py-2.5 border-t border-[#27272a]/40 bg-[#09090b]/50 rounded-b-xl flex items-center justify-between">
+              <div className="px-6 py-2.5 border-t border-border/40 bg-background/50 rounded-b-xl flex items-center justify-between">
                 <span className="flex items-center gap-1.5 text-[10px] font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded">
                   <Briefcase className="h-3 w-3" />
                   <span>{prov.especialidad}</span>
                 </span>
-                <span className="text-[10px] text-[#71717a] font-medium">
+                <span className="text-[10px] text-muted-foreground font-medium">
                   {prov.categorias_suministro?.length || 0} categorías
                 </span>
               </div>
@@ -308,10 +308,10 @@ export default function ProveedoresPage() {
 
       {/* Edit/Create Sheet */}
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent className="bg-[#09090b] text-[#fafafa] border-l border-[#27272a] sm:max-w-md overflow-y-auto">
+        <SheetContent className="bg-background text-foreground border-l border-border sm:max-w-md overflow-y-auto">
           <SheetHeader>
-            <SheetTitle className="text-[#fafafa]">{editingProveedor ? "Editar Proveedor" : "Nuevo Proveedor"}</SheetTitle>
-            <SheetDescription className="text-[#a1a1aa]">
+            <SheetTitle className="text-foreground">{editingProveedor ? "Editar Proveedor" : "Nuevo Proveedor"}</SheetTitle>
+            <SheetDescription className="text-muted-foreground">
               Ingresa los datos del proveedor homologado y sus condiciones de pago.
             </SheetDescription>
           </SheetHeader>
@@ -324,7 +324,7 @@ export default function ProveedoresPage() {
                 value={formData.nombre_comercial} 
                 onChange={handleFormChange}
                 required
-                className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                className="bg-background border-border text-xs text-foreground"
               />
             </div>
             <div className="space-y-2">
@@ -334,7 +334,7 @@ export default function ProveedoresPage() {
                 value={formData.razon_social} 
                 onChange={handleFormChange}
                 required
-                className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                className="bg-background border-border text-xs text-foreground"
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -345,7 +345,7 @@ export default function ProveedoresPage() {
                   value={formData.cif_nif} 
                   onChange={handleFormChange}
                   required
-                  className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                  className="bg-background border-border text-xs text-foreground"
                 />
               </div>
               <div className="space-y-2">
@@ -354,7 +354,7 @@ export default function ProveedoresPage() {
                   id="especialidad"
                   value={formData.especialidad}
                   onChange={handleFormChange}
-                  className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                  className="w-full bg-background border-border text-xs text-foreground rounded-md h-9 px-3"
                 >
                   {especialidadesList.map(e => (
                     <option key={e} value={e}>{e}</option>
@@ -369,12 +369,12 @@ export default function ProveedoresPage() {
                 id="domicilio_fiscal" 
                 value={formData.domicilio_fiscal} 
                 onChange={handleFormChange}
-                className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                className="bg-background border-border text-xs text-foreground"
               />
             </div>
 
-            <div className="border-t border-[#27272a]/50 my-4 pt-4 space-y-4">
-              <h4 className="text-xs font-bold text-[#fafafa] uppercase tracking-wider">Contacto Principal</h4>
+            <div className="border-t border-border/50 my-4 pt-4 space-y-4">
+              <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">Contacto Principal</h4>
               
               <div className="space-y-2">
                 <Label htmlFor="nombre_contacto" className="text-xs">Nombre Contacto</Label>
@@ -382,7 +382,7 @@ export default function ProveedoresPage() {
                   id="nombre_contacto" 
                   value={formData.nombre_contacto} 
                   onChange={handleFormChange}
-                  className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                  className="bg-background border-border text-xs text-foreground"
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -393,7 +393,7 @@ export default function ProveedoresPage() {
                     type="email"
                     value={formData.email_contacto} 
                     onChange={handleFormChange}
-                    className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                    className="bg-background border-border text-xs text-foreground"
                   />
                 </div>
                 <div className="space-y-2">
@@ -402,14 +402,14 @@ export default function ProveedoresPage() {
                     id="telefono_contacto" 
                     value={formData.telefono_contacto} 
                     onChange={handleFormChange}
-                    className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                    className="bg-background border-border text-xs text-foreground"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="border-t border-[#27272a]/50 my-4 pt-4 space-y-4">
-              <h4 className="text-xs font-bold text-[#fafafa] uppercase tracking-wider">Condiciones Pago</h4>
+            <div className="border-t border-border/50 my-4 pt-4 space-y-4">
+              <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">Condiciones Pago</h4>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -418,7 +418,7 @@ export default function ProveedoresPage() {
                     id="forma_pago"
                     value={formData.forma_pago}
                     onChange={handleFormChange}
-                    className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                    className="w-full bg-background border-border text-xs text-foreground rounded-md h-9 px-3"
                   >
                     <option value="transferencia">Transferencia</option>
                     <option value="confirming">Confirming</option>
@@ -433,7 +433,7 @@ export default function ProveedoresPage() {
                     type="number"
                     value={formData.plazo_pago_dias} 
                     onChange={handleFormChange}
-                    className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                    className="bg-background border-border text-xs text-foreground"
                   />
                 </div>
               </div>
@@ -450,7 +450,7 @@ export default function ProveedoresPage() {
                 type="button"
                 variant="outline"
                 onClick={() => setIsSheetOpen(false)}
-                className="w-1/3 bg-transparent border-[#27272a] hover:bg-[#18181b] text-[#fafafa]"
+                className="w-1/3 bg-transparent border-border hover:bg-muted text-foreground"
               >
                 Cancelar
               </Button>

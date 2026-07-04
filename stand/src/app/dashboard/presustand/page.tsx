@@ -542,22 +542,22 @@ export default function PresustandPage() {
     <div className="space-y-6 w-full max-w-full overflow-hidden">
       {/* Header section */}
       <div>
-        <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-[#fafafa] to-[#a1a1aa]">
+        <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-foreground to-muted-foreground">
           Presustand IA
         </h1>
-        <p className="text-xs text-[#a1a1aa] mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           Crea propuestas comerciales automáticas estimando por m² o generando despieces con Inteligencia Artificial.
         </p>
       </div>
 
       {/* Navigation tabs */}
-      <div className="flex flex-wrap gap-1 sm:gap-2 border-b border-[#27272a]/70 pb-px">
+      <div className="flex flex-wrap gap-1 sm:gap-2 border-b border-border/70 pb-px">
         <button
           onClick={() => { setActiveTab("rapida"); setActivePresId(null); }}
           className={`px-3 sm:px-4 py-2 text-[10px] sm:text-xs font-semibold border-b-2 transition-all duration-200 ${
             activeTab === "rapida" 
               ? "border-indigo-500 text-indigo-400" 
-              : "border-transparent text-[#71717a] hover:text-[#fafafa]"
+              : "border-transparent text-muted-foreground hover:text-foreground"
           }`}
         >
           <div className="flex items-center gap-2">
@@ -570,7 +570,7 @@ export default function PresustandPage() {
           className={`px-3 sm:px-4 py-2 text-[10px] sm:text-xs font-semibold border-b-2 transition-all duration-200 ${
             activeTab === "ia" 
               ? "border-indigo-500 text-indigo-400" 
-              : "border-transparent text-[#71717a] hover:text-[#fafafa]"
+              : "border-transparent text-muted-foreground hover:text-foreground"
           }`}
         >
           <div className="flex items-center gap-2">
@@ -583,7 +583,7 @@ export default function PresustandPage() {
           className={`px-3 sm:px-4 py-2 text-[10px] sm:text-xs font-semibold border-b-2 transition-all duration-200 ${
             activeTab === "historial" 
               ? "border-indigo-500 text-indigo-400" 
-              : "border-transparent text-[#71717a] hover:text-[#fafafa]"
+              : "border-transparent text-muted-foreground hover:text-foreground"
           }`}
         >
           <div className="flex items-center gap-2">
@@ -595,7 +595,7 @@ export default function PresustandPage() {
 
       {/* Loading Jarvis overlay */}
       {generating && (
-        <div className="fixed inset-0 z-50 bg-[#09090b]/80 backdrop-blur-xl flex flex-col items-center justify-center text-center p-6">
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-xl flex flex-col items-center justify-center text-center p-6">
           <div className="relative mb-6">
             <div className="w-16 h-16 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin" />
             <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-indigo-400 animate-pulse" />
@@ -619,13 +619,13 @@ export default function PresustandPage() {
           
           {/* Rapida Tab */}
           {activeTab === "rapida" && (
-            <Card className="border-[#27272a]/70 bg-[#09090b]/40">
+            <Card className="border-border/70 bg-card/80">
               <CardHeader>
-                <CardTitle className="text-base text-[#fafafa] flex items-center gap-2 flex-wrap">
+                <CardTitle className="text-base text-foreground flex items-center gap-2 flex-wrap">
                   <Calculator className="h-5 w-5 text-indigo-400 shrink-0" />
                   <span>Método 1: Estimación por Superficie (m²)</span>
                 </CardTitle>
-                <CardDescription className="text-xs text-[#a1a1aa]">
+                <CardDescription className="text-xs text-muted-foreground">
                   Calcula un coste estimado instantáneo multiplicando m² por tarifas estándar.
                 </CardDescription>
               </CardHeader>
@@ -649,7 +649,7 @@ export default function PresustandPage() {
                         id="cliente"
                         value={selectedCliente}
                         onChange={(e) => setSelectedCliente(e.target.value)}
-                        className="w-full bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        className="w-full bg-background border border-border text-xs text-foreground rounded-md h-9 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                       >
                         <option value="">Selecciona un cliente</option>
                         {clientes.map(c => (
@@ -664,7 +664,7 @@ export default function PresustandPage() {
                         placeholder="Ej: FITUR 2026"
                         value={nombreFeria}
                         onChange={(e) => setNombreFeria(e.target.value)}
-                        className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                        className="bg-background border-border text-xs text-foreground"
                       />
                     </div>
                   </div>
@@ -678,7 +678,7 @@ export default function PresustandPage() {
                         placeholder="50"
                         value={m2}
                         onChange={(e) => setM2(e.target.value)}
-                        className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                        className="bg-background border-border text-xs text-foreground"
                       />
                     </div>
                     <div className="space-y-2">
@@ -690,7 +690,7 @@ export default function PresustandPage() {
                         placeholder="2.50"
                         value={altura}
                         onChange={(e) => setAltura(e.target.value)}
-                        className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                        className="bg-background border-border text-xs text-foreground"
                       />
                     </div>
                     <div className="space-y-2">
@@ -699,7 +699,7 @@ export default function PresustandPage() {
                         id="tipo"
                         value={tipoStand}
                         onChange={(e) => setTipoStand(e.target.value)}
-                        className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                        className="w-full bg-background border-border text-xs text-foreground rounded-md h-9 px-3"
                       >
                         <option value="modular">Modular</option>
                         <option value="carpinteria_diseno">Carpintería de Diseño</option>
@@ -713,26 +713,26 @@ export default function PresustandPage() {
 
                 {/* Estimate Result Block */}
                 {Number(m2) > 0 && (
-                  <div className="mt-6 border border-[#27272a] bg-[#18181b]/30 p-4 rounded-xl space-y-3">
-                    <h3 className="text-xs font-bold text-[#fafafa] uppercase tracking-wider">Desglose Estimado (Venta)</h3>
-                    <div className="space-y-2 text-xs text-[#e4e4e7]">
+                  <div className="mt-6 border border-border bg-muted/30 p-4 rounded-xl space-y-3">
+                    <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">Desglose Estimado (Venta)</h3>
+                    <div className="space-y-2 text-xs text-foreground">
                       <div className="flex justify-between">
-                        <span className="text-[#71717a]">Estructura y Acabados:</span>
+                        <span className="text-muted-foreground">Estructura y Acabados:</span>
                         <span className="font-medium">{estSubtotalConstruccion.toLocaleString("es-ES")} €</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-[#71717a]">Servicios del Recinto:</span>
+                        <span className="text-muted-foreground">Servicios del Recinto:</span>
                         <span className="font-medium">{estSubtotalServicios.toLocaleString("es-ES")} €</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-[#71717a]">Diseño y Renders 3D:</span>
+                        <span className="text-muted-foreground">Diseño y Renders 3D:</span>
                         <span className="font-medium">{estSubtotalDiseno.toLocaleString("es-ES")} €</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-[#71717a]">Logística, Montaje y Transporte:</span>
+                        <span className="text-muted-foreground">Logística, Montaje y Transporte:</span>
                         <span className="font-medium">{estSubtotalTransporte.toLocaleString("es-ES")} €</span>
                       </div>
-                      <div className="border-t border-[#27272a]/60 pt-2 flex justify-between font-bold text-[#fafafa] text-sm">
+                      <div className="border-t border-border/60 pt-2 flex justify-between font-bold text-foreground text-sm">
                         <span>Total Estimado (c/ IVA 21%):</span>
                         <span className="text-indigo-400">{estTotal.toLocaleString("es-ES")} €</span>
                       </div>
@@ -740,7 +740,7 @@ export default function PresustandPage() {
                   </div>
                 )}
               </CardContent>
-              <CardFooter className="flex justify-end border-t border-[#27272a]/50 py-3 bg-[#09090b]/40">
+              <CardFooter className="flex justify-end border-t border-border/50 py-3 bg-card/80">
                 <Button
                   onClick={handleSaveEstimation}
                   disabled={savingEst || !m2}
@@ -761,13 +761,13 @@ export default function PresustandPage() {
 
           {/* IA Tab */}
           {activeTab === "ia" && (
-            <Card className="border-[#27272a]/70 bg-[#09090b]/40">
+            <Card className="border-border/70 bg-card/80">
               <CardHeader>
-                <CardTitle className="text-base text-[#fafafa] flex items-center gap-2 flex-wrap">
+                <CardTitle className="text-base text-foreground flex items-center gap-2 flex-wrap">
                   <Sparkles className="h-5 w-5 text-indigo-400 shrink-0" />
                   <span>Método 2: Inteligencia Artificial (Jarvis AI)</span>
                 </CardTitle>
-                <CardDescription className="text-xs text-[#a1a1aa]">
+                <CardDescription className="text-xs text-muted-foreground">
                   Jarvis generará un presupuesto desglosado a partir de tus indicaciones, audio o imagen de referencia.
                 </CardDescription>
               </CardHeader>
@@ -777,10 +777,10 @@ export default function PresustandPage() {
                   {/* Sección 1: Información del Proyecto */}
                   <div className="space-y-4">
                     <div>
-                      <h3 className="text-sm font-semibold text-[#fafafa]">
+                      <h3 className="text-sm font-semibold text-foreground">
                         Información del Proyecto
                       </h3>
-                      <p className="text-[10px] text-[#71717a] mt-0.5">
+                      <p className="text-[10px] text-muted-foreground mt-0.5">
                         Estos datos identifican el proyecto dentro de The Titan y son necesarios para generar correctamente el presupuesto.
                       </p>
                     </div>
@@ -803,7 +803,7 @@ export default function PresustandPage() {
                           value={selectedCliente}
                           onChange={(e) => setSelectedCliente(e.target.value)}
                           required
-                          className="w-full bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-full bg-background border border-border text-xs text-foreground rounded-md h-9 px-3 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         >
                           <option value="">Selecciona un cliente</option>
                           {clientes.map(c => (
@@ -819,7 +819,7 @@ export default function PresustandPage() {
                           value={nombreFeria}
                           onChange={(e) => setNombreFeria(e.target.value)}
                           required
-                          className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                          className="bg-background border-border text-xs text-foreground"
                         />
                       </div>
                     </div>
@@ -834,7 +834,7 @@ export default function PresustandPage() {
                           value={m2}
                           onChange={(e) => setM2(e.target.value)}
                           required
-                          className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                          className="bg-background border-border text-xs text-foreground"
                         />
                       </div>
                       <div className="space-y-2">
@@ -846,7 +846,7 @@ export default function PresustandPage() {
                           placeholder="4.00"
                           value={altura}
                           onChange={(e) => setAltura(e.target.value)}
-                          className="bg-[#09090b] border-[#27272a] text-xs text-[#fafafa]"
+                          className="bg-background border-border text-xs text-foreground"
                         />
                       </div>
                       <div className="space-y-2">
@@ -855,7 +855,7 @@ export default function PresustandPage() {
                           id="ia-tipo"
                           value={tipoStand}
                           onChange={(e) => setTipoStand(e.target.value)}
-                          className="w-full bg-[#09090b] border-[#27272a] text-xs text-[#fafafa] rounded-md h-9 px-3"
+                          className="w-full bg-background border-border text-xs text-foreground rounded-md h-9 px-3"
                         >
                           <option value="modular">Modular</option>
                           <option value="carpinteria_diseno">Carpintería de Diseño</option>
@@ -868,16 +868,16 @@ export default function PresustandPage() {
                   </div>
 
                   {/* Separador */}
-                  <div className="border-t border-[#27272a]/60" />
+                  <div className="border-t border-border/60" />
 
                   {/* Sección 2: Instrucciones para Jarvis */}
                   <div className="space-y-4">
                     <div>
-                      <h3 className="text-sm font-semibold text-[#fafafa] flex items-center gap-2">
+                      <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                         <Sparkles className="h-4 w-4 text-indigo-400" />
                         <span>Instrucciones para Jarvis</span>
                       </h3>
-                      <p className="text-[10px] text-[#71717a] mt-0.5">
+                      <p className="text-[10px] text-muted-foreground mt-0.5">
                         Describe el proyecto utilizando el método que prefieras. Puedes escribir, grabar un audio o adjuntar una imagen de referencia.
                       </p>
                     </div>
@@ -908,9 +908,9 @@ export default function PresustandPage() {
                         value={promptText}
                         onChange={(e) => setPromptText(e.target.value)}
                         rows={4}
-                        className="w-full bg-[#18181b] border-[#3f3f46] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-xs text-[#fafafa] p-3 rounded-md"
+                        className="w-full bg-muted border-border focus:border-primary focus:ring-1 focus:ring-primary/30 text-xs text-foreground p-3 rounded-md"
                       />
-                      <p className="text-[10px] text-[#71717a] leading-relaxed">
+                      <p className="text-[10px] text-muted-foreground leading-relaxed">
                         {imageUrl && audioUrl
                           ? "El audio contiene la descripción principal del proyecto y la imagen servirá como referencia visual. Este campo es opcional."
                           : audioUrl
@@ -930,14 +930,14 @@ export default function PresustandPage() {
                   </div>
 
                 </CardContent>
-                <CardFooter className="flex justify-between items-center border-t border-[#27272a]/50 py-3 bg-[#09090b]/40">
+                <CardFooter className="flex justify-between items-center border-t border-border/50 py-3 bg-card/80">
                   {generating ? (
                     <div className="flex-1 mr-4">
                       <div className="flex items-center justify-between text-xs text-indigo-400 mb-1.5">
                         <span className="font-medium animate-pulse">{loadingMessages[loadingMsgIdx]}</span>
                         <span>{Math.round(((loadingMsgIdx + 1) / loadingMessages.length) * 100)}%</span>
                       </div>
-                      <div className="h-1.5 w-full bg-[#27272a] rounded-full overflow-hidden">
+                      <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
                         <div 
                           className="h-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-500 ease-out"
                           style={{ width: `${((loadingMsgIdx + 1) / loadingMessages.length) * 100}%` }}
@@ -966,20 +966,20 @@ export default function PresustandPage() {
 
           {/* Historial Tab */}
           {activeTab === "historial" && (
-            <Card className="border-[#27272a]/70 bg-[#09090b]/40">
+            <Card className="border-border/70 bg-card/80">
               <CardHeader>
-                <CardTitle className="text-base text-[#fafafa] flex items-center gap-2">
+                <CardTitle className="text-base text-foreground flex items-center gap-2">
                   <History className="h-5 w-5 text-indigo-400" />
                   <span>Historial de Presupuestos</span>
                 </CardTitle>
-                <CardDescription className="text-xs text-[#a1a1aa]">
+                <CardDescription className="text-xs text-muted-foreground">
                   Selecciona una propuesta para consultar su despiece de partidas e importes.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="divide-y divide-[#27272a]/40 max-h-[500px] overflow-y-auto">
+                <div className="divide-y divide-border/40 max-h-[500px] overflow-y-auto">
                   {presupuestos.length === 0 ? (
-                    <div className="p-6 text-center text-xs text-[#71717a]">
+                    <div className="p-6 text-center text-xs text-muted-foreground">
                       No hay presupuestos generados todavía.
                     </div>
                   ) : (
@@ -989,7 +989,7 @@ export default function PresustandPage() {
                         <div
                           key={item.id}
                           onClick={() => handleViewDetails(item.id)}
-                          className={`p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-[#18181b]/30 transition-colors ${
+                          className={`p-4 flex items-center justify-between gap-2 cursor-pointer hover:bg-muted/50 transition-colors ${
                             isActive ? "bg-indigo-500/5 border-l-4 border-l-indigo-500" : ""
                           }`}
                         >
@@ -998,23 +998,23 @@ export default function PresustandPage() {
                               <span className="font-bold text-xs text-indigo-400 shrink-0">{item.numero_presupuesto}</span>
                               <StatusBadge estado={item.estado_presupuesto} />
                             </div>
-                            <div className="text-xs font-semibold text-[#fafafa] truncate w-full">
+                            <div className="text-xs font-semibold text-foreground truncate w-full">
                               {item.clientes?.nombre_comercial || "Cliente"} - {item.nombre_feria}
                             </div>
-                            <div className="text-[10px] text-[#71717a] truncate">
+                            <div className="text-[10px] text-muted-foreground truncate">
                               {item.m2_superficie} m² | {item.tipo_stand.replace("_", " ")}
                             </div>
                           </div>
                           <div className="text-right flex items-center gap-2 sm:gap-3 shrink-0">
                             <div className="space-y-1">
-                              <div className="font-bold text-xs text-[#fafafa]">
+                              <div className="font-bold text-xs text-foreground">
                                 {item.total_presupuesto.toLocaleString("es-ES")} €
                               </div>
-                              <div className="text-[9px] text-[#71717a]">
+                              <div className="text-[9px] text-muted-foreground">
                                 {new Date(item.created_at).toLocaleDateString("es-ES")}
                               </div>
                             </div>
-                            <ChevronRight className="h-4 w-4 text-[#71717a] hidden sm:block" />
+                            <ChevronRight className="h-4 w-4 text-muted-foreground hidden sm:block" />
                           </div>
                         </div>
                       )
@@ -1031,22 +1031,22 @@ export default function PresustandPage() {
         {activePresId && (
           <div className="lg:col-span-7 space-y-4">
             {loadingLineas ? (
-              <Card className="border-[#27272a]/70 bg-[#09090b]/40 h-80 flex items-center justify-center">
+              <Card className="border-border/70 bg-card/80 h-80 flex items-center justify-center">
                 <Loader2 className="h-8 w-8 text-indigo-500 animate-spin" />
               </Card>
             ) : activePres ? (
-              <Card className="border-[#27272a]/70 bg-[#09090b]/40">
-                <CardHeader className="border-b border-[#27272a]/50 pb-4 p-6 lg:p-8">
+              <Card className="border-border/70 bg-card/80">
+                <CardHeader className="border-b border-border/50 pb-4 p-6 lg:p-8">
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-extrabold text-sm text-indigo-400">{activePres.numero_presupuesto}</span>
                         <StatusBadge estado={activePres.estado_presupuesto} />
                       </div>
-                      <CardTitle className="text-base text-[#fafafa] mt-1">
+                      <CardTitle className="text-base text-foreground mt-1">
                         {activePres.clientes?.nombre_comercial} - {activePres.nombre_feria}
                       </CardTitle>
-                      <CardDescription className="text-xs text-[#a1a1aa] mt-0.5">
+                      <CardDescription className="text-xs text-muted-foreground mt-0.5">
                         Razón Social: {activePres.clientes?.razon_social}
                       </CardDescription>
                     </div>
@@ -1054,11 +1054,11 @@ export default function PresustandPage() {
                     {/* State Selector & Print */}
                     <div className="flex items-end gap-2">
                       <div className="space-y-1">
-                        <Label className="text-[9px] font-semibold text-[#a1a1aa] uppercase tracking-wider">Estado Comercial</Label>
+                        <Label className="text-[9px] font-semibold text-muted-foreground uppercase tracking-wider">Estado Comercial</Label>
                         <select
                           value={activePres.estado_presupuesto}
                           onChange={(e) => handleUpdateStatus(e.target.value)}
-                          className="bg-[#09090b] border-[#27272a] text-[11px] font-semibold text-[#fafafa] rounded-md h-8 px-2 focus:ring-1 focus:ring-indigo-500"
+                          className="bg-background border-border text-[11px] font-semibold text-foreground rounded-md h-8 px-2 focus:ring-1 focus:ring-indigo-500"
                         >
                           <option value="borrador">Borrador</option>
                           <option value="en_espera">En Espera</option>
@@ -1073,7 +1073,7 @@ export default function PresustandPage() {
                         variant="outline"
                         size="icon"
                         onClick={() => window.open(`/print/presupuesto/${activePres.id}?autoprint=true`, "_blank")}
-                        className="border-[#27272a] hover:bg-[#18181b]/50 text-[#a1a1aa] hover:text-[#fafafa] h-8 w-8"
+                        className="border-border hover:bg-muted/50 text-muted-foreground hover:text-foreground h-8 w-8"
                         title="Imprimir / Exportar a PDF"
                       >
                         <Printer className="h-4 w-4" />
@@ -1085,30 +1085,30 @@ export default function PresustandPage() {
                   
                   {/* Stand Physical specs */}
                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
-                    <div className="p-2 rounded bg-[#18181b]/40 border border-[#27272a]/30">
-                      <div className="text-[#71717a] text-[9px] font-bold uppercase">Superficie</div>
-                      <div className="font-extrabold text-sm text-[#fafafa] mt-0.5">{activePres.m2_superficie} m²</div>
+                    <div className="p-2 rounded bg-muted/40 border border-border/30">
+                      <div className="text-muted-foreground text-[9px] font-bold uppercase">Superficie</div>
+                      <div className="font-extrabold text-sm text-foreground mt-0.5">{activePres.m2_superficie} m²</div>
                     </div>
-                    <div className="p-2 rounded bg-[#18181b]/40 border border-[#27272a]/30">
-                      <div className="text-[#71717a] text-[9px] font-bold uppercase">Altura</div>
-                      <div className="font-extrabold text-sm text-[#fafafa] mt-0.5">{activePres.altura_stand_m} m</div>
+                    <div className="p-2 rounded bg-muted/40 border border-border/30">
+                      <div className="text-muted-foreground text-[9px] font-bold uppercase">Altura</div>
+                      <div className="font-extrabold text-sm text-foreground mt-0.5">{activePres.altura_stand_m} m</div>
                     </div>
-                    <div className="p-2 rounded bg-[#18181b]/40 border border-[#27272a]/30 col-span-2">
-                      <div className="text-[#71717a] text-[9px] font-bold uppercase">Tipo Stand</div>
-                      <div className="font-extrabold text-sm text-[#fafafa] mt-0.5 capitalize truncate">{activePres.tipo_stand.replace("_", " ")}</div>
+                    <div className="p-2 rounded bg-muted/40 border border-border/30 col-span-2">
+                      <div className="text-muted-foreground text-[9px] font-bold uppercase">Tipo Stand</div>
+                      <div className="font-extrabold text-sm text-foreground mt-0.5 capitalize truncate">{activePres.tipo_stand.replace("_", " ")}</div>
                     </div>
                   </div>
 
                   {/* AI Generated image if present */}
                   {activePres.imagen_stand_url && (
-                    <div className="rounded-xl overflow-hidden border border-[#27272a] aspect-video relative group">
+                    <div className="rounded-xl overflow-hidden border border-border aspect-video relative group">
                       <img 
                         src={activePres.imagen_stand_url} 
                         alt="Stand Generado por IA" 
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
-                        <div className="text-[10px] text-[#fafafa] font-medium italic">
+                        <div className="text-[10px] text-foreground font-medium italic">
                           &quot;Diseño renderizado por Jarvis AI en base al prompt comercial&quot;
                         </div>
                       </div>
@@ -1117,12 +1117,12 @@ export default function PresustandPage() {
 
                   {/* Partitioned Lines despiece */}
                   <div className="space-y-3">
-                    <h3 className="text-xs font-bold text-[#fafafa] uppercase tracking-wider">Desglose de Partidas (Presupuesto)</h3>
+                    <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">Desglose de Partidas (Presupuesto)</h3>
                     
                     <div className="overflow-x-auto">
                       <table className="w-full text-left text-xs border-collapse">
                         <thead>
-                          <tr className="border-b border-[#27272a]/70 text-[#a1a1aa] font-medium">
+                          <tr className="border-b border-border/70 text-muted-foreground font-medium">
                             <th className="py-2 px-1 w-8 text-center">Nº</th>
                             <th className="py-2 px-2">Concepto / Partida</th>
                             <th className="py-2 px-2 text-right w-16">Cant.</th>
@@ -1130,29 +1130,29 @@ export default function PresustandPage() {
                             <th className="py-2 px-2 text-right w-20">Total</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-[#27272a]/40">
+                        <tbody className="divide-y divide-border/40">
                           {activePresLineas.length === 0 ? (
                             <tr>
-                              <td colSpan={5} className="py-4 text-center text-[#71717a]">
+                              <td colSpan={5} className="py-4 text-center text-muted-foreground">
                                 Este presupuesto no tiene despiece de partidas asignado.
                               </td>
                             </tr>
                           ) : (
                             activePresLineas.map((linea) => (
-                              <tr key={linea.id} className="hover:bg-[#18181b]/30">
-                                <td className="py-2.5 px-1 text-center font-bold text-[#71717a]">
+                              <tr key={linea.id} className="hover:bg-muted/50">
+                                <td className="py-2.5 px-1 text-center font-bold text-muted-foreground">
                                   {linea.orden}
                                 </td>
-                                <td className="py-2.5 px-2 font-medium text-[#e4e4e7]">
+                                <td className="py-2.5 px-2 font-medium text-foreground">
                                   {linea.concepto_descripcion}
                                 </td>
-                                <td className="py-2.5 px-2 text-right text-[#a1a1aa] whitespace-nowrap">
+                                <td className="py-2.5 px-2 text-right text-muted-foreground whitespace-nowrap">
                                   {Number(linea.cantidad).toLocaleString()} <span className="text-[9px] uppercase font-bold">{linea.unidad}</span>
                                 </td>
-                                <td className="py-2.5 px-2 text-right text-[#a1a1aa]">
+                                <td className="py-2.5 px-2 text-right text-muted-foreground">
                                   {Number(linea.precio_unitario_venta).toLocaleString("es-ES")} €
                                 </td>
-                                <td className="py-2.5 px-2 text-right font-semibold text-[#fafafa]">
+                                <td className="py-2.5 px-2 text-right font-semibold text-foreground">
                                   {Number(linea.total_linea).toLocaleString("es-ES")} €
                                 </td>
                               </tr>
@@ -1164,32 +1164,32 @@ export default function PresustandPage() {
                   </div>
 
                   {/* Financial Summary */}
-                  <div className="border-t border-[#27272a]/60 pt-4 space-y-2 text-xs">
+                  <div className="border-t border-border/60 pt-4 space-y-2 text-xs">
                     <div className="flex justify-between">
-                      <span className="text-[#71717a]">Subtotal Construcción y Remates:</span>
-                      <span className="text-[#e4e4e7]">{Number(activePres.subtotal_construccion).toLocaleString("es-ES")} €</span>
+                      <span className="text-muted-foreground">Subtotal Construcción y Remates:</span>
+                      <span className="text-foreground">{Number(activePres.subtotal_construccion).toLocaleString("es-ES")} €</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#71717a]">Subtotal Servicios Recinto Ferial:</span>
-                      <span className="text-[#e4e4e7]">{Number(activePres.subtotal_servicios_feria).toLocaleString("es-ES")} €</span>
+                      <span className="text-muted-foreground">Subtotal Servicios Recinto Ferial:</span>
+                      <span className="text-foreground">{Number(activePres.subtotal_servicios_feria).toLocaleString("es-ES")} €</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#71717a]">Subtotal Diseño, Renders e Impresiones:</span>
-                      <span className="text-[#e4e4e7]">{Number(activePres.subtotal_diseno_grafica).toLocaleString("es-ES")} €</span>
+                      <span className="text-muted-foreground">Subtotal Diseño, Renders e Impresiones:</span>
+                      <span className="text-foreground">{Number(activePres.subtotal_diseno_grafica).toLocaleString("es-ES")} €</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[#71717a]">Subtotal Montaje, Logística y Transporte:</span>
-                      <span className="text-[#e4e4e7]">{Number(activePres.subtotal_transporte_mo).toLocaleString("es-ES")} €</span>
+                      <span className="text-muted-foreground">Subtotal Montaje, Logística y Transporte:</span>
+                      <span className="text-foreground">{Number(activePres.subtotal_transporte_mo).toLocaleString("es-ES")} €</span>
                     </div>
                     
-                    <div className="border-t border-[#27272a] pt-3 flex justify-between items-end">
+                    <div className="border-t border-border pt-3 flex justify-between items-end">
                       <div>
-                        <div className="text-[10px] text-[#71717a] uppercase font-bold">Base Imponible</div>
-                        <div className="font-semibold text-sm text-[#e4e4e7]">{Number(activePres.base_imponible).toLocaleString("es-ES")} €</div>
+                        <div className="text-[10px] text-muted-foreground uppercase font-bold">Base Imponible</div>
+                        <div className="font-semibold text-sm text-foreground">{Number(activePres.base_imponible).toLocaleString("es-ES")} €</div>
                       </div>
                       <div className="text-right">
-                        <div className="text-[10px] text-[#71717a] uppercase font-bold">IVA (21%)</div>
-                        <div className="font-semibold text-sm text-[#e4e4e7]">{Number(activePres.importe_iva).toLocaleString("es-ES")} €</div>
+                        <div className="text-[10px] text-muted-foreground uppercase font-bold">IVA (21%)</div>
+                        <div className="font-semibold text-sm text-foreground">{Number(activePres.importe_iva).toLocaleString("es-ES")} €</div>
                       </div>
                       <div className="text-right">
                         <div className="text-[10px] text-indigo-400 uppercase font-bold">Importe Venta Total</div>
@@ -1207,13 +1207,13 @@ export default function PresustandPage() {
 
       {/* Dialog para crear nuevo cliente */}
       <Dialog open={isNewClientOpen} onOpenChange={setIsNewClientOpen}>
-        <DialogContent className="bg-[#09090b] border border-[#27272a] text-[#fafafa] sm:max-w-md w-full p-6 rounded-xl shadow-2xl">
+        <DialogContent className="bg-background border border-border text-foreground sm:max-w-md w-full p-6 rounded-xl shadow-2xl">
           <DialogHeader className="space-y-1.5">
-            <DialogTitle className="text-lg font-bold text-[#fafafa] flex items-center gap-2">
+            <DialogTitle className="text-lg font-bold text-foreground flex items-center gap-2">
               <Plus className="h-5 w-5 text-indigo-400" />
               <span>Nuevo Cliente CRM</span>
             </DialogTitle>
-            <DialogDescription className="text-xs text-[#a1a1aa]">
+            <DialogDescription className="text-xs text-muted-foreground">
               Completa los datos del cliente. Se asociará automáticamente a tu empresa y se seleccionará al guardar.
             </DialogDescription>
           </DialogHeader>
@@ -1221,62 +1221,62 @@ export default function PresustandPage() {
           <form onSubmit={handleCreateNewClient} className="space-y-4 py-2">
             <div className="space-y-3">
               <div className="space-y-1">
-                <Label htmlFor="new-nombre" className="text-xs text-[#a1a1aa]">Nombre Comercial *</Label>
+                <Label htmlFor="new-nombre" className="text-xs text-muted-foreground">Nombre Comercial *</Label>
                 <Input
                   id="new-nombre"
                   placeholder="Ej: Stands Innovadores S.L."
                   value={newClientNombreComercial}
                   onChange={(e) => setNewClientNombreComercial(e.target.value)}
                   required
-                  className="bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] focus:ring-indigo-500"
+                  className="bg-background border border-border text-xs text-foreground focus:ring-indigo-500"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label htmlFor="new-razon" className="text-xs text-[#a1a1aa]">Razón Social *</Label>
+                  <Label htmlFor="new-razon" className="text-xs text-muted-foreground">Razón Social *</Label>
                   <Input
                     id="new-razon"
                     placeholder="Ej: Stands Innovadores S.L."
                     value={newClientRazonSocial}
                     onChange={(e) => setNewClientRazonSocial(e.target.value)}
                     required
-                    className="bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] focus:ring-indigo-500"
+                    className="bg-background border border-border text-xs text-foreground focus:ring-indigo-500"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label htmlFor="new-cif" className="text-xs text-[#a1a1aa]">CIF / NIF *</Label>
+                  <Label htmlFor="new-cif" className="text-xs text-muted-foreground">CIF / NIF *</Label>
                   <Input
                     id="new-cif"
                     placeholder="Ej: B12345678"
                     value={newClientCifNif}
                     onChange={(e) => setNewClientCifNif(e.target.value)}
                     required
-                    className="bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] focus:ring-indigo-500"
+                    className="bg-background border border-border text-xs text-foreground focus:ring-indigo-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label htmlFor="new-email" className="text-xs text-[#a1a1aa]">Email de Contacto</Label>
+                  <Label htmlFor="new-email" className="text-xs text-muted-foreground">Email de Contacto</Label>
                   <Input
                     id="new-email"
                     type="email"
                     placeholder="ejemplo@correo.com"
                     value={newClientEmail}
                     onChange={(e) => setNewClientEmail(e.target.value)}
-                    className="bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] focus:ring-indigo-500"
+                    className="bg-background border border-border text-xs text-foreground focus:ring-indigo-500"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label htmlFor="new-telefono" className="text-xs text-[#a1a1aa]">Teléfono</Label>
+                  <Label htmlFor="new-telefono" className="text-xs text-muted-foreground">Teléfono</Label>
                   <Input
                     id="new-telefono"
                     placeholder="+34 600 000 000"
                     value={newClientTelefono}
                     onChange={(e) => setNewClientTelefono(e.target.value)}
-                    className="bg-[#09090b] border border-[#27272a] text-xs text-[#fafafa] focus:ring-indigo-500"
+                    className="bg-background border border-border text-xs text-foreground focus:ring-indigo-500"
                   />
                 </div>
               </div>
@@ -1289,13 +1289,13 @@ export default function PresustandPage() {
               </div>
             )}
 
-            <DialogFooter className="flex justify-end gap-2 pt-2 border-t border-[#27272a]/50">
+            <DialogFooter className="flex justify-end gap-2 pt-2 border-t border-border/50">
               <Button
                 type="button"
                 variant="ghost"
                 onClick={() => setIsNewClientOpen(false)}
                 disabled={newClientSaving}
-                className="text-xs text-[#a1a1aa] hover:text-[#fafafa] hover:bg-[#18181b]"
+                className="text-xs text-muted-foreground hover:text-foreground hover:bg-muted"
               >
                 Cancelar
               </Button>

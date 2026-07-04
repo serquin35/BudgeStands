@@ -81,7 +81,7 @@ const PrivateImagePreview = ({ path }: { path: string }) => {
       <img
         src={url}
         alt="Arte gráfico"
-        className="max-h-48 object-cover rounded border border-[#27272a] hover:opacity-95 transition-opacity cursor-pointer"
+        className="max-h-48 object-cover rounded border border-border hover:opacity-95 transition-opacity cursor-pointer"
         onClick={() => window.open(url, "_blank")}
       />
       <div className="absolute top-2 right-2 bg-black/75 p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
@@ -426,8 +426,8 @@ export default function CanalB2B({ idProyecto, idEmpresa, usuario }: CanalB2BPro
         }
       default:
         return {
-          bg: "bg-zinc-800/40 border-zinc-700/50 text-[#e4e4e7]",
-          badge: "bg-zinc-800 text-[#a1a1aa] border-zinc-700",
+          bg: "bg-muted/40 border-border/50 text-foreground",
+          badge: "bg-muted text-muted-foreground border-border",
           icon: MessageSquare,
           name: "Mensaje"
         }
@@ -460,7 +460,7 @@ export default function CanalB2B({ idProyecto, idEmpresa, usuario }: CanalB2BPro
 
   if (loading) {
     return (
-      <div className="h-96 flex flex-col items-center justify-center text-slate-400 gap-3 border border-[#27272a]/70 rounded-xl bg-[#09090b]">
+      <div className="h-96 flex flex-col items-center justify-center text-muted-foreground gap-3 border border-border/70 rounded-xl bg-background">
         <Loader2 className="h-8 w-8 text-indigo-500 animate-spin" />
         <span className="text-sm">Iniciando canal seguro B2B...</span>
       </div>
@@ -480,13 +480,13 @@ export default function CanalB2B({ idProyecto, idEmpresa, usuario }: CanalB2BPro
   }
 
   return (
-    <div className="border border-[#27272a]/70 rounded-xl bg-[#09090b] flex flex-col h-[50vh] sm:h-[600px] md:h-[650px] shadow-2xl relative overflow-hidden">
+    <div className="border border-border/70 rounded-xl bg-background flex flex-col h-[50vh] sm:h-[600px] md:h-[650px] shadow-2xl relative overflow-hidden">
       {/* Header */}
-      <div className="p-3 sm:p-4 border-b border-[#27272a]/70 flex items-center justify-between bg-zinc-950/40">
+      <div className="p-3 sm:p-4 border-b border-border/70 flex items-center justify-between bg-muted/20">
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse" />
           <div>
-            <h3 className="font-semibold text-xs sm:text-sm text-[#fafafa] flex items-center gap-2">
+            <h3 className="font-semibold text-xs sm:text-sm text-foreground flex items-center gap-2">
               Canal B2B Taller-Oficina
             </h3>
             <p className="text-[10px] text-slate-500">Historial inmutable • RLS activo</p>
@@ -525,7 +525,7 @@ export default function CanalB2B({ idProyecto, idEmpresa, usuario }: CanalB2BPro
                 className={`flex gap-3 max-w-[85%] ${isMe ? "ml-auto flex-row-reverse" : ""}`}
               >
                 {/* Avatar */}
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border border-[#27272a] text-xs font-semibold ${
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border border-border text-xs font-semibold ${
                   isMe ? "bg-indigo-950/40 text-indigo-400" : "bg-slate-900 text-slate-300"
                 }`}>
                   {msg.usuarios?.nombre_completo?.slice(0, 2).toUpperCase() || <UserIcon className="h-3 w-3" />}
@@ -573,7 +573,7 @@ export default function CanalB2B({ idProyecto, idEmpresa, usuario }: CanalB2BPro
                           </div>
                         )}
 
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2 bg-black/40 rounded-lg border border-[#27272a] hover:border-slate-700 transition-colors">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2 bg-muted/30 rounded-lg border border-border hover:border-border transition-colors">
                           <div className="flex items-center gap-2 min-w-0">
                             <Icon className="h-4 w-4 shrink-0 text-slate-400" />
                             <span className="text-xs text-slate-300 break-all sm:truncate font-mono">
@@ -609,7 +609,7 @@ export default function CanalB2B({ idProyecto, idEmpresa, usuario }: CanalB2BPro
       </div>
 
       {/* Input Composer */}
-      <form onSubmit={handleSend} className="p-3 sm:p-4 border-t border-[#27272a]/70 bg-zinc-950/40 space-y-2 sm:space-y-3">
+      <form onSubmit={handleSend} className="p-3 sm:p-4 border-t border-border/70 bg-muted/20 space-y-2 sm:space-y-3">
         {uploading && (
           <div className="flex items-center gap-2 text-xs text-indigo-400 bg-indigo-950/30 p-2 rounded border border-indigo-900/30 animate-pulse">
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -622,7 +622,7 @@ export default function CanalB2B({ idProyecto, idEmpresa, usuario }: CanalB2BPro
           <select
             value={tipo}
             onChange={(e) => setTipo(e.target.value as TipoMensaje)}
-            className="hidden sm:block h-10 px-2.5 rounded-lg border border-[#27272a] bg-slate-950 text-[#a1a1aa] text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-indigo-500 hover:border-slate-700 transition-colors"
+            className="hidden sm:block h-10 px-2.5 rounded-lg border border-border bg-background text-muted-foreground text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-primary hover:border-border transition-colors"
           >
             <option value="mensaje">💬 Mensaje</option>
             <option value="plano_autocad">📐 Plano CAD</option>
@@ -639,7 +639,7 @@ export default function CanalB2B({ idProyecto, idEmpresa, usuario }: CanalB2BPro
               value={text}
               onChange={(e) => setText(e.target.value)}
               disabled={sending || uploading}
-              className="bg-slate-950 border-[#27272a] text-[#fafafa] placeholder-slate-500 pr-10 focus-visible:ring-indigo-500 text-sm"
+              className="bg-background border-border text-foreground placeholder-muted-foreground pr-10 focus-visible:ring-primary text-sm"
             />
 
             {/* Clip de adjuntar */}

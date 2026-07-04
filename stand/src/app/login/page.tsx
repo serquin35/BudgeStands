@@ -105,10 +105,10 @@ function LoginForm() {
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-[#09090b] text-[#fafafa] overflow-hidden">
+    <div className="relative min-h-screen flex items-center justify-center bg-background text-foreground overflow-hidden">
       {/* Background radial glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute top-1/4 left-1/3 w-[300px] h-[300px] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/3 w-[300px] h-[300px] bg-accent/20 rounded-full blur-[100px] pointer-events-none" />
       
       <div className="relative w-full max-w-[420px] mx-auto px-4 z-10">
         {/* Logo / Header */}
@@ -116,21 +116,21 @@ function LoginForm() {
           <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 mb-3">
             <span className="font-extrabold text-xl text-white tracking-wider">T</span>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-[#fafafa] to-[#a1a1aa]">
+          <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-foreground to-muted-foreground">
             The Titan
           </h1>
-          <p className="text-xs text-[#a1a1aa] mt-1 uppercase tracking-widest font-semibold">
+          <p className="text-xs text-muted-foreground mt-1 uppercase tracking-widest font-semibold">
             Presupuestador de Stands IA
           </p>
         </div>
 
         {/* Card Form */}
-        <Card className="border-[#27272a] bg-[#09090b]/60 backdrop-blur-xl shadow-2xl shadow-black/80">
+        <Card className="border-border bg-card/80 backdrop-blur-xl shadow-2xl shadow-black/10">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-xl font-semibold text-center text-[#fafafa]">
+            <CardTitle className="text-xl font-semibold text-center text-foreground">
               {isForgotPassword ? "Recuperar Contraseña" : isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
             </CardTitle>
-            <CardDescription className="text-center text-xs text-[#a1a1aa]">
+            <CardDescription className="text-center text-xs text-muted-foreground">
               {isForgotPassword 
                 ? "Te enviaremos un enlace seguro" 
                 : isLogin 
@@ -148,7 +148,7 @@ function LoginForm() {
                   type="button" 
                   disabled={googleLoading || loading}
                   onClick={handleGoogleLogin}
-                  className="w-full bg-[#18181b] border-[#27272a] hover:bg-[#27272a] text-[#fafafa]"
+                  className="w-full bg-muted border-border hover:bg-muted/80 text-foreground"
                 >
                   {googleLoading ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -177,10 +177,10 @@ function LoginForm() {
 
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-[#27272a]" />
+                    <span className="w-full border-t border-border" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-[#09090b] px-2 text-[#52525b]">O continuar con email</span>
+                    <span className="bg-card px-2 text-muted-foreground">O continuar con email</span>
                   </div>
                 </div>
               </>
@@ -188,7 +188,7 @@ function LoginForm() {
 
             <form onSubmit={handleAuth} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-xs font-medium text-[#e4e4e7]">
+                <Label htmlFor="email" className="text-xs font-medium text-foreground">
                   Correo Electrónico
                 </Label>
                 <Input
@@ -198,7 +198,7 @@ function LoginForm() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-[#09090b]/80 border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-sm text-[#fafafa] placeholder-[#52525b]"
+                  className="bg-background border-border focus:border-primary focus:ring-1 focus:ring-primary/30 text-sm text-foreground placeholder:text-muted-foreground"
                   disabled={loading}
                 />
               </div>
@@ -206,14 +206,14 @@ function LoginForm() {
               {!isForgotPassword && (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password" className="text-xs font-medium text-[#e4e4e7]">
+                    <Label htmlFor="password" className="text-xs font-medium text-foreground">
                       Contraseña
                     </Label>
                     {isLogin && (
                       <button 
                         type="button" 
                         onClick={() => setIsForgotPassword(true)}
-                        className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
+                        className="text-xs text-primary hover:text-primary/80 transition-colors"
                       >
                         ¿Olvidaste tu contraseña?
                       </button>
@@ -226,13 +226,13 @@ function LoginForm() {
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="bg-[#09090b]/80 border-[#27272a] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 text-sm text-[#fafafa] pr-10"
+                      className="bg-background border-border focus:border-primary focus:ring-1 focus:ring-primary/30 text-sm text-foreground pr-10"
                       disabled={loading}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a1a1aa] hover:text-[#fafafa] transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -274,7 +274,7 @@ function LoginForm() {
               </Button>
             </form>
           </CardContent>
-          <CardFooter className="flex flex-col gap-3 justify-center border-t border-[#27272a]/50 py-4 bg-[#09090b]/40">
+          <CardFooter className="flex flex-col gap-3 justify-center border-t border-border/50 py-4 bg-muted/30">
             {isForgotPassword ? (
                <button 
                 type="button" 
@@ -283,12 +283,12 @@ function LoginForm() {
                   setError(null)
                   setSuccess(null)
                 }}
-                className="text-xs text-[#a1a1aa] hover:text-[#fafafa] transition-colors"
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                >
                  Volver al inicio de sesión
                </button>
             ) : (
-              <div className="text-xs text-[#a1a1aa] text-center">
+              <div className="text-xs text-muted-foreground text-center">
                 {isLogin ? "¿No tienes cuenta? " : "¿Ya tienes cuenta? "}
                 <button 
                   type="button" 
@@ -297,13 +297,13 @@ function LoginForm() {
                     setError(null)
                     setSuccess(null)
                   }}
-                  className="text-indigo-400 hover:text-indigo-300 transition-colors font-medium"
+                  className="text-primary hover:text-primary/80 transition-colors font-medium"
                 >
                   {isLogin ? "Regístrate" : "Inicia sesión"}
                 </button>
               </div>
             )}
-            <span className="text-[10px] text-[#52525b]">
+            <span className="text-[10px] text-muted-foreground">
               Desarrollado para Presustand &copy; 2026
             </span>
           </CardFooter>
@@ -316,7 +316,7 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-[#09090b] text-[#fafafa]">
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
         <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
       </div>
     }>

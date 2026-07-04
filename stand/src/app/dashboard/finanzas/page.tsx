@@ -949,26 +949,26 @@ function FinanzasContent() {
   }
 
   return (
-    <div className="space-y-6 p-6 max-w-7xl mx-auto text-[#fafafa]">
+    <div className="space-y-6 p-6 max-w-7xl mx-auto text-foreground">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-200 via-zinc-100 to-indigo-100 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-foreground to-muted-foreground">
             Gestión Financiera
           </h1>
-          <p className="text-sm text-[#a1a1aa] mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Control de cobros, facturación de proyectos, cash flow analítico y cierres operativos.
           </p>
         </div>
 
         {/* Global Tab Navigation */}
-        <div className="flex bg-[#18181b]/50 border border-[#27272a]/60 p-1 rounded-xl w-fit">
+        <div className="flex bg-muted/50 border border-border/60 p-1 rounded-xl w-fit">
           <button
             onClick={() => setActiveTab("clientes")}
             className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
               activeTab === "clientes"
                 ? "bg-indigo-600 text-white shadow-md"
-                : "text-[#a1a1aa] hover:text-[#fafafa]"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Facturas Clientes
@@ -978,7 +978,7 @@ function FinanzasContent() {
             className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
               activeTab === "proveedores"
                 ? "bg-indigo-600 text-white shadow-md"
-                : "text-[#a1a1aa] hover:text-[#fafafa]"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Facturas Proveedores
@@ -988,7 +988,7 @@ function FinanzasContent() {
             className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
               activeTab === "cashflow"
                 ? "bg-indigo-600 text-white shadow-md"
-                : "text-[#a1a1aa] hover:text-[#fafafa]"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Cash Flow
@@ -998,7 +998,7 @@ function FinanzasContent() {
             className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
               activeTab === "cierre"
                 ? "bg-indigo-600 text-white shadow-md"
-                : "text-[#a1a1aa] hover:text-[#fafafa]"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Cierre Proyectos
@@ -1011,70 +1011,70 @@ function FinanzasContent() {
         <div className="space-y-6">
           {/* Dashboard mini-summary cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="bg-[#09090b]/40 border-[#27272a]/60 backdrop-blur-md">
+            <Card className="bg-card/80 border-border/60 backdrop-blur-md">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-xs font-semibold text-[#a1a1aa]">Total Facturado</CardTitle>
+                <CardTitle className="text-xs font-semibold text-muted-foreground">Total Facturado</CardTitle>
                 <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-400">
                   <Receipt className="w-4 h-4" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{formatCurrency(totalFacturadoSum)}</div>
-                <div className="text-[10px] text-[#71717a] mt-1">Total bruto facturado acumulado</div>
+                <div className="text-[10px] text-muted-foreground mt-1">Total bruto facturado acumulado</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-[#09090b]/40 border-[#27272a]/60 backdrop-blur-md">
+            <Card className="bg-card/80 border-border/60 backdrop-blur-md">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-xs font-semibold text-[#a1a1aa]">Total Cobrado</CardTitle>
+                <CardTitle className="text-xs font-semibold text-muted-foreground">Total Cobrado</CardTitle>
                 <div className="p-2 rounded-lg bg-green-500/10 text-green-400">
                   <ArrowUpRight className="w-4 h-4" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-green-400">{formatCurrency(totalCobradoSum)}</div>
-                <div className="text-[10px] text-[#71717a] mt-1">Ingresos reales ingresados</div>
+                <div className="text-[10px] text-muted-foreground mt-1">Ingresos reales ingresados</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-[#09090b]/40 border-[#27272a]/60 backdrop-blur-md">
+            <Card className="bg-card/80 border-border/60 backdrop-blur-md">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-xs font-semibold text-[#a1a1aa]">Total Pendiente</CardTitle>
+                <CardTitle className="text-xs font-semibold text-muted-foreground">Total Pendiente</CardTitle>
                 <div className="p-2 rounded-lg bg-rose-500/10 text-rose-400">
                   <ArrowDownRight className="w-4 h-4" />
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-rose-400">{formatCurrency(totalPendienteSum)}</div>
-                <div className="text-[10px] text-[#71717a] mt-1">Facturas pendientes e impagadas</div>
+                <div className="text-[10px] text-muted-foreground mt-1">Facturas pendientes e impagadas</div>
               </CardContent>
             </Card>
           </div>
 
           {/* Table list and Filters */}
-          <Card className="bg-[#09090b]/30 border-[#27272a]/60 backdrop-blur-md">
+          <Card className="bg-card/60 border-border/60 backdrop-blur-md">
             <CardHeader className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6">
               <div>
                 <CardTitle className="text-lg font-bold">Listado de Facturas Emitidas</CardTitle>
-                <CardDescription className="text-xs text-[#a1a1aa]">Controla los cobros y vencimientos de tus clientes.</CardDescription>
+                <CardDescription className="text-xs text-muted-foreground">Controla los cobros y vencimientos de tus clientes.</CardDescription>
               </div>
 
               {/* Action and Search */}
               <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                 <div className="relative w-full sm:w-64">
-                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#71717a]" />
+                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Buscar factura, proyecto..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 bg-[#18181b]/40 border-[#27272a] focus-visible:ring-indigo-500 text-xs"
+                    className="pl-9 bg-muted/40 border-border focus-visible:ring-indigo-500 text-xs"
                   />
                 </div>
 
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="bg-[#18181b]/60 border border-[#27272a] rounded-lg px-3 py-2 text-xs text-[#fafafa] focus:ring-indigo-500"
+                  className="bg-muted/60 border border-border rounded-lg px-3 py-2 text-xs text-foreground focus:ring-indigo-500"
                 >
                   <option value="todos">Todos los Estados</option>
                   <option value="pendiente_cobro">Pendiente Cobro</option>
@@ -1090,11 +1090,11 @@ function FinanzasContent() {
                 </Button>
 
                 <Dialog open={isNewFacturaOpen} onOpenChange={setIsNewFacturaOpen}>
-                  <DialogContent className="bg-[#09090b] border-[#27272a] text-[#fafafa] max-w-lg">
+                  <DialogContent className="bg-background border-border text-foreground max-w-lg">
                     <form onSubmit={handleEmitirFactura}>
                       <DialogHeader>
                         <DialogTitle className="text-lg font-bold">Emitir Nueva Factura</DialogTitle>
-                        <DialogDescription className="text-xs text-[#a1a1aa]">
+                        <DialogDescription className="text-xs text-muted-foreground">
                           Elige el proyecto de origen. Los importes y fecha de vencimiento se calcularán automáticamente según las reglas oficiales.
                         </DialogDescription>
                       </DialogHeader>
@@ -1102,12 +1102,12 @@ function FinanzasContent() {
                       <div className="space-y-4 my-6">
                         {/* Proyecto Select */}
                         <div className="space-y-2">
-                          <Label className="text-xs text-[#a1a1aa]">Proyecto de Origen</Label>
+                          <Label className="text-xs text-muted-foreground">Proyecto de Origen</Label>
                           <select
                             value={facturaForm.id_proyecto}
                             onChange={(e) => handleFormChange("id_proyecto", e.target.value)}
                             required
-                            className="w-full bg-[#18181b]/60 border border-[#27272a] rounded-lg px-3 py-2 text-xs text-[#fafafa] focus:ring-indigo-500"
+                            className="w-full bg-muted/60 border border-border rounded-lg px-3 py-2 text-xs text-foreground focus:ring-indigo-500"
                           >
                             <option value="">Selecciona un proyecto...</option>
                             {proyectosList.map(proj => (
@@ -1120,12 +1120,12 @@ function FinanzasContent() {
 
                         {/* Tipo de Factura */}
                         <div className="space-y-2">
-                          <Label className="text-xs text-[#a1a1aa]">Tipo de Factura</Label>
+                          <Label className="text-xs text-muted-foreground">Tipo de Factura</Label>
                           <select
                             value={facturaForm.tipo_factura}
                             onChange={(e) => handleFormChange("tipo_factura", e.target.value)}
                             required
-                            className="w-full bg-[#18181b]/60 border border-[#27272a] rounded-lg px-3 py-2 text-xs text-[#fafafa] focus:ring-indigo-500"
+                            className="w-full bg-muted/60 border border-border rounded-lg px-3 py-2 text-xs text-foreground focus:ring-indigo-500"
                           >
                             <option value="anticipo">Factura de Anticipo (50%)</option>
                             <option value="final">Factura Final (50%)</option>
@@ -1135,7 +1135,7 @@ function FinanzasContent() {
 
                         {/* Porcentaje */}
                         <div className="space-y-2">
-                          <Label className="text-xs text-[#a1a1aa]">Porcentaje a Facturar (%)</Label>
+                          <Label className="text-xs text-muted-foreground">Porcentaje a Facturar (%)</Label>
                           <Input
                             type="number"
                             min="0"
@@ -1144,7 +1144,7 @@ function FinanzasContent() {
                             value={facturaForm.porcentaje_facturado}
                             onChange={(e) => handleFormChange("porcentaje_facturado", Number(e.target.value))}
                             required
-                            className="bg-[#18181b]/40 border-[#27272a] text-xs"
+                            className="bg-muted/40 border-border text-xs"
                           />
                         </div>
 
@@ -1153,22 +1153,22 @@ function FinanzasContent() {
                           <div className="p-4 rounded-lg bg-zinc-900/60 border border-zinc-800 space-y-2 text-xs">
                             <h4 className="font-semibold text-indigo-400">Desglose de Factura Estimado</h4>
                             <div className="flex justify-between">
-                              <span className="text-[#a1a1aa]">Presupuesto Total (con IVA):</span>
+                              <span className="text-muted-foreground">Presupuesto Total (con IVA):</span>
                               <span>{formatCurrency(budgetData.total_presupuesto)}</span>
                             </div>
                             <div className="flex justify-between">
-                              <span className="text-[#a1a1aa]">IVA Aplicable:</span>
+                              <span className="text-muted-foreground">IVA Aplicable:</span>
                               <span>{budgetData.porcentaje_iva ?? 21}%</span>
                             </div>
                             <hr className="border-zinc-800 my-1" />
                             <div className="flex justify-between font-semibold">
-                              <span className="text-[#a1a1aa]">Base Imponible ({facturaForm.porcentaje_facturado}%):</span>
+                              <span className="text-muted-foreground">Base Imponible ({facturaForm.porcentaje_facturado}%):</span>
                               <span>{formatCurrency(
                                 Number(((budgetData.total_presupuesto / (1 + (budgetData.porcentaje_iva ?? 21)/100)) * (facturaForm.porcentaje_facturado/100)).toFixed(2))
                               )}</span>
                             </div>
                             <div className="flex justify-between">
-                              <span className="text-[#a1a1aa]">Importe IVA:</span>
+                              <span className="text-muted-foreground">Importe IVA:</span>
                               <span>{formatCurrency(
                                 Number((((budgetData.total_presupuesto / (1 + (budgetData.porcentaje_iva ?? 21)/100)) * (facturaForm.porcentaje_facturado/100)) * ((budgetData.porcentaje_iva ?? 21)/100)).toFixed(2))
                               )}</span>
@@ -1180,7 +1180,7 @@ function FinanzasContent() {
                               )}</span>
                             </div>
                             {clienteData && (
-                              <div className="text-[10px] text-[#71717a] mt-2">
+                              <div className="text-[10px] text-muted-foreground mt-2">
                                 Plazo de pago cliente: {clienteData.plazo_pago_dias ?? 30} días. Vencimiento calculado de forma automatizada.
                               </div>
                             )}
@@ -1189,44 +1189,44 @@ function FinanzasContent() {
 
                         {/* Sugerencia de Número */}
                         <div className="space-y-2">
-                          <Label className="text-xs text-[#a1a1aa]">Número de Factura Sugerido (Legal)</Label>
+                          <Label className="text-xs text-muted-foreground">Número de Factura Sugerido (Legal)</Label>
                           <Input
                             value={numeroFacturaSugerido}
                             onChange={(e) => setNumeroFacturaSugerido(e.target.value)}
                             required
-                            className="bg-[#18181b]/40 border-[#27272a] text-xs font-mono"
+                            className="bg-muted/40 border-border text-xs font-mono"
                           />
                         </div>
 
                         {/* Fecha de Emisión */}
                         <div className="space-y-2">
-                          <Label className="text-xs text-[#a1a1aa]">Fecha de Emisión</Label>
+                          <Label className="text-xs text-muted-foreground">Fecha de Emisión</Label>
                           <Input
                             type="date"
                             value={facturaForm.fecha_emision}
                             onChange={(e) => handleFormChange("fecha_emision", e.target.value)}
                             required
-                            className="bg-[#18181b]/40 border-[#27272a] text-xs"
+                            className="bg-muted/40 border-border text-xs"
                           />
                         </div>
 
                         {/* Notas */}
                         <div className="space-y-2">
-                          <Label className="text-xs text-[#a1a1aa]">Notas Internas / Observaciones</Label>
+                          <Label className="text-xs text-muted-foreground">Notas Internas / Observaciones</Label>
                           <Input
                             value={facturaForm.notas}
                             onChange={(e) => handleFormChange("notas", e.target.value)}
                             placeholder="Ej: Emitido según hito de inicio de fabricación..."
-                            className="bg-[#18181b]/40 border-[#27272a] text-xs"
+                            className="bg-muted/40 border-border text-xs"
                           />
                         </div>
                       </div>
 
-                      <DialogFooter className="flex justify-end gap-2 pt-4 border-t border-[#27272a]">
+                      <DialogFooter className="flex justify-end gap-2 pt-4 border-t border-border">
                         <Button 
                           variant="outline" 
                           onClick={() => setIsNewFacturaOpen(false)}
-                          className="text-xs border-[#3f3f46] text-[#a1a1aa] hover:bg-[#27272a] hover:text-white"
+                          className="text-xs border-border text-muted-foreground hover:bg-muted/30 hover:text-white"
                         >
                           Cancelar
                         </Button>
@@ -1248,16 +1248,16 @@ function FinanzasContent() {
             <CardContent className="p-0">
               {loadingFacturas ? (
                 <div className="flex h-48 w-full items-center justify-center">
-                  <Loader2 className="h-6 w-6 animate-spin text-[#a1a1aa]" />
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                 </div>
               ) : filteredFacturas.length === 0 ? (
-                <div className="flex h-36 w-full items-center justify-center border-t border-[#27272a]/60">
-                  <div className="text-xs font-semibold text-[#71717a]">No se encontraron facturas emitidas</div>
+                <div className="flex h-36 w-full items-center justify-center border-t border-border/60">
+                  <div className="text-xs font-semibold text-muted-foreground">No se encontraron facturas emitidas</div>
                 </div>
               ) : (
-                <div className="overflow-x-auto border-t border-[#27272a]/60">
+                <div className="overflow-x-auto border-t border-border/60">
                   <table className="w-full text-xs text-left">
-                    <thead className="bg-[#18181b]/35 border-b border-[#27272a]/60 text-[#a1a1aa]">
+                    <thead className="bg-muted/35 border-b border-border/60 text-muted-foreground">
                       <tr>
                         <th className="px-6 py-3 font-semibold">Nº Factura</th>
                         <th className="px-6 py-3 font-semibold">Cliente</th>
@@ -1271,7 +1271,7 @@ function FinanzasContent() {
                         <th className="px-6 py-3 font-semibold text-right">Acciones</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#27272a]/40 bg-[#09090b]/10">
+                    <tbody className="divide-y divide-border/40 bg-card/20">
                       {filteredFacturas.map((factura) => {
                         const pc = factura.proyectos_operaciones
                         const bData = pc?.presupuestos_cabecera
@@ -1279,12 +1279,12 @@ function FinanzasContent() {
                         const badgeInfo = getBadgeFactura(factura)
 
                         return (
-                          <tr key={factura.id} className="hover:bg-[#18181b]/15 transition-colors">
+                          <tr key={factura.id} className="hover:bg-muted/15 transition-colors">
                             <td className="px-6 py-4 font-mono font-semibold text-white">{factura.numero_factura_legal}</td>
-                            <td className="px-6 py-4 font-medium text-[#fafafa]">{cData?.nombre_comercial || "Cliente Desconocido"}</td>
+                            <td className="px-6 py-4 font-medium text-foreground">{cData?.nombre_comercial || "Cliente Desconocido"}</td>
                             <td className="px-6 py-4">
                               <div>{pc?.codigo_proyecto_interno || "N/A"}</div>
-                              <div className="text-[10px] text-[#71717a] mt-0.5">{bData?.nombre_feria || "Feria"}</div>
+                              <div className="text-[10px] text-muted-foreground mt-0.5">{bData?.nombre_feria || "Feria"}</div>
                             </td>
                             <td className="px-6 py-4 text-center font-semibold">{factura.porcentaje_facturado}%</td>
                             <td className="px-6 py-4">{formatCurrency(factura.base_imponible)}</td>
@@ -1292,7 +1292,7 @@ function FinanzasContent() {
                             <td className="px-6 py-4 font-semibold text-white">{formatCurrency(factura.total_factura_bruto)}</td>
                             <td className="px-6 py-4">
                               <div>{factura.fecha_emision}</div>
-                              <div className="text-[10px] text-[#71717a] mt-0.5">Vto: {factura.fecha_vencimiento}</div>
+                              <div className="text-[10px] text-muted-foreground mt-0.5">Vto: {factura.fecha_vencimiento}</div>
                             </td>
                             <td className="px-6 py-4">
                               <span className={`px-2 py-1 rounded-md text-[10px] font-semibold border ${badgeInfo.color}`}>
@@ -1304,7 +1304,7 @@ function FinanzasContent() {
                                 size="sm"
                                 variant="outline"
                                 onClick={() => window.open(`/print/factura/${factura.id}?autoprint=true`, '_blank')}
-                                className="border-[#27272a] hover:bg-[#18181b]/30 h-7 text-[10px] px-2 text-indigo-400 hover:text-indigo-300 inline-flex items-center"
+                                className="border-border hover:bg-muted/30 h-7 text-[10px] px-2 text-indigo-400 hover:text-indigo-300 inline-flex items-center"
                               >
                                 <Printer className="w-3 h-3 mr-1" />
                                 PDF
@@ -1314,7 +1314,7 @@ function FinanzasContent() {
                                 variant="outline"
                                 disabled={sendingEmailId === factura.id}
                                 onClick={() => handleSendEmail(factura.id)}
-                                className="border-[#27272a] hover:bg-[#18181b]/30 h-7 text-[10px] px-2 text-purple-400 hover:text-purple-300 disabled:opacity-50 inline-flex items-center"
+                                className="border-border hover:bg-muted/30 h-7 text-[10px] px-2 text-purple-400 hover:text-purple-300 disabled:opacity-50 inline-flex items-center"
                               >
                                 {sendingEmailId === factura.id ? (
                                   <Loader2 className="w-3 h-3 animate-spin mr-1" />
@@ -1335,9 +1335,9 @@ function FinanzasContent() {
                                   </Button>
                                   <Button
                                     size="sm"
-                                    variant="destructive"
-                                    onClick={() => handleUpdateEstado(factura.id, pc.id, "impagada_vencida")}
-                                    className="bg-red-600 hover:bg-red-700 h-7 text-[10px] px-2"
+                                   variant="destructive"
+                                   onClick={() => handleUpdateEstado(factura.id, pc.id, "impagada_vencida")}
+                                   className="bg-red-600 hover:bg-red-700 text-white h-7 text-[10px] px-2"
                                   >
                                     Impagar
                                   </Button>
@@ -1348,7 +1348,7 @@ function FinanzasContent() {
                                   size="sm"
                                   variant="outline"
                                   onClick={() => handleUpdateEstado(factura.id, pc.id, "pendiente_cobro")}
-                                  className="border-[#27272a] hover:bg-[#18181b]/30 h-7 text-[10px] px-2 text-[#a1a1aa]"
+                                   className="border-border hover:bg-muted/30 h-7 text-[10px] px-2 text-foreground"
                                 >
                                   Revertir
                                 </Button>
@@ -1372,65 +1372,65 @@ function FinanzasContent() {
 
           {/* KPI Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="bg-[#09090b]/40 border-[#27272a]/60 backdrop-blur-md">
+            <Card className="bg-card/80 border-border/60 backdrop-blur-md">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-xs font-semibold text-[#a1a1aa]">Total Recibido</CardTitle>
+                <CardTitle className="text-xs font-semibold text-muted-foreground">Total Recibido</CardTitle>
                 <div className="p-2 rounded-lg bg-rose-500/10 text-rose-400"><ArrowDownRight className="w-4 h-4" /></div>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-rose-400">
                   {formatCurrency(facturasProveedores.reduce((s: number, f: any) => s + Number(f.total_factura_bruto || 0), 0))}
                 </div>
-                <div className="text-[10px] text-[#71717a] mt-1">Coste bruto acumulado de proveedores</div>
+                <div className="text-[10px] text-muted-foreground mt-1">Coste bruto acumulado de proveedores</div>
               </CardContent>
             </Card>
-            <Card className="bg-[#09090b]/40 border-[#27272a]/60 backdrop-blur-md">
+            <Card className="bg-card/80 border-border/60 backdrop-blur-md">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-xs font-semibold text-[#a1a1aa]">Pagadas</CardTitle>
+                <CardTitle className="text-xs font-semibold text-muted-foreground">Pagadas</CardTitle>
                 <div className="p-2 rounded-lg bg-green-500/10 text-green-400"><Check className="w-4 h-4" /></div>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-green-400">
                   {formatCurrency(facturasProveedores.filter((f: any) => f.estado_pago === "pagada").reduce((s: number, f: any) => s + Number(f.total_factura_bruto || 0), 0))}
                 </div>
-                <div className="text-[10px] text-[#71717a] mt-1">Pagos ya ejecutados</div>
+                <div className="text-[10px] text-muted-foreground mt-1">Pagos ya ejecutados</div>
               </CardContent>
             </Card>
-            <Card className="bg-[#09090b]/40 border-[#27272a]/60 backdrop-blur-md">
+            <Card className="bg-card/80 border-border/60 backdrop-blur-md">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-xs font-semibold text-[#a1a1aa]">Pendiente de Pago</CardTitle>
+                <CardTitle className="text-xs font-semibold text-muted-foreground">Pendiente de Pago</CardTitle>
                 <div className="p-2 rounded-lg bg-yellow-500/10 text-yellow-400"><AlertCircle className="w-4 h-4" /></div>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-yellow-400">
                   {formatCurrency(facturasProveedores.filter((f: any) => f.estado_pago === "pendiente").reduce((s: number, f: any) => s + Number(f.total_factura_bruto || 0), 0))}
                 </div>
-                <div className="text-[10px] text-[#71717a] mt-1">Facturas pendientes de pagar</div>
+                <div className="text-[10px] text-muted-foreground mt-1">Facturas pendientes de pagar</div>
               </CardContent>
             </Card>
           </div>
 
           {/* List + Actions */}
-          <Card className="bg-[#09090b]/30 border-[#27272a]/60 backdrop-blur-md">
+          <Card className="bg-card/60 border-border/60 backdrop-blur-md">
             <CardHeader className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6">
               <div>
                 <CardTitle className="text-lg font-bold">Facturas Recibidas de Proveedores</CardTitle>
-                <CardDescription className="text-xs text-[#a1a1aa]">Gestiona los costes imputados a proyectos.</CardDescription>
+                <CardDescription className="text-xs text-muted-foreground">Gestiona los costes imputados a proyectos.</CardDescription>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                 <div className="relative w-full sm:w-64">
-                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#71717a]" />
+                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Buscar proveedor, nº factura..."
                     value={searchQueryProveedores}
                     onChange={(e) => setSearchQueryProveedores(e.target.value)}
-                    className="pl-9 bg-[#18181b]/40 border-[#27272a] focus-visible:ring-indigo-500 text-xs"
+                    className="pl-9 bg-muted/40 border-border focus-visible:ring-indigo-500 text-xs"
                   />
                 </div>
                 <select
                   value={statusFilterProveedores}
                   onChange={(e) => setStatusFilterProveedores(e.target.value)}
-                  className="bg-[#18181b]/60 border border-[#27272a] rounded-lg px-3 py-2 text-xs text-[#fafafa] focus:ring-indigo-500"
+                  className="bg-muted/60 border border-border rounded-lg px-3 py-2 text-xs text-foreground focus:ring-indigo-500"
                 >
                   <option value="todos">Todos los Estados</option>
                   <option value="pendiente">Pendiente Pago</option>
@@ -1447,28 +1447,28 @@ function FinanzasContent() {
 
                 <Dialog open={isNewFacturaProveedorOpen} onOpenChange={setIsNewFacturaProveedorOpen}>
 
-                  <DialogContent className="bg-[#09090b] border-[#27272a] text-[#fafafa] max-w-2xl max-h-[90vh] overflow-y-auto">
+                  <DialogContent className="bg-background border-border text-foreground max-w-2xl max-h-[90vh] overflow-y-auto">
                     <form onSubmit={handleEmitirFacturaProveedor}>
                       <DialogHeader>
                         <DialogTitle className="text-lg font-bold">Registrar Factura de Proveedor</DialogTitle>
-                        <DialogDescription className="text-xs text-[#a1a1aa]">
+                        <DialogDescription className="text-xs text-muted-foreground">
                           Paso 1: datos de cabecera. Paso 2: líneas de detalle con imputación a proyecto y categoría técnica.
                         </DialogDescription>
                       </DialogHeader>
 
                       <div className="space-y-5 my-5">
                         {/* ── STEP 1: HEADER ── */}
-                        <div className="rounded-lg border border-[#27272a] p-4 space-y-4">
+                        <div className="rounded-lg border border-border p-4 space-y-4">
                           <p className="text-xs font-semibold text-indigo-400 uppercase tracking-wider">① Cabecera de Factura</p>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {/* Proveedor */}
                             <div className="space-y-1 sm:col-span-2">
-                              <Label className="text-xs text-[#a1a1aa]">Proveedor *</Label>
+                              <Label className="text-xs text-muted-foreground">Proveedor *</Label>
                               <select
                                 value={facturaProveedorForm.id_proveedor}
                                 onChange={(e) => setFacturaProveedorForm(p => ({ ...p, id_proveedor: e.target.value }))}
                                 required
-                                className="w-full bg-[#18181b]/60 border border-[#27272a] rounded-lg px-3 py-2 text-xs text-[#fafafa] focus:ring-indigo-500"
+                                className="w-full bg-muted/60 border border-border rounded-lg px-3 py-2 text-xs text-foreground focus:ring-indigo-500"
                               >
                                 <option value="">Selecciona un proveedor...</option>
                                 {suppliersList.map((s: any) => (
@@ -1478,22 +1478,22 @@ function FinanzasContent() {
                             </div>
                             {/* Nº Factura */}
                             <div className="space-y-1">
-                              <Label className="text-xs text-[#a1a1aa]">Nº Factura del Proveedor *</Label>
+                              <Label className="text-xs text-muted-foreground">Nº Factura del Proveedor *</Label>
                               <Input
                                 value={facturaProveedorForm.numero_factura_proveedor}
                                 onChange={(e) => setFacturaProveedorForm(p => ({ ...p, numero_factura_proveedor: e.target.value }))}
                                 placeholder="Ej: FP-2026-0042"
                                 required
-                                className="bg-[#18181b]/40 border-[#27272a] text-xs focus-visible:ring-indigo-500"
+                                className="bg-muted/40 border-border text-xs focus-visible:ring-indigo-500"
                               />
                             </div>
                             {/* Método Pago */}
                             <div className="space-y-1">
-                              <Label className="text-xs text-[#a1a1aa]">Método de Pago</Label>
+                              <Label className="text-xs text-muted-foreground">Método de Pago</Label>
                               <select
                                 value={facturaProveedorForm.metodo_pago}
                                 onChange={(e) => setFacturaProveedorForm(p => ({ ...p, metodo_pago: e.target.value as any }))}
-                                className="w-full bg-[#18181b]/60 border border-[#27272a] rounded-lg px-3 py-2 text-xs text-[#fafafa] focus:ring-indigo-500"
+                                className="w-full bg-muted/60 border border-border rounded-lg px-3 py-2 text-xs text-foreground focus:ring-indigo-500"
                               >
                                 <option value="transferencia">Transferencia</option>
                                 <option value="confirming">Confirming</option>
@@ -1503,68 +1503,68 @@ function FinanzasContent() {
                             </div>
                             {/* Fechas */}
                             <div className="space-y-1">
-                              <Label className="text-xs text-[#a1a1aa]">Fecha Emisión *</Label>
-                              <Input type="date" value={facturaProveedorForm.fecha_emision} onChange={(e) => setFacturaProveedorForm(p => ({ ...p, fecha_emision: e.target.value }))} required className="bg-[#18181b]/40 border-[#27272a] text-xs focus-visible:ring-indigo-500" />
+                              <Label className="text-xs text-muted-foreground">Fecha Emisión *</Label>
+                              <Input type="date" value={facturaProveedorForm.fecha_emision} onChange={(e) => setFacturaProveedorForm(p => ({ ...p, fecha_emision: e.target.value }))} required className="bg-muted/40 border-border text-xs focus-visible:ring-indigo-500" />
                             </div>
                             <div className="space-y-1">
-                              <Label className="text-xs text-[#a1a1aa]">Fecha Recepción</Label>
-                              <Input type="date" value={facturaProveedorForm.fecha_recepcion} onChange={(e) => setFacturaProveedorForm(p => ({ ...p, fecha_recepcion: e.target.value }))} className="bg-[#18181b]/40 border-[#27272a] text-xs focus-visible:ring-indigo-500" />
+                              <Label className="text-xs text-muted-foreground">Fecha Recepción</Label>
+                              <Input type="date" value={facturaProveedorForm.fecha_recepcion} onChange={(e) => setFacturaProveedorForm(p => ({ ...p, fecha_recepcion: e.target.value }))} className="bg-muted/40 border-border text-xs focus-visible:ring-indigo-500" />
                             </div>
                             <div className="space-y-1">
-                              <Label className="text-xs text-[#a1a1aa]">Fecha Vencimiento *</Label>
-                              <Input type="date" value={facturaProveedorForm.fecha_vencimiento} onChange={(e) => setFacturaProveedorForm(p => ({ ...p, fecha_vencimiento: e.target.value }))} required className="bg-[#18181b]/40 border-[#27272a] text-xs focus-visible:ring-indigo-500" />
+                              <Label className="text-xs text-muted-foreground">Fecha Vencimiento *</Label>
+                              <Input type="date" value={facturaProveedorForm.fecha_vencimiento} onChange={(e) => setFacturaProveedorForm(p => ({ ...p, fecha_vencimiento: e.target.value }))} required className="bg-muted/40 border-border text-xs focus-visible:ring-indigo-500" />
                             </div>
                             <div className="space-y-1">
-                              <Label className="text-xs text-[#a1a1aa]">Notas Internas</Label>
-                              <Input value={facturaProveedorForm.notas} onChange={(e) => setFacturaProveedorForm(p => ({ ...p, notas: e.target.value }))} placeholder="Opcional..." className="bg-[#18181b]/40 border-[#27272a] text-xs focus-visible:ring-indigo-500" />
+                              <Label className="text-xs text-muted-foreground">Notas Internas</Label>
+                              <Input value={facturaProveedorForm.notas} onChange={(e) => setFacturaProveedorForm(p => ({ ...p, notas: e.target.value }))} placeholder="Opcional..." className="bg-muted/40 border-border text-xs focus-visible:ring-indigo-500" />
                             </div>
                           </div>
                         </div>
 
                         {/* ── STEP 2: LINE ITEMS ── */}
-                        <div className="rounded-lg border border-[#27272a] p-4 space-y-3">
+                        <div className="rounded-lg border border-border p-4 space-y-3">
                           <div className="flex items-center justify-between">
                             <p className="text-xs font-semibold text-rose-400 uppercase tracking-wider">② Líneas de Detalle e Imputación</p>
-                            <Button type="button" variant="outline" size="sm" onClick={handleAddProveedorLinea} className="h-7 text-[10px] border-[#3f3f46] text-[#a1a1aa] hover:bg-[#27272a] hover:text-white">
+                            <Button type="button" variant="outline" size="sm" onClick={handleAddProveedorLinea} className="h-7 text-[10px] border-border text-muted-foreground hover:bg-muted/30 hover:text-white">
                               <Plus className="w-3 h-3 mr-1" /> Añadir Línea
                             </Button>
                           </div>
 
                           {facturaProveedorForm.lineas.map((linea, idx) => (
-                            <div key={idx} className="rounded-md border border-[#3f3f46]/50 bg-[#18181b]/30 p-3 space-y-3">
+                            <div key={idx} className="rounded-md border border-border/50 bg-muted/30 p-3 space-y-3">
                               <div className="flex items-center justify-between">
-                                <span className="text-[10px] font-semibold text-[#71717a]">Línea {idx + 1}</span>
+                                <span className="text-[10px] font-semibold text-muted-foreground">Línea {idx + 1}</span>
                                 {facturaProveedorForm.lineas.length > 1 && (
-                                  <button type="button" onClick={() => handleRemoveProveedorLinea(idx)} className="text-[#71717a] hover:text-red-400 transition-colors">
+                                  <button type="button" onClick={() => handleRemoveProveedorLinea(idx)} className="text-muted-foreground hover:text-red-400 transition-colors">
                                     <X className="w-3.5 h-3.5" />
                                   </button>
                                 )}
                               </div>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div className="space-y-1 sm:col-span-2">
-                                  <Label className="text-[10px] text-[#a1a1aa]">Descripción *</Label>
+                                  <Label className="text-[10px] text-muted-foreground">Descripción *</Label>
                                   <Input
                                     value={linea.descripcion_articulo}
                                     onChange={(e) => handleProveedorLineaChange(idx, "descripcion_articulo", e.target.value)}
                                     placeholder="Ej: Paneles de madera chapada..."
                                     required
-                                    className="bg-[#18181b]/60 border-[#27272a] text-xs focus-visible:ring-rose-500 h-8"
+                                    className="bg-muted/60 border-border text-xs focus-visible:ring-rose-500 h-8"
                                   />
                                 </div>
                                 <div className="space-y-1">
-                                  <Label className="text-[10px] text-[#a1a1aa]">Cantidad</Label>
-                                  <Input type="number" min="0.01" step="0.01" value={linea.cantidad} onChange={(e) => handleProveedorLineaChange(idx, "cantidad", e.target.value)} className="bg-[#18181b]/60 border-[#27272a] text-xs focus-visible:ring-rose-500 h-8" />
+                                  <Label className="text-[10px] text-muted-foreground">Cantidad</Label>
+                                  <Input type="number" min="0.01" step="0.01" value={linea.cantidad} onChange={(e) => handleProveedorLineaChange(idx, "cantidad", e.target.value)} className="bg-muted/60 border-border text-xs focus-visible:ring-rose-500 h-8" />
                                 </div>
                                 <div className="space-y-1">
-                                  <Label className="text-[10px] text-[#a1a1aa]">Unidad</Label>
-                                  <Input value={linea.unidad} onChange={(e) => handleProveedorLineaChange(idx, "unidad", e.target.value)} placeholder="ud / m² / h" className="bg-[#18181b]/60 border-[#27272a] text-xs focus-visible:ring-rose-500 h-8" />
+                                  <Label className="text-[10px] text-muted-foreground">Unidad</Label>
+                                  <Input value={linea.unidad} onChange={(e) => handleProveedorLineaChange(idx, "unidad", e.target.value)} placeholder="ud / m² / h" className="bg-muted/60 border-border text-xs focus-visible:ring-rose-500 h-8" />
                                 </div>
                                 <div className="space-y-1">
-                                  <Label className="text-[10px] text-[#a1a1aa]">Precio Unit. Coste (€)</Label>
-                                  <Input type="number" min="0" step="0.01" value={linea.precio_unitario_coste} onChange={(e) => handleProveedorLineaChange(idx, "precio_unitario_coste", e.target.value)} className="bg-[#18181b]/60 border-[#27272a] text-xs focus-visible:ring-rose-500 h-8" />
+                                  <Label className="text-[10px] text-muted-foreground">Precio Unit. Coste (€)</Label>
+                                  <Input type="number" min="0" step="0.01" value={linea.precio_unitario_coste} onChange={(e) => handleProveedorLineaChange(idx, "precio_unitario_coste", e.target.value)} className="bg-muted/60 border-border text-xs focus-visible:ring-rose-500 h-8" />
                                 </div>
                                 <div className="space-y-1">
-                                  <Label className="text-[10px] text-[#a1a1aa] flex items-center gap-1">
+                                  <Label className="text-[10px] text-muted-foreground flex items-center gap-1">
                                     Total Línea
                                     <span className="text-rose-400 font-semibold">
                                       {formatCurrency(Number(linea.cantidad) * Number(linea.precio_unitario_coste))}
@@ -1574,11 +1574,11 @@ function FinanzasContent() {
                                 </div>
                                 <div className="space-y-1 sm:col-span-2 grid grid-cols-2 gap-3">
                                   <div className="space-y-1">
-                                    <Label className="text-[10px] text-[#a1a1aa]">Imputar a Proyecto</Label>
+                                    <Label className="text-[10px] text-muted-foreground">Imputar a Proyecto</Label>
                                     <select
                                       value={linea.id_proyecto}
                                       onChange={(e) => handleProveedorLineaChange(idx, "id_proyecto", e.target.value)}
-                                      className="w-full bg-[#18181b]/60 border border-[#27272a] rounded-lg px-2 py-1.5 text-xs text-[#fafafa] focus:ring-rose-500"
+                                      className="w-full bg-muted/60 border border-border rounded-lg px-2 py-1.5 text-xs text-foreground focus:ring-rose-500"
                                     >
                                       <option value="">Sin proyecto específico</option>
                                       {proyectosList.map((p: any) => (
@@ -1589,12 +1589,12 @@ function FinanzasContent() {
                                     </select>
                                   </div>
                                   <div className="space-y-1">
-                                    <Label className="text-[10px] text-[#a1a1aa]">Categoría Técnica *</Label>
+                                    <Label className="text-[10px] text-muted-foreground">Categoría Técnica *</Label>
                                     <select
                                       value={linea.id_categoria_matriz}
                                       onChange={(e) => handleProveedorLineaChange(idx, "id_categoria_matriz", e.target.value)}
                                       required
-                                      className="w-full bg-[#18181b]/60 border border-[#27272a] rounded-lg px-2 py-1.5 text-xs text-[#fafafa] focus:ring-rose-500"
+                                      className="w-full bg-muted/60 border border-border rounded-lg px-2 py-1.5 text-xs text-foreground focus:ring-rose-500"
                                     >
                                       <option value="">Selecciona categoría...</option>
                                       {categoriesList.map((c: any) => (
@@ -1608,16 +1608,16 @@ function FinanzasContent() {
                           ))}
 
                           {/* Running total preview */}
-                          <div className="flex justify-end gap-6 pt-2 border-t border-[#27272a] text-xs">
-                            <span className="text-[#a1a1aa]">Base imponible: <span className="text-white font-semibold">{formatCurrency(facturaProveedorForm.lineas.reduce((s, l) => s + Number(l.cantidad) * Number(l.precio_unitario_coste), 0))}</span></span>
-                            <span className="text-[#a1a1aa]">IVA 21%: <span className="text-white font-semibold">{formatCurrency(facturaProveedorForm.lineas.reduce((s, l) => s + Number(l.cantidad) * Number(l.precio_unitario_coste), 0) * 0.21)}</span></span>
+                          <div className="flex justify-end gap-6 pt-2 border-t border-border text-xs">
+                            <span className="text-muted-foreground">Base imponible: <span className="text-white font-semibold">{formatCurrency(facturaProveedorForm.lineas.reduce((s, l) => s + Number(l.cantidad) * Number(l.precio_unitario_coste), 0))}</span></span>
+                            <span className="text-muted-foreground">IVA 21%: <span className="text-white font-semibold">{formatCurrency(facturaProveedorForm.lineas.reduce((s, l) => s + Number(l.cantidad) * Number(l.precio_unitario_coste), 0) * 0.21)}</span></span>
                             <span className="text-rose-400 font-bold">Total: {formatCurrency(facturaProveedorForm.lineas.reduce((s, l) => s + Number(l.cantidad) * Number(l.precio_unitario_coste), 0) * 1.21)}</span>
                           </div>
                         </div>
                       </div>
 
-                      <DialogFooter className="flex justify-end gap-2 pt-4 border-t border-[#27272a]">
-                        <Button type="button" variant="outline" onClick={() => setIsNewFacturaProveedorOpen(false)} className="text-xs border-[#3f3f46] text-[#a1a1aa] hover:bg-[#27272a] hover:text-white">
+                      <DialogFooter className="flex justify-end gap-2 pt-4 border-t border-border">
+                        <Button type="button" variant="outline" onClick={() => setIsNewFacturaProveedorOpen(false)} className="text-xs border-border text-muted-foreground hover:bg-muted/30 hover:text-white">
                           Cancelar
                         </Button>
                         <Button type="submit" disabled={savingFacturaProveedor} className="text-xs font-semibold text-white bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 shadow-lg shadow-rose-500/30 ring-1 ring-rose-400/20 transition-all duration-200 px-5">
@@ -1636,15 +1636,15 @@ function FinanzasContent() {
                 <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-indigo-500" /></div>
               ) : facturasProveedores.length === 0 ? (
                 <div className="text-center py-12">
-                  <Receipt className="w-10 h-10 text-[#3f3f46] mx-auto mb-3" />
-                  <p className="text-sm text-[#71717a]">No hay facturas de proveedores registradas.</p>
-                  <p className="text-xs text-[#52525b] mt-1">Registra la primera usando el botón superior.</p>
+                  <Receipt className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+                  <p className="text-sm text-muted-foreground">No hay facturas de proveedores registradas.</p>
+                  <p className="text-xs text-muted-foreground mt-1">Registra la primera usando el botón superior.</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead>
-                      <tr className="border-b border-[#27272a] text-[#71717a]">
+                      <tr className="border-b border-border text-muted-foreground">
                         <th className="text-left py-2 px-2 font-medium">Nº Factura</th>
                         <th className="text-left py-2 px-2 font-medium">Proveedor</th>
                         <th className="text-left py-2 px-2 font-medium">Base / IVA / Total</th>
@@ -1678,14 +1678,14 @@ function FinanzasContent() {
                               : { color: "bg-zinc-800/80 text-zinc-400 border-zinc-700", label: "Pendiente" }
 
                           return (
-                            <tr key={fac.id} className="border-b border-[#27272a]/40 hover:bg-[#18181b]/30 transition-colors">
+                            <tr key={fac.id} className="border-b border-border/40 hover:bg-muted/30 transition-colors">
                               <td className="py-3 px-2 font-mono text-indigo-300">{fac.numero_factura_proveedor}</td>
-                              <td className="py-3 px-2 text-[#fafafa]">{fac.proveedores?.nombre_comercial || "—"}</td>
+                              <td className="py-3 px-2 text-foreground">{fac.proveedores?.nombre_comercial || "—"}</td>
                               <td className="py-3 px-2">
-                                <div className="text-[#a1a1aa]">{formatCurrency(fac.base_imponible)} + {formatCurrency(fac.importe_iva)}</div>
+                                <div className="text-muted-foreground">{formatCurrency(fac.base_imponible)} + {formatCurrency(fac.importe_iva)}</div>
                                 <div className="font-semibold text-rose-300">{formatCurrency(fac.total_factura_bruto)}</div>
                               </td>
-                              <td className="py-3 px-2 text-[#a1a1aa]">
+                              <td className="py-3 px-2 text-muted-foreground">
                                 {new Date(fac.fecha_vencimiento).toLocaleDateString("es-ES")}
                               </td>
                               <td className="py-3 px-2">
@@ -1702,7 +1702,7 @@ function FinanzasContent() {
                                     <Button size="sm" variant="outline" onClick={() => handleUpdateEstadoProveedor(fac.id, "disputa_bloqueada")} className="border-orange-600/40 text-orange-400 hover:bg-orange-900/20 h-7 text-[10px] px-2">Disputa</Button>
                                   )}
                                   {fac.estado_pago !== "pendiente" && (
-                                    <Button size="sm" variant="outline" onClick={() => handleUpdateEstadoProveedor(fac.id, "pendiente")} className="border-[#27272a] hover:bg-[#18181b]/30 h-7 text-[10px] px-2 text-[#a1a1aa]">Revertir</Button>
+                                    <Button size="sm" variant="outline" onClick={() => handleUpdateEstadoProveedor(fac.id, "pendiente")} className="border-border hover:bg-muted/30 h-7 text-[10px] px-2 text-muted-foreground">Revertir</Button>
                                   )}
                                 </div>
                               </td>
@@ -1732,24 +1732,24 @@ function FinanzasContent() {
                   { label: "Cobros previstos 60d", value: cashFlowData.previsto60, color: "text-violet-400", bg: "bg-violet-500/10" },
                   { label: "Cobros previstos 90d", value: cashFlowData.previsto90, color: "text-purple-400", bg: "bg-purple-500/10" },
                 ].map(item => (
-                  <Card key={item.label} className="bg-[#09090b]/40 border-[#27272a]/60 backdrop-blur-md">
+                  <Card key={item.label} className="bg-card/80 border-border/60 backdrop-blur-md">
                     <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                      <CardTitle className="text-xs font-semibold text-[#a1a1aa]">{item.label}</CardTitle>
+                      <CardTitle className="text-xs font-semibold text-muted-foreground">{item.label}</CardTitle>
                       <div className={`p-2 rounded-lg ${item.bg} ${item.color}`}><TrendingUp className="w-4 h-4" /></div>
                     </CardHeader>
                     <CardContent>
                       <div className={`text-2xl font-bold ${item.color}`}>{formatCurrency(item.value)}</div>
-                      <div className="text-[10px] text-[#71717a] mt-1">Facturas pendientes de cobro</div>
+                      <div className="text-[10px] text-muted-foreground mt-1">Facturas pendientes de cobro</div>
                     </CardContent>
                   </Card>
                 ))}
               </div>
 
               {/* Gráfico: Ingresos vs Gastos histórico (últimos 6 meses) */}
-              <Card className="bg-[#09090b]/30 border-[#27272a]/60 backdrop-blur-md">
+              <Card className="bg-card/60 border-border/60 backdrop-blur-md">
                 <CardHeader>
                   <CardTitle className="text-base font-bold">Ingresos Cobrados vs Gastos Pagados — Últimos 6 meses</CardTitle>
-                  <CardDescription className="text-xs text-[#a1a1aa]">Comparativa mensual de flujo de caja real ejecutado.</CardDescription>
+                  <CardDescription className="text-xs text-muted-foreground">Comparativa mensual de flujo de caja real ejecutado.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
@@ -1759,7 +1759,7 @@ function FinanzasContent() {
                       const maxVal = Math.max(...cashFlowData.cobradoMes, ...cashFlowData.gastoMes, 1)
                       return (
                         <div key={mes} className="space-y-1">
-                          <div className="flex justify-between text-[10px] text-[#a1a1aa]">
+                          <div className="flex justify-between text-[10px] text-muted-foreground">
                             <span className="font-semibold uppercase tracking-wider">{mes}</span>
                             <span className={ingr >= gast ? "text-green-400" : "text-red-400"}>
                               {ingr >= gast ? "+" : ""}{formatCurrency(ingr - gast)}
@@ -1767,7 +1767,7 @@ function FinanzasContent() {
                           </div>
                           <div className="flex gap-1 items-center">
                             <div className="w-12 text-[10px] text-indigo-400 text-right">{formatCurrency(ingr).replace(" €","€")}</div>
-                            <div className="flex-1 h-3 bg-[#18181b] rounded-full overflow-hidden">
+                            <div className="flex-1 h-3 bg-muted rounded-full overflow-hidden">
                               <div
                                 className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all"
                                 style={{ width: `${maxVal > 0 ? (ingr / maxVal) * 100 : 0}%` }}
@@ -1776,7 +1776,7 @@ function FinanzasContent() {
                           </div>
                           <div className="flex gap-1 items-center">
                             <div className="w-12 text-[10px] text-rose-400 text-right">{formatCurrency(gast).replace(" €","€")}</div>
-                            <div className="flex-1 h-3 bg-[#18181b] rounded-full overflow-hidden">
+                            <div className="flex-1 h-3 bg-muted rounded-full overflow-hidden">
                               <div
                                 className="h-full bg-gradient-to-r from-rose-500 to-pink-500 rounded-full transition-all"
                                 style={{ width: `${maxVal > 0 ? (gast / maxVal) * 100 : 0}%` }}
@@ -1786,7 +1786,7 @@ function FinanzasContent() {
                         </div>
                       )
                     })}
-                    <div className="flex gap-4 pt-2 text-[10px] text-[#71717a] border-t border-[#27272a]">
+                    <div className="flex gap-4 pt-2 text-[10px] text-muted-foreground border-t border-border">
                       <span className="flex items-center gap-1"><span className="inline-block w-3 h-1.5 rounded bg-indigo-500"/> Cobrado</span>
                       <span className="flex items-center gap-1"><span className="inline-block w-3 h-1.5 rounded bg-rose-500"/> Pagado a proveedores</span>
                     </div>
@@ -1795,31 +1795,31 @@ function FinanzasContent() {
               </Card>
 
               {/* Alertas de vencimiento próximo */}
-              <Card className="bg-[#09090b]/30 border-[#27272a]/60 backdrop-blur-md">
+              <Card className="bg-card/60 border-border/60 backdrop-blur-md">
                 <CardHeader>
                   <CardTitle className="text-base font-bold flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 text-yellow-400" />
                     Alertas de Vencimiento Próximo (&lt;14 días)
                   </CardTitle>
-                  <CardDescription className="text-xs text-[#a1a1aa]">Facturas de clientes que vencen en los próximos 14 días.</CardDescription>
+                  <CardDescription className="text-xs text-muted-foreground">Facturas de clientes que vencen en los próximos 14 días.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {cashFlowData.alertasVencimiento.length === 0 ? (
                     <div className="text-center py-6">
                       <Check className="w-8 h-8 text-green-500 mx-auto mb-2" />
-                      <p className="text-xs text-[#71717a]">No hay facturas con vencimiento urgente. ¡Todo en orden!</p>
+                      <p className="text-xs text-muted-foreground">No hay facturas con vencimiento urgente. ¡Todo en orden!</p>
                     </div>
                   ) : (
                     <div className="space-y-2">
                       {cashFlowData.alertasVencimiento.map((f: any, i: number) => (
-                        <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-[#18181b]/40 border border-yellow-500/20">
+                        <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-muted/40 border border-yellow-500/20">
                           <div className="flex items-center gap-3">
                             <div className="p-1.5 rounded-md bg-yellow-500/10">
                               <Calendar className="w-3.5 h-3.5 text-yellow-400" />
                             </div>
                             <div>
                               <div className="text-xs font-semibold text-white">{formatCurrency(f.total_factura_bruto)}</div>
-                              <div className="text-[10px] text-[#71717a]">Vence: {new Date(f.fecha_vencimiento).toLocaleDateString("es-ES")}</div>
+                              <div className="text-[10px] text-muted-foreground">Vence: {new Date(f.fecha_vencimiento).toLocaleDateString("es-ES")}</div>
                             </div>
                           </div>
                           <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
@@ -1835,7 +1835,7 @@ function FinanzasContent() {
               </Card>
             </>
           ) : (
-            <div className="text-center py-20 text-[#71717a] text-sm">Sin datos disponibles</div>
+            <div className="text-center py-20 text-muted-foreground text-sm">Sin datos disponibles</div>
           )}
         </div>
       )}
@@ -1843,10 +1843,10 @@ function FinanzasContent() {
       {/* ── TAB: CIERRE DE PROYECTOS ── */}
       {activeTab === "cierre" && (
         <div className="space-y-6">
-          <Card className="bg-[#09090b]/30 border-[#27272a]/60 backdrop-blur-md">
+          <Card className="bg-card/60 border-border/60 backdrop-blur-md">
             <CardHeader>
               <CardTitle className="text-lg font-bold">Proyectos Pendientes de Cierre Económico</CardTitle>
-              <CardDescription className="text-xs text-[#a1a1aa]">
+              <CardDescription className="text-xs text-muted-foreground">
                 Proyectos desmontados o finalizados sin cierre contable registrado. Al cerrar se calcula la rentabilidad real y se indexa en Qdrant.
               </CardDescription>
             </CardHeader>
@@ -1856,24 +1856,24 @@ function FinanzasContent() {
               ) : proyectosParaCierre.length === 0 ? (
                 <div className="text-center py-12">
                   <Check className="w-10 h-10 text-green-500 mx-auto mb-3" />
-                  <p className="text-sm text-[#71717a]">Todos los proyectos finalizados tienen cierre económico registrado.</p>
+                  <p className="text-sm text-muted-foreground">Todos los proyectos finalizados tienen cierre económico registrado.</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {proyectosParaCierre.map((proj: any) => {
                     const pres = proj.presupuestos_cabecera as any
                     return (
-                      <div key={proj.id} className="flex items-center justify-between p-4 rounded-xl border border-[#27272a]/60 bg-[#18181b]/30 hover:bg-[#18181b]/50 transition-colors">
+                      <div key={proj.id} className="flex items-center justify-between p-4 rounded-xl border border-border/60 bg-muted/30 hover:bg-muted/50 transition-colors">
                         <div className="flex items-center gap-4">
                           <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center">
                             <DollarSign className="w-5 h-5 text-indigo-400" />
                           </div>
                           <div>
                             <div className="text-sm font-semibold text-white">{proj.codigo_proyecto_interno}</div>
-                            <div className="text-xs text-[#a1a1aa]">
+                            <div className="text-xs text-muted-foreground">
                               {pres?.clientes?.[0]?.nombre_comercial || pres?.clientes?.nombre_comercial || "—"} · {pres?.nombre_feria || ""}
                             </div>
-                            <div className="text-[10px] text-[#71717a] mt-0.5">Presupuesto: {formatCurrency(Number(pres?.total_presupuesto || 0))}</div>
+                            <div className="text-[10px] text-muted-foreground mt-0.5">Presupuesto: {formatCurrency(Number(pres?.total_presupuesto || 0))}</div>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
@@ -1899,36 +1899,36 @@ function FinanzasContent() {
           {/* Cierre Modal */}
           {cierreModal && (
             <Dialog open={cierreModal.open} onOpenChange={(o) => !o && setCierreModal(null)}>
-              <DialogContent className="bg-[#09090b] border-[#27272a] text-[#fafafa] max-w-lg">
+              <DialogContent className="bg-background border-border text-foreground max-w-lg">
                 <DialogHeader>
                   <DialogTitle className="text-lg font-bold flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-emerald-400" />
                     Cierre Económico — {cierreModal.proyecto.codigo_proyecto_interno}
                   </DialogTitle>
-                  <DialogDescription className="text-xs text-[#a1a1aa]">
+                  <DialogDescription className="text-xs text-muted-foreground">
                     Revisa los números reales. Al confirmar, el proyecto quedará cerrado y se sincronizará con Qdrant.
                   </DialogDescription>
                 </DialogHeader>
 
                 <div className="space-y-5 my-4">
                   {/* Rentabilidad real */}
-                  <div className="rounded-lg border border-[#27272a] p-4 space-y-3">
+                  <div className="rounded-lg border border-border p-4 space-y-3">
                     <p className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Desglose de Rentabilidad Real</p>
                     <div className="grid grid-cols-2 gap-3 text-xs">
                       <div className="space-y-0.5">
-                        <div className="text-[#71717a]">Presupuesto original</div>
+                        <div className="text-muted-foreground">Presupuesto original</div>
                         <div className="font-semibold text-white">{formatCurrency(Number((cierreModal.proyecto.presupuestos_cabecera as any)?.total_presupuesto || 0))}</div>
                       </div>
                       <div className="space-y-0.5">
-                        <div className="text-[#71717a]">Cobrado al cliente</div>
+                        <div className="text-muted-foreground">Cobrado al cliente</div>
                         <div className="font-semibold text-indigo-400">{formatCurrency(cierreModal.ingresoReal)}</div>
                       </div>
                       <div className="space-y-0.5">
-                        <div className="text-[#71717a]">Coste real proveedores</div>
+                        <div className="text-muted-foreground">Coste real proveedores</div>
                         <div className="font-semibold text-rose-400">{formatCurrency(cierreModal.gastoReal)}</div>
                       </div>
                       <div className="space-y-0.5">
-                        <div className="text-[#71717a]">Margen bruto real</div>
+                        <div className="text-muted-foreground">Margen bruto real</div>
                         <div className={`font-bold text-base ${(cierreModal.ingresoReal - cierreModal.gastoReal) >= 0 ? "text-green-400" : "text-red-400"}`}>
                           {formatCurrency(cierreModal.ingresoReal - cierreModal.gastoReal)}
                           <span className="text-xs ml-1">
@@ -1941,7 +1941,7 @@ function FinanzasContent() {
 
                   {/* Valoración cliente */}
                   <div className="space-y-2">
-                    <Label className="text-xs text-[#a1a1aa]">Valoración del cliente (1-5 ⭐)</Label>
+                    <Label className="text-xs text-muted-foreground">Valoración del cliente (1-5 ⭐)</Label>
                     <div className="flex gap-2">
                       {[1,2,3,4,5].map(n => (
                         <button
@@ -1960,19 +1960,19 @@ function FinanzasContent() {
 
                   {/* Lecciones aprendidas */}
                   <div className="space-y-2">
-                    <Label className="text-xs text-[#a1a1aa]">Lecciones aprendidas (opcional)</Label>
+                    <Label className="text-xs text-muted-foreground">Lecciones aprendidas (opcional)</Label>
                     <textarea
                       value={cierreModal.lecciones}
                       onChange={(e) => setCierreModal(prev => prev ? { ...prev, lecciones: e.target.value } : null)}
                       placeholder="Qué funcionó bien, qué mejorar para el próximo proyecto..."
                       rows={3}
-                      className="w-full bg-[#18181b]/40 border border-[#27272a] rounded-lg px-3 py-2 text-xs text-[#fafafa] placeholder:text-[#52525b] focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none"
+                      className="w-full bg-muted/40 border border-border rounded-lg px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none"
                     />
                   </div>
                 </div>
 
-                <DialogFooter className="flex justify-end gap-2 pt-4 border-t border-[#27272a]">
-                  <Button variant="outline" onClick={() => setCierreModal(null)} className="text-xs border-[#3f3f46] text-[#a1a1aa] hover:bg-[#27272a]">
+                <DialogFooter className="flex justify-end gap-2 pt-4 border-t border-border">
+                  <Button variant="outline" onClick={() => setCierreModal(null)} className="text-xs border-border text-muted-foreground hover:bg-muted/30">
                     Cancelar
                   </Button>
                   <Button
@@ -1993,12 +1993,12 @@ function FinanzasContent() {
       {/* Block Client dialog confirmation */}
       {blockClientDialog && (
         <Dialog open={blockClientDialog.open} onOpenChange={(isOpen) => !isOpen && setBlockClientDialog(null)}>
-          <DialogContent className="bg-[#09090b] border-[#27272a] text-[#fafafa] max-w-md">
+          <DialogContent className="bg-background border-border text-foreground max-w-md">
             <DialogHeader>
               <DialogTitle className="text-lg font-bold flex items-center gap-2 text-red-400">
                 <ShieldAlert className="w-5 h-5 text-red-400" /> ¿Bloquear cliente por impago?
               </DialogTitle>
-              <DialogDescription className="text-xs text-[#a1a1aa] mt-2">
+              <DialogDescription className="text-xs text-muted-foreground mt-2">
                 Has marcado una factura como <strong>Impagada</strong>. Como administrador, tienes la opción de bloquear al cliente <strong>{blockClientDialog.clienteNombre}</strong> en la plataforma para evitar que se puedan emitir nuevos presupuestos o licitaciones.
               </DialogDescription>
             </DialogHeader>
@@ -2006,7 +2006,7 @@ function FinanzasContent() {
               <Button
                 variant="outline"
                 onClick={() => handleBlockCliente(false)}
-                className="text-xs border-[#27272a]"
+                className="text-xs border-border"
               >
                 No bloquear, solo registrar impago
               </Button>

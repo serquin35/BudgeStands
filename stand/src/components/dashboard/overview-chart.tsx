@@ -7,13 +7,21 @@ interface OverviewChartProps {
   presupuestos?: any[]
 }
 
+interface MonthData {
+  name: string
+  facturacion: number
+  presupuestado: number
+  month: number
+  year: number
+}
+
 export default function OverviewChart({ presupuestos = [] }: OverviewChartProps) {
   const data = useMemo(() => {
     const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
     const today = new Date();
     
     // Generar los últimos 6 meses (incluyendo el actual)
-    const months = [];
+    const months: MonthData[] = [];
     for (let i = 5; i >= 0; i--) {
       const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
       months.push({
@@ -62,24 +70,25 @@ export default function OverviewChart({ presupuestos = [] }: OverviewChartProps)
         >
           <defs>
             <linearGradient id="colorFacturacion" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4}/>
-              <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+              <stop offset="5%" stopColor="var(--primary)" stopColor={undefined} className="text-primary" style={{ stopColor: "var(--primary)" }} stopOpacity={0.3}/>
+              <stop offset="95%" stopColor="var(--primary)" stopColor={undefined} className="text-primary" style={{ stopColor: "var(--primary)" }} stopOpacity={0}/>
             </linearGradient>
             <linearGradient id="colorPresupuestado" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#a855f7" stopOpacity={0.2}/>
+              <stop offset="5%" stopColor="#a855f7" stopOpacity={0.15}/>
               <stop offset="95%" stopColor="#a855f7" stopOpacity={0}/>
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+          {/* Grid lines adapt to Tailwind borders */}
+          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.3)" vertical={false} />
           <XAxis 
             dataKey="name" 
-            stroke="#71717a" 
+            stroke="hsl(var(--muted-foreground))" 
             fontSize={12}
             tickLine={false}
             axisLine={false}
           />
           <YAxis 
-            stroke="#71717a" 
+            stroke="hsl(var(--muted-foreground))" 
             fontSize={12}
             tickLine={false}
             axisLine={false}
@@ -87,17 +96,19 @@ export default function OverviewChart({ presupuestos = [] }: OverviewChartProps)
           />
           <Tooltip 
             contentStyle={{ 
-              backgroundColor: "#09090b", 
-              borderColor: "#27272a",
+              backgroundColor: "hsl(var(--card))", 
+              borderColor: "hsl(var(--border) / 0.4)",
               borderRadius: "8px",
-              color: "#fafafa" 
+              color: "hsl(var(--foreground))" 
             }}
+            itemStyle={{ color: "hsl(var(--foreground))" }}
+            labelStyle={{ color: "hsl(var(--muted-foreground))", fontWeight: "bold" }}
             formatter={(value: any) => [`${value.toLocaleString()} €`]}
           />
           <Area 
             type="monotone" 
             dataKey="facturacion" 
-            stroke="#6366f1" 
+            stroke="hsl(var(--primary))" 
             strokeWidth={2}
             fillOpacity={1} 
             fill="url(#colorFacturacion)" 
