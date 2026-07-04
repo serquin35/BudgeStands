@@ -738,7 +738,7 @@ function FinanzasContent() {
     if (diasRestantes <= ALERTA_VENCIMIENTO_DIAS) 
       return { color: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20', label: `Vence en ${diasRestantes}d` }
     
-    return { color: 'bg-zinc-800/80 text-zinc-400 border-zinc-700', label: 'Pendiente' }
+    return { color: 'bg-muted text-muted-foreground border-border', label: 'Pendiente' }
   }
 
   // Handle Form changes
@@ -1150,7 +1150,7 @@ function FinanzasContent() {
 
                         {/* Automatic Calculations Preview */}
                         {facturaForm.id_proyecto && budgetData && (
-                          <div className="p-4 rounded-lg bg-zinc-900/60 border border-zinc-800 space-y-2 text-xs">
+                          <div className="p-4 rounded-lg bg-muted/40 border border-border space-y-2 text-xs">
                             <h4 className="font-semibold text-indigo-400">Desglose de Factura Estimado</h4>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Presupuesto Total (con IVA):</span>
@@ -1160,7 +1160,7 @@ function FinanzasContent() {
                               <span className="text-muted-foreground">IVA Aplicable:</span>
                               <span>{budgetData.porcentaje_iva ?? 21}%</span>
                             </div>
-                            <hr className="border-zinc-800 my-1" />
+                            <hr className="border-border my-1" />
                             <div className="flex justify-between font-semibold">
                               <span className="text-muted-foreground">Base Imponible ({facturaForm.porcentaje_facturado}%):</span>
                               <span>{formatCurrency(
@@ -1675,7 +1675,7 @@ function FinanzasContent() {
                               ? { color: "bg-rose-500/10 text-rose-400 border-rose-500/20", label: "Vencida" }
                               : dias <= ALERTA_VENCIMIENTO_DIAS
                               ? { color: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20", label: `Vence en ${dias}d` }
-                              : { color: "bg-zinc-800/80 text-zinc-400 border-zinc-700", label: "Pendiente" }
+                              : { color: "bg-muted text-muted-foreground border-border", label: "Pendiente" }
 
                           return (
                             <tr key={fac.id} className="border-b border-border/40 hover:bg-muted/30 transition-colors">
