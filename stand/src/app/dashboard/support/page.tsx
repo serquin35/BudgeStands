@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Send, CheckCircle2, AlertCircle, ChevronDown, ChevronRight, HelpCircle, MessageSquare, BookOpen, Mail } from "lucide-react"
+import { toast } from "sonner"
 
 const FAQ_SECTIONS = [
   {
@@ -140,7 +141,10 @@ export default function SupportPage() {
 
       {/* Quick Links */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <Card className="hover:border-primary/30 transition-colors cursor-pointer">
+        <Card
+          className="hover:border-primary/30 transition-colors cursor-pointer"
+          onClick={() => toast.info("Guía de inicio próximamente")}
+        >
           <CardContent className="p-4 flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
               <BookOpen className="h-4 w-4 text-primary" />
@@ -151,7 +155,10 @@ export default function SupportPage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="hover:border-primary/30 transition-colors cursor-pointer">
+        <Card
+          className="hover:border-primary/30 transition-colors cursor-pointer"
+          onClick={() => toast.info("Chat con Jarvis próximamente")}
+        >
           <CardContent className="p-4 flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
               <MessageSquare className="h-4 w-4 text-primary" />
@@ -162,14 +169,17 @@ export default function SupportPage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="hover:border-primary/30 transition-colors cursor-pointer">
+        <Card
+          className="hover:border-primary/30 transition-colors cursor-pointer"
+          onClick={() => window.location.href = "mailto:presustand@gmail.com"}
+        >
           <CardContent className="p-4 flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
               <Mail className="h-4 w-4 text-primary" />
             </div>
             <div>
               <div className="text-sm font-semibold text-foreground">Email directo</div>
-              <div className="text-[10px] text-muted-foreground">info@thetitan.com</div>
+              <div className="text-[10px] text-muted-foreground">presustand@gmail.com</div>
             </div>
           </CardContent>
         </Card>

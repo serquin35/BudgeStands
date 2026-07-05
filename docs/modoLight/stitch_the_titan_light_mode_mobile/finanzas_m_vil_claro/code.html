@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Titan Hub - Finance</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#07006c",
+                        "surface-container-high": "#e6e8ea",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface": "#f7f9fb",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#8455ef",
+                        "primary-fixed": "#e1e0ff",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#191c1e",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "error": "#ba1a1a",
+                        "background": "#f7f9fb",
+                        "surface-bright": "#f7f9fb",
+                        "secondary-container": "#d5e0f8",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#c7c4d7",
+                        "on-secondary-fixed": "#111c2d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "secondary-fixed": "#d8e3fb",
+                        "surface-container": "#eceef0",
+                        "secondary": "#545f73",
+                        "on-secondary-fixed-variant": "#3c475a",
+                        "surface-variant": "#e0e3e5",
+                        "primary-container": "#6063ee",
+                        "primary": "#4648d4",
+                        "inverse-surface": "#2d3133",
+                        "secondary-fixed-dim": "#bcc7de",
+                        "tertiary": "#6b38d4",
+                        "on-secondary-container": "#586377",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary-fixed": "#23005c",
+                        "tertiary-fixed": "#e9ddff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#fffbff",
+                        "on-surface-variant": "#464554",
+                        "inverse-primary": "#c0c1ff",
+                        "surface-dim": "#d8dadc",
+                        "outline": "#767586",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "surface-tint": "#494bd6",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-container": "#fffbff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1440px",
+                        "sidebar-width": "260px",
+                        "xl": "48px",
+                        "base": "4px",
+                        "sm": "16px",
+                        "xs": "8px",
+                        "md": "24px",
+                        "lg": "32px"
+                    },
+                    "fontFamily": {
+                        "title-sm": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "label-caps": ["JetBrains Mono"],
+                        "display-lg-mobile": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "title-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "display-lg": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "display-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #f7f9fb;
+            color: #191c1e;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .card-shadow {
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .bar-transition {
+            transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-body-md">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface-container-lowest border-b border-outline-variant flex items-center justify-between px-sm h-14 w-full">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a senior financial executive in a bright, modern office. The lighting is soft and high-key, emphasizing a clean light-mode aesthetic. The subject is wearing a tailored charcoal suit against a minimalist white and light gray background, conveying a sense of corporate precision and technical reliability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEu0VXhndIr8ybO-UogekFMwA42MRQsKXyTULgL9stpJzvU2SErIiO2m8E7DviwYkKH88YVriqsPauzQNRwKSf97GYNkP9wVk4fCzkSw33ngxDzzjT4wsjma3YMwO6lnvUraw09MSKfa3Z-D0WQ-6Aoc1VUeql62ynqOG-1ONufHyVOQnONM1CstnE1gLlwoGcOY2KEriiRjdLIUqnJEN9Wr-iBT-tAn3PzczuxJtLTWMD5KdrwosOodaNktAnXj-iB18d6mQhdc0"/>
+</div>
+<span class="font-headline-md text-headline-md-mobile font-bold text-on-surface">Titan Hub</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors active:opacity-80">
+<span class="material-symbols-outlined text-primary">search</span>
+</button>
+</header>
+<main class="pt-20 pb-24 px-sm">
+<!-- Summary Cards Horizontal Scroll -->
+<section class="flex gap-sm overflow-x-auto pb-4 hide-scrollbar -mx-sm px-sm">
+<!-- Total Invoiced -->
+<div class="min-w-[280px] bg-surface-container-lowest border border-outline-variant rounded-xl p-md card-shadow">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">TOTAL INVOICED</span>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">description</span>
+</div>
+<div class="font-display-lg-mobile text-display-lg-mobile text-on-surface">142.850,00 €</div>
+<div class="flex items-center gap-1 mt-2 text-primary font-body-sm">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>+12.5% vs last month</span>
+</div>
+</div>
+<!-- Total Collected -->
+<div class="min-w-[280px] bg-surface-container-lowest border border-outline-variant rounded-xl p-md card-shadow">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">TOTAL COLLECTED</span>
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+<div class="font-display-lg-mobile text-display-lg-mobile text-on-surface">98.420,50 €</div>
+<div class="flex items-center gap-1 mt-2 text-on-surface-variant font-body-sm">
+<span>68.9% collection rate</span>
+</div>
+</div>
+<!-- Total Pending -->
+<div class="min-w-[280px] bg-surface-container-lowest border border-outline-variant rounded-xl p-md card-shadow">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">TOTAL PENDING</span>
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">schedule</span>
+</div>
+<div class="font-display-lg-mobile text-display-lg-mobile text-on-surface">44.429,50 €</div>
+<div class="flex items-center gap-1 mt-2 text-error font-body-sm">
+<span class="material-symbols-outlined text-sm">warning</span>
+<span>5 overdue invoices</span>
+</div>
+</div>
+</section>
+<!-- Monthly Projection Bar Chart -->
+<section class="mt-lg">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md card-shadow">
+<div class="flex items-center justify-between mb-sm">
+<h2 class="font-title-sm text-title-sm text-on-surface">Monthly Projection</h2>
+<span class="material-symbols-outlined text-on-surface-variant">more_vert</span>
+</div>
+<div class="h-40 flex items-end justify-between gap-2 pt-4">
+<!-- Bars -->
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary/20 rounded-t h-16 bar-transition hover:bg-primary/40"></div>
+<span class="font-label-caps text-[10px] text-on-surface-variant">APR</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary/20 rounded-t h-24 bar-transition hover:bg-primary/40"></div>
+<span class="font-label-caps text-[10px] text-on-surface-variant">MAY</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary/20 rounded-t h-32 bar-transition hover:bg-primary/40"></div>
+<span class="font-label-caps text-[10px] text-on-surface-variant">JUN</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-primary rounded-t h-28 bar-transition hover:opacity-90 shadow-lg shadow-primary/20"></div>
+<span class="font-label-caps text-[10px] text-primary font-bold">JUL</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container-high rounded-t h-20 bar-transition"></div>
+<span class="font-label-caps text-[10px] text-on-surface-variant">AUG</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2">
+<div class="w-full bg-surface-container-high rounded-t h-12 bar-transition"></div>
+<span class="font-label-caps text-[10px] text-on-surface-variant">SEP</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Invoice List Section -->
+<section class="mt-lg">
+<div class="flex items-center justify-between mb-sm">
+<h2 class="font-title-sm text-title-sm text-on-surface">Recent Invoices</h2>
+<div class="flex gap-2">
+<button class="p-2 bg-surface-container-low rounded-lg transition-colors active:scale-95">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+</button>
+<button class="p-2 bg-surface-container-low rounded-lg transition-colors active:scale-95">
+<span class="material-symbols-outlined text-sm">sort</span>
+</button>
+</div>
+</div>
+<!-- Invoices Stack -->
+<div class="space-y-sm">
+<!-- Invoice Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-sm flex items-center justify-between active:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">account_balance_wallet</span>
+</div>
+<div>
+<div class="font-body-md font-semibold text-on-surface">Cliente Test</div>
+<div class="font-label-caps text-[10px] text-on-surface-variant">F26-0001 • 14 JUL 2024</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-body-md font-bold text-on-surface">24.381,50 €</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-[9px]">PAID</span>
+</div>
+</div>
+<!-- Invoice Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-sm flex items-center justify-between active:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-tertiary-container/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary">account_balance_wallet</span>
+</div>
+<div>
+<div class="font-body-md font-semibold text-on-surface">Global Dynamics</div>
+<div class="font-label-caps text-[10px] text-on-surface-variant">F26-0002 • 12 JUL 2024</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-body-md font-bold text-on-surface">12.500,00 €</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-caps text-[9px]">PENDING</span>
+</div>
+</div>
+<!-- Invoice Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-sm flex items-center justify-between active:bg-surface-container-low transition-colors border-l-4 border-l-error">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-error-container flex items-center justify-center">
+<span class="material-symbols-outlined text-error">priority_high</span>
+</div>
+<div>
+<div class="font-body-md font-semibold text-on-surface">Cyberdyne Systems</div>
+<div class="font-label-caps text-[10px] text-on-surface-variant">F26-0003 • 01 JUL 2024</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-body-md font-bold text-on-surface">8.225,00 €</div>
+<span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-caps text-[9px]">OVERDUE</span>
+</div>
+</div>
+<!-- Invoice Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-sm flex items-center justify-between active:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">account_balance_wallet</span>
+</div>
+<div>
+<div class="font-body-md font-semibold text-on-surface">Stark Industries</div>
+<div class="font-label-caps text-[10px] text-on-surface-variant">F26-0004 • 28 JUN 2024</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-body-md font-bold text-on-surface">45.000,00 €</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-[9px]">PAID</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- FAB: Emit Invoice -->
+<button class="fixed bottom-20 right-4 w-14 h-14 bg-primary text-on-primary rounded-2xl shadow-xl shadow-primary/30 flex items-center justify-center active:scale-90 transition-transform z-40">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-16 bg-surface-container-lowest border-t border-outline-variant px-xs pb-safe z-50">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">view_kanban</span>
+<span class="font-label-caps text-label-caps mt-1">Kanban</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="font-label-caps text-label-caps mt-1">Finance</span>
+</a>
+</nav>
+<!-- Micro-interaction Script -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animate bars on load
+            const bars = document.querySelectorAll('.bar-transition');
+            bars.forEach((bar, index) => {
+                const targetHeight = bar.style.height || getComputedStyle(bar).height;
+                bar.style.height = '0px';
+                setTimeout(() => {
+                    bar.style.height = targetHeight;
+                }, 100 + (index * 100));
+            });
+
+            // Search interaction
+            const searchBtn = document.querySelector('header button');
+            searchBtn.addEventListener('click', () => {
+                console.log('Search triggered');
+            });
+        });
+    </script>
+</body></html>

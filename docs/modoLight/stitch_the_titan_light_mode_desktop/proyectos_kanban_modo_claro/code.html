@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Titan - Proyectos en Curso</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#fffbff",
+                        "primary": "#4648d4",
+                        "secondary-fixed": "#d8e3fb",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#191c1e",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#c7c4d7",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "on-surface-variant": "#464554",
+                        "surface-tint": "#494bd6",
+                        "on-primary-fixed": "#07006c",
+                        "surface-container-highest": "#e0e3e5",
+                        "background": "#f7f9fb",
+                        "primary-fixed": "#e1e0ff",
+                        "error": "#ba1a1a",
+                        "inverse-surface": "#2d3133",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-primary": "#ffffff",
+                        "surface": "#f7f9fb",
+                        "on-secondary-container": "#586377",
+                        "on-surface": "#191c1e",
+                        "surface-container-low": "#f2f4f6",
+                        "secondary-container": "#d5e0f8",
+                        "surface-container": "#eceef0",
+                        "on-secondary-fixed-variant": "#3c475a",
+                        "tertiary": "#6b38d4",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "inverse-primary": "#c0c1ff",
+                        "outline": "#767586",
+                        "on-tertiary-fixed": "#23005c",
+                        "primary-container": "#6063ee",
+                        "secondary-fixed-dim": "#bcc7de",
+                        "tertiary-container": "#8455ef",
+                        "on-tertiary-container": "#fffbff",
+                        "tertiary-fixed": "#e9ddff",
+                        "secondary": "#545f73",
+                        "on-secondary-fixed": "#111c2d",
+                        "surface-bright": "#f7f9fb",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "surface-variant": "#e0e3e5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "8px",
+                        "sidebar-width": "260px",
+                        "container-max": "1440px",
+                        "md": "24px",
+                        "xl": "48px",
+                        "sm": "16px",
+                        "base": "4px",
+                        "lg": "32px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "label-caps": ["JetBrains Mono"],
+                        "title-sm": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "display-lg-mobile": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "title-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "display-lg": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "display-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            @apply font-body-md text-on-surface bg-background;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .kanban-column {
+            min-height: calc(100vh - 280px);
+        }
+        /* Custom scrollbar for Kanban board */
+        .custom-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            @apply bg-surface-container-low;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            @apply bg-outline-variant rounded-full;
+        }
+    </style>
+</head>
+<body class="flex">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-screen w-sidebar-width bg-surface-container-low border-r border-outline-variant flex flex-col py-lg z-50" id="sidebar">
+<div class="px-md mb-xl">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container font-headline-md font-bold">T</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">The Titan</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Enterprise Hub</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-sm space-y-base overflow-y-auto">
+<a class="flex items-center gap-sm px-md py-xs text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</a>
+<!-- Active State: Kanban Projects -->
+<a class="flex items-center gap-sm px-md py-xs bg-secondary-container text-on-secondary-container rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">view_kanban</span>
+<span class="font-label-caps text-label-caps">Kanban Projects</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-caps text-label-caps">Presustand IA</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-caps text-label-caps">CRM Clients</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-caps text-label-caps">Suppliers</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-caps text-label-caps">Finance</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Analytics</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-label-caps text-label-caps">Catalogs</span>
+</a>
+</nav>
+<div class="px-sm pt-lg space-y-base border-t border-outline-variant">
+<a class="flex items-center gap-sm px-md py-xs text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-caps text-label-caps">Support</span>
+</a>
+<div class="mt-md p-sm bg-surface rounded-xl border border-outline-variant flex items-center gap-sm">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A professional headshot of a person with a clean-cut look, wearing business attire, against a soft neutral grey background. The lighting is flattering and professional, emphasizing an enterprise user profile aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQB29NRHqSPRUXKS2kfUABT1T8foh3yB3jsY-r9vpq6MJjvSZwu95xamqE8WWkMItBeirKoVOM1gnu8pXQX7DMNmXNeACLemdJc6zM0u7DmwIfRH9LbMaEzZGKb3kq_GN_BmnpYvz0DRGgL_fX5PIhbc_wFZI4iJJheh7OQxl9ltG7GxjF781KgKKmN7kXukyWdeeiV6ayM-v-y_k4qstnu4_qDzFCL6ywKHJf77CYH_gA5kz71TdfzzGbzKcR1X6IpEfjCzt-xpA"/>
+<div class="overflow-hidden">
+<p class="font-title-sm text-sm truncate">Moon Gothic</p>
+<p class="font-body-sm text-xs text-on-surface-variant truncate">Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-sidebar-width flex-1 min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="h-16 flex items-center justify-between px-lg bg-surface border-b border-outline-variant">
+<div class="flex items-center gap-md">
+<nav class="flex items-center gap-sm">
+<span class="text-on-surface-variant font-body-sm">Home</span>
+<span class="material-symbols-outlined text-sm text-outline">chevron_right</span>
+<span class="text-primary font-bold border-b-2 border-primary pb-1 font-body-sm">Projects</span>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-xl pr-md py-xs bg-surface-container-low border border-outline-variant rounded-full text-body-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none w-64" placeholder="Search projects..." type="text"/>
+</div>
+<div class="flex items-center gap-sm">
+<button class="p-xs text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-xs text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">history</span>
+</button>
+<button class="p-xs text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Kanban Workspace -->
+<div class="p-lg flex-1">
+<div class="flex justify-between items-end mb-lg">
+<div>
+<h2 class="font-display-lg text-display-lg">Proyectos en Curso</h2>
+<p class="text-on-surface-variant font-body-md mt-base">Gestiona las fases de producción y montaje de los stands aprobados.</p>
+</div>
+<button class="flex items-center gap-xs px-md py-sm bg-primary text-on-primary rounded-xl font-title-sm hover:opacity-90 transition-all transform active:scale-95 shadow-sm">
+<span class="material-symbols-outlined">add</span>
+<span>Nuevo Proyecto</span>
+</button>
+</div>
+<!-- Kanban Board -->
+<div class="flex gap-md overflow-x-auto pb-md custom-scroll">
+<!-- Column: Pendiente -->
+<div class="flex-shrink-0 w-80">
+<div class="flex items-center justify-between mb-sm px-xs">
+<div class="flex items-center gap-xs">
+<div class="w-2 h-2 rounded-full bg-outline"></div>
+<h3 class="font-title-sm text-on-surface">Pendiente</h3>
+</div>
+<span class="px-xs py-0.5 bg-surface-container-high rounded text-xs font-bold text-on-surface-variant">0</span>
+</div>
+<div class="kanban-column bg-surface-container-low rounded-xl border border-dashed border-outline-variant flex flex-col items-center justify-center p-md">
+<span class="material-symbols-outlined text-outline mb-xs">drag_indicator</span>
+<p class="text-xs text-outline font-label-caps">Soltar aquí</p>
+</div>
+</div>
+<!-- Column: Diseño -->
+<div class="flex-shrink-0 w-80">
+<div class="flex items-center justify-between mb-sm px-xs">
+<div class="flex items-center gap-xs">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<h3 class="font-title-sm text-on-surface">Diseño</h3>
+</div>
+<span class="px-xs py-0.5 bg-primary-container text-on-primary-container rounded text-xs font-bold">1</span>
+</div>
+<div class="kanban-column bg-surface-container-low rounded-xl border border-outline-variant p-sm space-y-sm">
+<!-- Project Card: Mobile Congress -->
+<div class="bg-surface rounded-lg border border-outline-variant shadow-sm hover:shadow-md transition-shadow group cursor-pointer overflow-hidden">
+<div class="relative h-40 overflow-hidden">
+<img class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" data-alt="A wide-angle professional photograph of a modern, award-winning exhibition stand at a technology trade show. The stand features sleek white minimalist architecture, integrated LED lighting, comfortable seating areas, and high-resolution display screens. The surrounding environment is a bustling, high-key convention hall with a bright and airy atmosphere, conveying enterprise luxury and precision engineering." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhyy3IqNa1fqqBOWPFJLplsJB01kdAFkqu1u-DKW7S1ybq2LP4k1GF0J5e86rxLsrHZYNge27hcDTrZkJPaI4wcdhOHkvL2b7fLqrcOpdKERBuM-gd4kt9DVhkRc5s2CXMEwJx9ieobvWsDmCi0neMEyAMD23XvfbqCUU92dWmDd8Ts3auD2a2Jd2M2dzpds4T6oxGDxcf2gnz9z0jfJcpz9z2aQ8R_q6oIg2yRbYj-ZtTXepdJox6M21AEgeTQlXf4f5V79vkIMs"/>
+<div class="absolute top-sm right-sm bg-surface/90 backdrop-blur-sm p-xs rounded-full border border-outline-variant opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</div>
+</div>
+<div class="p-md">
+<div class="mb-sm">
+<span class="text-[10px] font-label-caps bg-secondary-container text-on-secondary-container px-xs py-0.5 rounded">OP-2026-0837</span>
+<h4 class="font-title-sm text-on-surface mt-xs">Mobile Congress</h4>
+</div>
+<div class="space-y-xs mb-md">
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="text-xs font-body-sm">Mobile Congress, Barcelona</span>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">calendar_month</span>
+<span class="text-xs font-body-sm">Sin fecha fijada</span>
+</div>
+</div>
+<div class="pt-sm border-t border-outline-variant flex justify-between items-center">
+<span class="text-xs text-outline font-label-caps uppercase">Presupuesto</span>
+<span class="font-title-sm text-primary">48.763 €</span>
+</div>
+</div>
+</div>
+<!-- Drop Placeholder -->
+<div class="border border-dashed border-outline-variant rounded-lg p-md flex flex-col items-center justify-center opacity-40">
+<span class="material-symbols-outlined text-sm mb-xs">add</span>
+<span class="text-[10px] font-label-caps uppercase">Añadir Proyecto</span>
+</div>
+</div>
+</div>
+<!-- Column: Fabricación -->
+<div class="flex-shrink-0 w-80">
+<div class="flex items-center justify-between mb-sm px-xs">
+<div class="flex items-center gap-xs">
+<div class="w-2 h-2 rounded-full bg-amber-500"></div>
+<h3 class="font-title-sm text-on-surface">Fabricación</h3>
+</div>
+<span class="px-xs py-0.5 bg-surface-container-high rounded text-xs font-bold text-on-surface-variant">0</span>
+</div>
+<div class="kanban-column bg-surface-container-low rounded-xl border border-dashed border-outline-variant flex flex-col items-center justify-center p-md">
+<span class="material-symbols-outlined text-outline mb-xs">drag_indicator</span>
+<p class="text-xs text-outline font-label-caps">Soltar aquí</p>
+</div>
+</div>
+<!-- Column: Montaje -->
+<div class="flex-shrink-0 w-80">
+<div class="flex items-center justify-between mb-sm px-xs">
+<div class="flex items-center gap-xs">
+<div class="w-2 h-2 rounded-full bg-purple-500"></div>
+<h3 class="font-title-sm text-on-surface">Montaje</h3>
+</div>
+<span class="px-xs py-0.5 bg-surface-container-high rounded text-xs font-bold text-on-surface-variant">0</span>
+</div>
+<div class="kanban-column bg-surface-container-low rounded-xl border border-dashed border-outline-variant flex flex-col items-center justify-center p-md">
+<span class="material-symbols-outlined text-outline mb-xs">drag_indicator</span>
+<p class="text-xs text-outline font-label-caps">Soltar aquí</p>
+</div>
+</div>
+<!-- Column: Finalizado -->
+<div class="flex-shrink-0 w-80">
+<div class="flex items-center justify-between mb-sm px-xs">
+<div class="flex items-center gap-xs">
+<div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+<h3 class="font-title-sm text-on-surface">Finalizado</h3>
+</div>
+<span class="px-xs py-0.5 bg-surface-container-high rounded text-xs font-bold text-on-surface-variant">0</span>
+</div>
+<div class="kanban-column bg-surface-container-low rounded-xl border border-dashed border-outline-variant flex flex-col items-center justify-center p-md">
+<span class="material-symbols-outlined text-outline mb-xs">drag_indicator</span>
+<p class="text-xs text-outline font-label-caps">Soltar aquí</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB Suppression Rule followed: Sub-page focused, no general FAB added beyond header action -->
+<script>
+        // Simple Micro-interaction for Kanban Cards
+        document.querySelectorAll('.group').forEach(card => {
+            card.addEventListener('mousedown', () => {
+                card.style.transform = 'scale(0.98)';
+                card.style.transition = 'transform 0.1s ease';
+            });
+            card.addEventListener('mouseup', () => {
+                card.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>

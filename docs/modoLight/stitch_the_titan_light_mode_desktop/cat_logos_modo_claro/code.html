@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Enterprise Hub - Catálogos Técnicos</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Hanken+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#e1e0ff",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "secondary-fixed": "#d8e3fb",
+                        "on-surface-variant": "#464554",
+                        "on-secondary-fixed": "#111c2d",
+                        "primary-container": "#6063ee",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "on-primary-container": "#fffbff",
+                        "tertiary-container": "#8455ef",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#bcc7de",
+                        "on-surface": "#191c1e",
+                        "on-primary-fixed": "#07006c",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#e0e3e5",
+                        "outline": "#767586",
+                        "on-tertiary-container": "#fffbff",
+                        "inverse-primary": "#c0c1ff",
+                        "tertiary-fixed": "#e9ddff",
+                        "surface-container-highest": "#e0e3e5",
+                        "secondary": "#545f73",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "on-background": "#191c1e",
+                        "on-secondary-fixed-variant": "#3c475a",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-dim": "#d8dadc",
+                        "surface-bright": "#f7f9fb",
+                        "on-secondary-container": "#586377",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "error": "#ba1a1a",
+                        "surface": "#f7f9fb",
+                        "primary": "#4648d4",
+                        "on-error": "#ffffff",
+                        "tertiary": "#6b38d4",
+                        "inverse-surface": "#2d3133",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "error-container": "#ffdad6",
+                        "background": "#f7f9fb",
+                        "secondary-container": "#d5e0f8",
+                        "outline-variant": "#c7c4d7",
+                        "on-tertiary-fixed": "#23005c",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#494bd6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "32px",
+                        "container-max": "1440px",
+                        "sm": "16px",
+                        "xl": "48px",
+                        "md": "24px",
+                        "base": "4px",
+                        "xs": "8px",
+                        "sidebar-width": "260px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["JetBrains Mono"],
+                        "display-lg-mobile": ["Hanken Grotesk"],
+                        "body-sm": ["Inter"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "title-sm": ["Hanken Grotesk"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "display-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "display-lg": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "title-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .active-tab-indicator {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #4648d4;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #cbd5e1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary-fixed">
+<!-- TopNavBar Shell -->
+<header class="fixed top-0 right-0 left-0 z-50 flex justify-between items-center px-lg h-16 bg-surface-bright border-b border-outline-variant shadow-sm">
+<div class="flex items-center gap-md">
+<span class="font-headline-md text-headline-md font-bold text-primary">Enterprise Hub</span>
+<div class="hidden md:flex ml-xl gap-md">
+<a class="text-primary font-bold border-b-2 border-primary py-xs transition-colors" href="#">Dashboard</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low px-xs py-xs transition-colors rounded-lg" href="#">Proyectos</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low px-xs py-xs transition-colors rounded-lg" href="#">Reportes</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-sm focus:ring-2 focus:ring-primary outline-none transition-all w-64" placeholder="Buscar..." type="text"/>
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional male corporate manager in his 40s wearing a crisp white shirt and a dark navy suit. He has a confident expression and short well-groomed hair. The lighting is soft and natural from a side window, emphasizing a high-end corporate setting with a blurred modern office background in light grey tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCS7XHn9hUITW_rOwYPBu9NTbp9b0xqOdua3KyY-DT-c-xgJTX7wqk-thYe1aRqSoQZlicEhEcGvrfL-eNsJlxev4EaNO_vR0PI-6ykjuKSL68-FU4X-iDGHXoLx62z5Aiga3DSixSJtRSLy3v6Msw0-XV-5vRzRrzSPZkmwpU_g-BAF3qj37ujB6-7jQYVBAN6LIRXZoH5aZ9Ei-MVu9cuiVExyNLu_o2Ri7QibM-xtpZT9uOxKLWgDm6-o1pXqxXH5WyGW_hMU3c"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full w-[260px] flex flex-col p-md z-40 bg-surface-container-low border-r border-outline-variant hidden md:flex">
+<div class="mt-16 flex flex-col gap-xs flex-grow">
+<div class="px-md py-sm mb-xs">
+<span class="text-label-caps font-label-caps text-on-surface-variant opacity-60">ADMIN CONSOLE</span>
+</div>
+<a class="text-on-surface-variant flex items-center gap-sm px-md py-sm hover:bg-surface-container-high rounded-lg transition-all active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-sm">Dashboard</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-sm px-md py-sm hover:bg-surface-container-high rounded-lg transition-all active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined">view_kanban</span>
+<span class="font-body-sm">Kanban Projects</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-sm px-md py-sm hover:bg-surface-container-high rounded-lg transition-all active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-body-sm">Presustand IA</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-sm px-md py-sm hover:bg-surface-container-high rounded-lg transition-all active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-body-sm">CRM Clients</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-sm px-md py-sm hover:bg-surface-container-high rounded-lg transition-all active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined">factory</span>
+<span class="font-body-sm">Suppliers</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-sm px-md py-sm hover:bg-surface-container-high rounded-lg transition-all active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-body-sm">Finance</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-sm px-md py-sm hover:bg-surface-container-high rounded-lg transition-all active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body-sm">Analytics</span>
+</a>
+<!-- Active State -->
+<a class="bg-secondary-container text-on-secondary-container font-semibold flex items-center gap-sm px-md py-sm rounded-lg shadow-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-body-sm">Catalogs</span>
+</a>
+</div>
+<div class="border-t border-outline-variant pt-md flex flex-col gap-xs">
+<button class="bg-primary text-on-primary w-full py-3 rounded-lg font-title-sm flex items-center justify-center gap-xs shadow-lg hover:brightness-110 active:scale-95 transition-all mb-md">
+<span class="material-symbols-outlined">add</span>
+<span>New Entry</span>
+</button>
+<a class="text-on-surface-variant flex items-center gap-sm px-md py-sm hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-body-sm">Support</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-sm px-md py-sm hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-body-sm">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="md:ml-[260px] pt-16 min-h-screen">
+<div class="max-w-[1440px] mx-auto p-sm md:p-lg">
+<!-- Page Header -->
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
+<div class="space-y-xs">
+<div class="flex items-center gap-xs">
+<span class="px-xs py-1 bg-primary-fixed text-on-primary-fixed-variant text-[10px] font-label-caps rounded">MVP V1.0</span>
+</div>
+<h1 class="font-display-lg text-display-lg text-on-surface">Catálogos Técnicos</h1>
+<p class="text-on-surface-variant font-body-sm max-w-2xl">Parámetros base del motor de estimación macro e inventario de elementos constructivos (Base A y B).</p>
+</div>
+<button class="bg-primary text-on-primary px-6 py-3 rounded-lg font-title-sm flex items-center gap-xs shadow-md hover:shadow-lg transition-all">
+<span class="material-symbols-outlined">add_circle</span>
+<span>Añadir Tarifa m²</span>
+</button>
+</header>
+<!-- Tab Navigation -->
+<nav class="flex border-b border-outline-variant mb-lg relative">
+<button class="tab-btn px-md py-sm font-title-sm text-primary relative flex items-center gap-xs transition-colors" id="btn-tab-a" onclick="switchTab('tab-a')">
+<span class="material-symbols-outlined">architecture</span>
+                    Base A: Tarifas Macros (m²)
+                    <span class="active-tab-indicator" id="indicator-a"></span>
+</button>
+<button class="tab-btn px-md py-sm font-title-sm text-on-surface-variant hover:text-on-surface relative flex items-center gap-xs transition-colors" id="btn-tab-b" onclick="switchTab('tab-b')">
+<span class="material-symbols-outlined">view_list</span>
+                    Base B: Catálogo Elementos
+                    <span class="active-tab-indicator hidden" id="indicator-b"></span>
+</button>
+<button class="tab-btn px-md py-sm font-title-sm text-on-surface-variant hover:text-on-surface relative flex items-center gap-xs transition-colors" id="btn-tab-c" onclick="switchTab('tab-c')">
+<span class="material-symbols-outlined">build</span>
+                    Base C: Tarifas Despiece
+                    <span class="active-tab-indicator hidden" id="indicator-c"></span>
+</button>
+</nav>
+<!-- Tab Content A: Stand Cards -->
+<div class="tab-content block animate-in fade-in duration-300" id="tab-a-content">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md mb-lg flex flex-wrap items-center gap-md">
+<div class="flex items-center gap-xs">
+<span class="text-on-surface-variant font-body-sm">Tipo de Stand:</span>
+<select class="bg-surface border border-outline-variant rounded-lg px-md py-2 text-body-sm focus:ring-primary focus:border-primary">
+<option>Todos los tipos</option>
+<option>Stand Modular</option>
+<option>Carpintería Diseño</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md hover:shadow-lg transition-all group">
+<div class="flex justify-between items-start mb-md">
+<div>
+<h3 class="font-title-sm text-on-surface">Stand Modular</h3>
+<p class="text-[10px] font-label-caps text-on-surface-variant opacity-60">DENSIDAD: BAJA MINIMALISTA</p>
+</div>
+<button class="p-2 text-on-surface-variant opacity-0 group-hover:opacity-100 hover:bg-surface-container-low rounded-lg transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+<p class="text-body-sm text-on-surface-variant mb-xl line-clamp-3">Stand modular con estructura de aluminio anodizado y paneles de melamina blanca. Moqueta ferial estándar en suelo. Iluminación LED básica con carril de 4 focos. Sin mobiliario incluido.</p>
+<div class="flex justify-between items-end">
+<div class="text-primary font-headline-md font-bold">$ 150 <span class="text-body-sm font-normal text-on-surface-variant">/m²</span></div>
+<div class="px-2 py-1 bg-green-50 text-green-700 text-[10px] font-label-caps rounded">MARGEN: 35%</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md hover:shadow-lg transition-all group">
+<div class="flex justify-between items-start mb-md">
+<div>
+<h3 class="font-title-sm text-on-surface">Stand Modular</h3>
+<p class="text-[10px] font-label-caps text-on-surface-variant opacity-60">DENSIDAD: MEDIA ESTANDAR</p>
+</div>
+<button class="p-2 text-on-surface-variant opacity-0 group-hover:opacity-100 hover:bg-surface-container-low rounded-lg transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+<p class="text-body-sm text-on-surface-variant mb-xl line-clamp-3">Estructura reforzada con tarima laminada. Iluminación LED con carril de 6 focos orientables. Incluye mostrador de recepción estándar, 2 sillas y papelera. Gráfica básica incluida.</p>
+<div class="flex justify-between items-end">
+<div class="text-primary font-headline-md font-bold">$ 210 <span class="text-body-sm font-normal text-on-surface-variant">/m²</span></div>
+<div class="px-2 py-1 bg-green-50 text-green-700 text-[10px] font-label-caps rounded">MARGEN: 35%</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md hover:shadow-lg transition-all group border-primary/20">
+<div class="flex justify-between items-start mb-md">
+<div>
+<h3 class="font-title-sm text-on-surface">Stand Modular Premium</h3>
+<p class="text-[10px] font-label-caps text-on-surface-variant opacity-60">DENSIDAD: ALTA ESPECTACULAR</p>
+</div>
+<button class="p-2 text-on-surface-variant opacity-0 group-hover:opacity-100 hover:bg-surface-container-low rounded-lg transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+<p class="text-body-sm text-on-surface-variant mb-xl line-clamp-3">Estructura premium lacada con acabados de diseño. Iluminación LED perimetral completa con spots orientables y tiras LED de acento. Incluye zona lounge con mobiliario de diseño.</p>
+<div class="flex justify-between items-end">
+<div class="text-primary font-headline-md font-bold">$ 300 <span class="text-body-sm font-normal text-on-surface-variant">/m²</span></div>
+<div class="px-2 py-1 bg-green-50 text-green-700 text-[10px] font-label-caps rounded">MARGEN: 35%</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md hover:shadow-lg transition-all group">
+<div class="flex justify-between items-start mb-md">
+<div>
+<h3 class="font-title-sm text-on-surface">Carpintería Diseño</h3>
+<p class="text-[10px] font-label-caps text-on-surface-variant opacity-60">DENSIDAD: BAJA MINIMALISTA</p>
+</div>
+<button class="p-2 text-on-surface-variant opacity-0 group-hover:opacity-100 hover:bg-surface-container-low rounded-lg transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+<p class="text-body-sm text-on-surface-variant mb-xl line-clamp-3">Construcción a medida en madera/DM lacado. Diseño minimalista y funcional. Revestimientos limpios y texturas suaves. Planos técnicos y fabricación incluidos.</p>
+<div class="flex justify-between items-end">
+<div class="text-primary font-headline-md font-bold">$ 350 <span class="text-body-sm font-normal text-on-surface-variant">/m²</span></div>
+<div class="px-2 py-1 bg-green-50 text-green-700 text-[10px] font-label-caps rounded">MARGEN: 35%</div>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md hover:shadow-lg transition-all group">
+<div class="flex justify-between items-start mb-md">
+<div>
+<h3 class="font-title-sm text-on-surface">Carpintería Diseño</h3>
+<p class="text-[10px] font-label-caps text-on-surface-variant opacity-60">DENSIDAD: MEDIA ESTANDAR</p>
+</div>
+<button class="p-2 text-on-surface-variant opacity-0 group-hover:opacity-100 hover:bg-surface-container-low rounded-lg transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+<p class="text-body-sm text-on-surface-variant mb-xl line-clamp-3">Acabados de alta calidad, colores corporativos integrados. Incluye zona de reuniones con mesa y sillas. Mostrador a medida retroiluminado.</p>
+<div class="flex justify-between items-end">
+<div class="text-primary font-headline-md font-bold">$ 490 <span class="text-body-sm font-normal text-on-surface-variant">/m²</span></div>
+<div class="px-2 py-1 bg-green-50 text-green-700 text-[10px] font-label-caps rounded">MARGEN: 35%</div>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md hover:shadow-lg transition-all group">
+<div class="flex justify-between items-start mb-md">
+<div>
+<h3 class="font-title-sm text-on-surface">Carpintería Diseño</h3>
+<p class="text-[10px] font-label-caps text-on-surface-variant opacity-60">DENSIDAD: ALTA ESPECTACULAR</p>
+</div>
+<button class="p-2 text-on-surface-variant opacity-0 group-hover:opacity-100 hover:bg-surface-container-low rounded-lg transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+<p class="text-body-sm text-on-surface-variant mb-xl line-clamp-3">Construcción con materiales nobles (madera maciza, acero, cristal). Iluminación arquitectónica completa, pantallas LED integradas y acabados de lujo.</p>
+<div class="flex justify-between items-end">
+<div class="text-primary font-headline-md font-bold">$ 700 <span class="text-body-sm font-normal text-on-surface-variant">/m²</span></div>
+<div class="px-2 py-1 bg-green-50 text-green-700 text-[10px] font-label-caps rounded">MARGEN: 35%</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Tab Content B: Inventory Table -->
+<div class="tab-content hidden animate-in fade-in duration-300" id="tab-b-content">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
+<div class="p-md flex flex-wrap justify-between items-center gap-md bg-surface-bright/50 border-b border-outline-variant">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 w-full bg-white border border-outline-variant rounded-lg text-body-sm focus:ring-2 focus:ring-primary outline-none transition-all" placeholder="Buscar por SKU o Nombre..." type="text"/>
+</div>
+<div class="flex gap-xs">
+<button class="flex items-center gap-xs px-4 py-2 text-body-sm font-medium bg-white border border-outline-variant rounded-lg hover:bg-surface transition-colors shadow-sm">
+<span class="material-symbols-outlined">sync</span> Sincronizar Catálogo B
+                            </button>
+<button class="flex items-center gap-xs px-4 py-2 text-body-sm font-medium bg-primary text-on-primary rounded-lg shadow-sm hover:brightness-110 transition-all">
+<span class="material-symbols-outlined">add</span> Añadir Elemento
+                            </button>
+</div>
+</div>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant">SKU / CÓDIGO</th>
+<th class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant">NOMBRE ELEMENTO</th>
+<th class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant">CATEGORÍA MATRIZ</th>
+<th class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant">DIMENSIONES (AxFxH)</th>
+<th class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant">U.M.</th>
+<th class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant text-right">PRECIO VENTA</th>
+<th class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant text-center">ACCIÓN</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-md py-4 text-primary font-label-caps text-[12px]">AUD-AUD-001</td>
+<td class="px-md py-4">
+<div class="font-medium text-on-surface">Sistema audio ambiente para stand</div>
+<div class="text-[12px] text-on-surface-variant mt-0.5">Par de altavoces 80W RMS con amplificador y ecualizador.</div>
+</td>
+<td class="px-md py-4"><span class="px-2 py-1 bg-surface-container rounded-full text-[12px] text-on-surface-variant border border-outline-variant/50">Audiovisual</span></td>
+<td class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant">0x0x0</td>
+<td class="px-md py-4 text-[12px] font-bold">UD</td>
+<td class="px-md py-4 text-right font-bold text-on-surface">295 €</td>
+<td class="px-md py-4 text-center">
+<button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-md py-4 text-primary font-label-caps text-[12px]">AUD-MON-001</td>
+<td class="px-md py-4">
+<div class="font-medium text-on-surface">Monitor 55" con soporte de pie</div>
+<div class="text-[12px] text-on-surface-variant mt-0.5">Monitor profesional 4K UHD con peana regulable.</div>
+</td>
+<td class="px-md py-4"><span class="px-2 py-1 bg-surface-container rounded-full text-[12px] text-on-surface-variant border border-outline-variant/50">Audiovisual</span></td>
+<td class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant">1240x750x1800</td>
+<td class="px-md py-4 text-[12px] font-bold">UD</td>
+<td class="px-md py-4 text-right font-bold text-on-surface">485 €</td>
+<td class="px-md py-4 text-center">
+<button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-md py-4 text-primary font-label-caps text-[12px]">DIS-3D-001</td>
+<td class="px-md py-4">
+<div class="font-medium text-on-surface">Proyecto 3D completo con 3 renders</div>
+<div class="text-[12px] text-on-surface-variant mt-0.5">Diseño tridimensional en 3ds Max / SketchUp Pro.</div>
+</td>
+<td class="px-md py-4"><span class="px-2 py-1 bg-surface-container rounded-full text-[12px] text-on-surface-variant border border-outline-variant/50">Diseño/Renders</span></td>
+<td class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant">0x0x0</td>
+<td class="px-md py-4 text-[12px] font-bold">UD</td>
+<td class="px-md py-4 text-right font-bold text-on-surface">880 €</td>
+<td class="px-md py-4 text-center">
+<button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-md py-4 text-primary font-label-caps text-[12px]">DIS-PLA-001</td>
+<td class="px-md py-4">
+<div class="font-medium text-on-surface">Planos técnicos de ejecución AutoCAD</div>
+<div class="text-[12px] text-on-surface-variant mt-0.5">Plantas, alzados, secciones y detalles constructivos.</div>
+</td>
+<td class="px-md py-4"><span class="px-2 py-1 bg-surface-container rounded-full text-[12px] text-on-surface-variant border border-outline-variant/50">Diseño/Renders</span></td>
+<td class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant">0x0x0</td>
+<td class="px-md py-4 text-[12px] font-bold">UD</td>
+<td class="px-md py-4 text-right font-bold text-on-surface">465 €</td>
+<td class="px-md py-4 text-center">
+<button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-md flex justify-between items-center bg-surface-container-lowest border-t border-outline-variant">
+<span class="text-body-sm text-on-surface-variant">Mostrando 1-10 de 154 elementos</span>
+<div class="flex gap-xs">
+<button class="p-2 border border-outline-variant rounded-lg hover:bg-surface transition-colors disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="p-2 border border-outline-variant rounded-lg hover:bg-surface transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Tab Content C: Detail Rates -->
+<div class="tab-content hidden animate-in fade-in duration-300" id="tab-c-content">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<div class="p-md flex flex-wrap justify-between items-center gap-md bg-white border-b border-outline-variant">
+<div class="flex gap-md w-full md:w-auto">
+<div class="relative flex-grow md:w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 w-full bg-surface-container-low border border-outline-variant rounded-lg text-body-sm focus:ring-2 focus:ring-primary outline-none transition-all" placeholder="Buscar por nombre técnico..." type="text"/>
+</div>
+<select class="bg-surface-container-low border border-outline-variant rounded-lg px-md py-2 text-body-sm focus:ring-primary outline-none min-w-[180px]">
+<option>Todas las categorías</option>
+<option>Montaje</option>
+<option>Electricidad</option>
+<option>Transporte</option>
+</select>
+</div>
+<button class="flex items-center gap-xs px-4 py-2 text-body-sm font-medium bg-primary text-on-primary rounded-lg shadow-sm hover:brightness-110 transition-all">
+<span class="material-symbols-outlined">add_box</span> Añadir Tarifa Despiece
+                        </button>
+</div>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant">NOMBRE TÉCNICO</th>
+<th class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant">CATEGORÍA</th>
+<th class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant text-right">COSTE/UD</th>
+<th class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant text-center">UD.</th>
+<th class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant text-right">COSTE/HORA/DÍA</th>
+<th class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant text-center">DESP.</th>
+<th class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant text-center">ESTADO</th>
+<th class="px-md py-4 font-label-caps text-[11px] text-on-surface-variant text-center">ACCIÓN</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-md py-4">
+<div class="font-medium text-on-surface">Ayudante carpintero — hora taller</div>
+<div class="text-[12px] text-on-surface-variant mt-0.5">Hora de ayudante de carpintería en taller. Tareas de apoyo y lijado.</div>
+</td>
+<td class="px-md py-4"><span class="px-2 py-0.5 bg-secondary-fixed text-on-secondary-fixed text-[11px] rounded-sm">Montaje</span></td>
+<td class="px-md py-4 text-right font-bold text-on-surface">0.00 €</td>
+<td class="px-md py-4 text-center"><div class="text-[11px] font-bold">UD</div><div class="text-[10px] opacity-50">HORA</div></td>
+<td class="px-md py-4 text-right text-on-surface font-medium">22.00 €</td>
+<td class="px-md py-4 text-center">—</td>
+<td class="px-md py-4 text-center"><span class="text-green-600 font-medium text-[12px]">Activa</span></td>
+<td class="px-md py-4 text-center">
+<button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-md py-4">
+<div class="font-medium text-on-surface">Camión 12t — jornada transporte peninsular</div>
+<div class="text-[12px] text-on-surface-variant mt-0.5">Camión 12 toneladas con conductor. Hasta 700km.</div>
+</td>
+<td class="px-md py-4"><span class="px-2 py-0.5 bg-primary-fixed text-on-primary-fixed-variant text-[11px] rounded-sm">Transporte</span></td>
+<td class="px-md py-4 text-right font-bold text-on-surface">0.00 €</td>
+<td class="px-md py-4 text-center"><div class="text-[11px] font-bold">UD</div><div class="text-[10px] opacity-50">DIA MONTAJE</div></td>
+<td class="px-md py-4 text-right text-on-surface font-medium">980.00 €</td>
+<td class="px-md py-4 text-center">—</td>
+<td class="px-md py-4 text-center"><span class="text-green-600 font-medium text-[12px]">Activa</span></td>
+<td class="px-md py-4 text-center">
+<button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="px-md py-4">
+<div class="font-medium text-on-surface">Chapa acero inox cepillado 1mm</div>
+<div class="text-[12px] text-on-surface-variant mt-0.5">Acabado cepillado espejado, espesor 1mm. Detalles premium.</div>
+</td>
+<td class="px-md py-4"><span class="px-2 py-0.5 bg-tertiary-fixed text-on-tertiary-fixed-variant text-[11px] rounded-sm">Metal</span></td>
+<td class="px-md py-4 text-right font-bold text-on-surface">42.00 €</td>
+<td class="px-md py-4 text-center"><div class="text-[11px] font-bold">M2</div></td>
+<td class="px-md py-4 text-right text-on-surface font-medium">—</td>
+<td class="px-md py-4 text-center"><span class="px-1.5 py-0.5 bg-yellow-100 text-yellow-800 text-[10px] rounded font-bold">x1.05</span></td>
+<td class="px-md py-4 text-center"><span class="text-green-600 font-medium text-[12px]">Activa</span></td>
+<td class="px-md py-4 text-center">
+<button class="p-1.5 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (FAB) -->
+<button class="fixed bottom-8 right-8 w-16 h-16 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-xl hover:shadow-primary/30 transition-all group z-50 md:hidden">
+<span class="material-symbols-outlined text-3xl group-hover:rotate-90 transition-transform">add</span>
+</button>
+<script>
+        function switchTab(tabId) {
+            // Hide all tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('block');
+            });
+            
+            // Show selected content
+            document.getElementById(tabId + '-content').classList.remove('hidden');
+            document.getElementById(tabId + '-content').classList.add('block');
+            
+            // Update button styles and indicators
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('text-primary');
+                btn.classList.add('text-on-surface-variant');
+            });
+            
+            document.querySelectorAll('.active-tab-indicator').forEach(ind => {
+                ind.classList.add('hidden');
+            });
+            
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.add('text-primary');
+            activeBtn.classList.remove('text-on-surface-variant');
+            
+            const activeInd = document.getElementById('indicator-' + tabId.split('-')[1]);
+            activeInd.classList.remove('hidden');
+        }
+
+        // Simple enter animation simulation
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('UI Initialized: Titan Lumina Design System');
+        });
+    </script>
+</body></html>

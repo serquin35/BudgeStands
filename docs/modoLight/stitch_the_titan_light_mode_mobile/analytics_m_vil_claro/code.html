@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Titan Enterprise Analytics</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "primary-fixed": "#e1e0ff",
+                  "on-secondary": "#ffffff",
+                  "on-primary": "#ffffff",
+                  "surface-container": "#eceef0",
+                  "secondary-fixed": "#d8e3fb",
+                  "on-surface-variant": "#464554",
+                  "on-secondary-fixed": "#111c2d",
+                  "primary-container": "#6063ee",
+                  "tertiary-fixed-dim": "#d0bcff",
+                  "on-primary-container": "#fffbff",
+                  "tertiary-container": "#8455ef",
+                  "on-error-container": "#93000a",
+                  "secondary-fixed-dim": "#bcc7de",
+                  "on-surface": "#191c1e",
+                  "on-primary-fixed": "#07006c",
+                  "surface-container-high": "#e6e8ea",
+                  "surface-container-lowest": "#ffffff",
+                  "surface-variant": "#e0e3e5",
+                  "outline": "#767586",
+                  "on-tertiary-container": "#fffbff",
+                  "inverse-primary": "#c0c1ff",
+                  "tertiary-fixed": "#e9ddff",
+                  "surface-container-highest": "#e0e3e5",
+                  "secondary": "#545f73",
+                  "primary-fixed-dim": "#c0c1ff",
+                  "on-background": "#191c1e",
+                  "on-secondary-fixed-variant": "#3c475a",
+                  "inverse-on-surface": "#eff1f3",
+                  "surface-dim": "#d8dadc",
+                  "surface-bright": "#f7f9fb",
+                  "on-secondary-container": "#586377",
+                  "surface-container-low": "#f2f4f6",
+                  "on-tertiary-fixed-variant": "#5516be",
+                  "error": "#ba1a1a",
+                  "surface": "#f7f9fb",
+                  "primary": "#4648d4",
+                  "on-error": "#ffffff",
+                  "tertiary": "#6b38d4",
+                  "inverse-surface": "#2d3133",
+                  "on-primary-fixed-variant": "#2f2ebe",
+                  "error-container": "#ffdad6",
+                  "background": "#f7f9fb",
+                  "secondary-container": "#d5e0f8",
+                  "outline-variant": "#c7c4d7",
+                  "on-tertiary-fixed": "#23005c",
+                  "on-tertiary": "#ffffff",
+                  "surface-tint": "#494bd6"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "lg": "32px",
+                  "container-max": "1440px",
+                  "sm": "16px",
+                  "xl": "48px",
+                  "md": "24px",
+                  "base": "4px",
+                  "xs": "8px",
+                  "sidebar-width": "260px"
+          },
+          "fontFamily": {
+                  "label-caps": ["JetBrains Mono"],
+                  "display-lg-mobile": ["Hanken Grotesk"],
+                  "body-sm": ["Inter"],
+                  "display-lg": ["Hanken Grotesk"],
+                  "headline-md": ["Hanken Grotesk"],
+                  "title-sm": ["Hanken Grotesk"],
+                  "body-md": ["Inter"]
+          },
+          "fontSize": {
+                  "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                  "display-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                  "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                  "display-lg": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                  "title-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                  "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .tonal-card { background: #ffffff; border: 1px solid #E2E8F0; }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-20">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center px-sm h-14 w-full z-50 bg-surface fixed top-0 border-b border-outline-variant">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+<span class="text-white font-bold">T</span>
+</div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Titan Enterprise</h1>
+</div>
+<div class="flex items-center gap-sm">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a corporate manager in a bright, high-key office setting. The lighting is soft and natural, emphasizing a modern light-mode aesthetic. The person is dressed in smart casual business attire, looking confident and approachable, reflecting the system's focus on enterprise management and modern intelligence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDM4a_Zo256rcIdV1ZXvP_wFTwEq7e-w9dh54qJJ2c59xdmWLdMqiY6MDIf3cmEsUq-9WLWkJWjYcIl385-Vg_3Ly7wIGOil-F0Cz_LHnRQRPlIISN8BRt4_kutZxrXXha9_UntBXSXcuJEu3xR8Ammt69wnOSoWTuuiyb-zXlmw9IJpLDnwraxdyWJ2MyQpbLNYoSsabkO069rYxmmsq6-9mToMvY673xnmxGsieocbMpqy5SwvlkFgc3FYhTrQILQMQACPHjNtxQ"/>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="pt-20 px-sm space-y-md">
+<!-- Hero Section -->
+<section>
+<h2 class="font-display-lg-mobile text-display-lg-mobile text-on-surface">Analytics Gerencial</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Métricas financieras y de rentabilidad en tiempo real.</p>
+</section>
+<!-- Key Metrics Scroll -->
+<section class="flex overflow-x-auto no-scrollbar gap-sm -mx-sm px-sm pb-xs">
+<!-- Card 1 -->
+<div class="tonal-card min-w-[240px] p-md rounded-xl flex flex-col justify-between">
+<div class="flex justify-between items-start mb-base">
+<span class="font-label-caps text-label-caps text-on-surface-variant">COBRADO REAL</span>
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">payments</span>
+</div>
+<div>
+<p class="font-display-lg-mobile text-display-lg-mobile text-on-surface">24.382 €</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Facturas efectivamente cobradas</p>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="tonal-card min-w-[240px] p-md rounded-xl flex flex-col justify-between">
+<div class="flex justify-between items-start mb-base">
+<span class="font-label-caps text-label-caps text-on-surface-variant">GASTO APROBADO</span>
+<span class="material-symbols-outlined text-error" style="font-size: 20px;">trending_down</span>
+</div>
+<div>
+<p class="font-display-lg-mobile text-display-lg-mobile text-on-surface">0 €</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Facturas de proveedores pagadas</p>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="tonal-card min-w-[240px] p-md rounded-xl flex flex-col justify-between">
+<div class="flex justify-between items-start mb-base">
+<span class="font-label-caps text-label-caps text-on-surface-variant">RENTABILIDAD</span>
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">query_stats</span>
+</div>
+<div>
+<p class="font-display-lg-mobile text-display-lg-mobile text-on-surface">—</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Media de margen real</p>
+</div>
+</div>
+</section>
+<!-- Top Clients (Bento Card) -->
+<section class="tonal-card p-md rounded-xl">
+<div class="flex items-center gap-xs mb-md">
+<span class="material-symbols-outlined text-primary">diversity_3</span>
+<h3 class="font-title-sm text-title-sm">Top 5 Clientes</h3>
+</div>
+<div class="space-y-md">
+<div class="space-y-xs">
+<div class="flex justify-between font-body-sm">
+<span class="font-medium">1. Cliente Test</span>
+<span class="font-bold">24.382 €</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 85%;"></div>
+</div>
+</div>
+<div class="space-y-xs opacity-50">
+<div class="flex justify-between font-body-sm">
+<span>2. Global Nexus</span>
+<span>12.100 €</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-outline-variant rounded-full" style="width: 45%;"></div>
+</div>
+</div>
+<div class="space-y-xs opacity-50">
+<div class="flex justify-between font-body-sm">
+<span>3. Vertex Media</span>
+<span>8.450 €</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-outline-variant rounded-full" style="width: 32%;"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Annual Progress -->
+<section class="tonal-card p-md rounded-xl">
+<div class="flex items-center gap-xs mb-sm">
+<span class="material-symbols-outlined text-primary">analytics</span>
+<h3 class="font-title-sm text-title-sm">Progreso Objetivo Anual</h3>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-md">Facturación emitida vs objetivo de 500.000 €</p>
+<div class="relative pt-xs">
+<div class="flex justify-between mb-xs">
+<span class="font-body-sm font-semibold">Emitido: 24.382 €</span>
+<span class="font-label-caps text-label-caps text-primary">4.9%</span>
+</div>
+<div class="w-full h-3 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 4.9%;"></div>
+</div>
+<div class="flex justify-between mt-xs font-label-caps text-[10px] text-on-surface-variant">
+<span>0 €</span>
+<span>500.000 €</span>
+</div>
+</div>
+</section>
+<!-- Carga del Taller (Task Focus) -->
+<section class="tonal-card p-md rounded-xl">
+<div class="flex items-center gap-xs mb-md">
+<span class="material-symbols-outlined text-primary">build</span>
+<h3 class="font-title-sm text-title-sm">Carga del Taller (30 días)</h3>
+</div>
+<div class="space-y-sm">
+<!-- Item 1 -->
+<div class="flex items-center justify-between p-sm rounded-lg bg-surface-container-low border border-outline-variant">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">schedule</span>
+<div>
+<p class="font-body-sm font-semibold">Fabricación <span class="text-primary-container text-xs ml-base">OP-2024-0037</span></p>
+<p class="text-[12px] text-on-surface-variant">Cliente Test — Mobile Congress</p>
+</div>
+</div>
+<span class="font-label-caps text-label-caps text-error">15d</span>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center justify-between p-sm rounded-lg bg-surface-container-low border border-outline-variant">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">schedule</span>
+<div>
+<p class="font-body-sm font-semibold">Carga <span class="text-primary-container text-xs ml-base">OP-2024-0037</span></p>
+<p class="text-[12px] text-on-surface-variant">Cliente Test — Mobile Congress</p>
+</div>
+</div>
+<span class="font-label-caps text-label-caps text-secondary">27d</span>
+</div>
+<!-- Item 3 -->
+<div class="flex items-center justify-between p-sm rounded-lg bg-surface-container-low border border-outline-variant">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-size: 20px;">schedule</span>
+<div>
+<p class="font-body-sm font-semibold">Montaje <span class="text-primary-container text-xs ml-base">OP-2024-0037</span></p>
+<p class="text-[12px] text-on-surface-variant">Cliente Test — Mobile Congress</p>
+</div>
+</div>
+<span class="font-label-caps text-label-caps text-secondary">29d</span>
+</div>
+</div>
+</section>
+<!-- AI Insights Area -->
+<section class="tonal-card p-md rounded-xl bg-primary-container text-on-primary-container border-none shadow-lg">
+<div class="flex items-center gap-xs mb-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h3 class="font-title-sm text-title-sm">Presustand AI Insight</h3>
+</div>
+<p class="font-body-sm mb-md opacity-90">La rentabilidad media se proyecta un 12% por encima del objetivo anual basado en las 3 propuestas aceptadas recientemente. Se recomienda priorizar el montaje de la OP-2024-0037 para asegurar el flujo de caja del Q3.</p>
+<button class="w-full py-sm bg-white text-primary font-semibold rounded-lg text-body-sm active:scale-95 transition-transform">
+        Ver Análisis Detallado
+      </button>
+</section>
+<!-- Bottom Placeholder for Scroll -->
+<div class="h-10"></div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-base py-xs bg-surface border-t border-outline-variant">
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps mt-1">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1">
+<span class="material-symbols-outlined">view_kanban</span>
+<span class="font-label-caps text-label-caps mt-1">Kanban</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="font-label-caps text-label-caps mt-1">Finance</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps mt-1">Settings</span>
+</div>
+</nav>
+<script>
+    // Micro-interactions
+    document.querySelectorAll('.active\\:scale-95').forEach(button => {
+      button.addEventListener('touchstart', () => button.classList.add('scale-95'));
+      button.addEventListener('touchend', () => button.classList.remove('scale-95'));
+    });
+  </script>
+</body></html>

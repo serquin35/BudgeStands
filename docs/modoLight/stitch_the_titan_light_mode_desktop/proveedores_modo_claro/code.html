@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Titan Corp - Proveedores</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "primary-fixed": "#e1e0ff",
+                  "on-secondary": "#ffffff",
+                  "on-primary": "#ffffff",
+                  "surface-container": "#eceef0",
+                  "secondary-fixed": "#d8e3fb",
+                  "on-surface-variant": "#464554",
+                  "on-secondary-fixed": "#111c2d",
+                  "primary-container": "#6063ee",
+                  "tertiary-fixed-dim": "#d0bcff",
+                  "on-primary-container": "#fffbff",
+                  "tertiary-container": "#8455ef",
+                  "on-error-container": "#93000a",
+                  "secondary-fixed-dim": "#bcc7de",
+                  "on-surface": "#191c1e",
+                  "on-primary-fixed": "#07006c",
+                  "surface-container-high": "#e6e8ea",
+                  "surface-container-lowest": "#ffffff",
+                  "surface-variant": "#e0e3e5",
+                  "outline": "#767586",
+                  "on-tertiary-container": "#fffbff",
+                  "inverse-primary": "#c0c1ff",
+                  "tertiary-fixed": "#e9ddff",
+                  "surface-container-highest": "#e0e3e5",
+                  "secondary": "#545f73",
+                  "primary-fixed-dim": "#c0c1ff",
+                  "on-background": "#191c1e",
+                  "on-secondary-fixed-variant": "#3c475a",
+                  "inverse-on-surface": "#eff1f3",
+                  "surface-dim": "#d8dadc",
+                  "surface-bright": "#f7f9fb",
+                  "on-secondary-container": "#586377",
+                  "surface-container-low": "#f2f4f6",
+                  "on-tertiary-fixed-variant": "#5516be",
+                  "error": "#ba1a1a",
+                  "surface": "#f7f9fb",
+                  "primary": "#4648d4",
+                  "on-error": "#ffffff",
+                  "tertiary": "#6b38d4",
+                  "inverse-surface": "#2d3133",
+                  "on-primary-fixed-variant": "#2f2ebe",
+                  "error-container": "#ffdad6",
+                  "background": "#f7f9fb",
+                  "secondary-container": "#d5e0f8",
+                  "outline-variant": "#c7c4d7",
+                  "on-tertiary-fixed": "#23005c",
+                  "on-tertiary": "#ffffff",
+                  "surface-tint": "#494bd6"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "lg": "32px",
+                  "container-max": "1440px",
+                  "sm": "16px",
+                  "xl": "48px",
+                  "md": "24px",
+                  "base": "4px",
+                  "xs": "8px",
+                  "sidebar-width": "260px"
+          },
+          "fontFamily": {
+                  "label-caps": ["JetBrains Mono"],
+                  "display-lg-mobile": ["Hanken Grotesk"],
+                  "body-sm": ["Inter"],
+                  "display-lg": ["Hanken Grotesk"],
+                  "headline-md": ["Hanken Grotesk"],
+                  "title-sm": ["Hanken Grotesk"],
+                  "body-md": ["Inter"]
+          },
+          "fontSize": {
+                  "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                  "display-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                  "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                  "display-lg": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                  "title-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                  "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body { background-color: #f7f9fb; }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e0e3e5; border-radius: 10px; }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(8px);
+      border: 1px solid #e2e8f0;
+    }
+  </style>
+</head>
+<body class="font-body-md text-on-surface">
+<!-- Side Navigation -->
+<aside class="fixed left-0 top-0 h-full w-[260px] flex flex-col p-md z-40 bg-surface-container-low border-r border-outline-variant">
+<div class="flex items-center gap-sm mb-xl">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-on-primary-container font-bold text-headline-md">T</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary leading-none">Titan Corp</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant opacity-70">Admin Console</p>
+</div>
+</div>
+<nav class="flex-1 space-y-base overflow-y-auto custom-scrollbar">
+<!-- Dashboard -->
+<a class="text-on-surface-variant flex items-center gap-sm px-md py-sm hover:bg-surface-container-high transition-all font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined">dashboard</span> Dashboard
+      </a>
+<!-- Kanban Projects -->
+<a class="text-on-surface-variant flex items-center gap-sm px-md py-sm hover:bg-surface-container-high transition-all font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined">view_kanban</span> Kanban Projects
+      </a>
+<!-- Presustand IA -->
+<a class="text-on-surface-variant flex items-center gap-sm px-md py-sm hover:bg-surface-container-high transition-all font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined">psychology</span> Presustand IA
+      </a>
+<!-- CRM Clients -->
+<a class="text-on-surface-variant flex items-center gap-sm px-md py-sm hover:bg-surface-container-high transition-all font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined">groups</span> CRM Clients
+      </a>
+<!-- Suppliers (ACTIVE) -->
+<a class="bg-secondary-container text-on-secondary-container font-semibold rounded-lg flex items-center gap-sm px-md py-sm transition-all scale-[0.99] font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined">factory</span> Suppliers
+      </a>
+<!-- Finance -->
+<a class="text-on-surface-variant flex items-center gap-sm px-md py-sm hover:bg-surface-container-high transition-all font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined">payments</span> Finance
+      </a>
+<!-- Analytics -->
+<a class="text-on-surface-variant flex items-center gap-sm px-md py-sm hover:bg-surface-container-high transition-all font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined">analytics</span> Analytics
+      </a>
+<!-- Catalogs -->
+<a class="text-on-surface-variant flex items-center gap-sm px-md py-sm hover:bg-surface-container-high transition-all font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined">inventory_2</span> Catalogs
+      </a>
+</nav>
+<div class="mt-auto pt-md border-t border-outline-variant space-y-base">
+<button class="w-full flex items-center gap-sm px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all font-body-sm text-body-sm">
+<span class="material-symbols-outlined">help</span> Support
+      </button>
+<div class="p-sm bg-surface-container rounded-xl flex items-center gap-sm mb-sm">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a corporate manager in a bright, high-key office setting. The lighting is soft and even, highlighting a friendly yet serious expression. The background features modern architecture with clean glass and steel lines in a minimalist light-mode aesthetic, using tones of soft white and cool gray." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTMjPX8P5Z-XoUH3gIg04Ji6NmXoKD1rCtSZxyv6-Tf0xvz8r519FeSSjG3QFIBOiwEuzy9PgikmBqka4DGeKNOjXuQCpRrIJ3-GmUJFnD2xzSwsNSFqhA_An7J3gVdQDZyu0d45sf4JOGXRjfMFM161b-tdJXmy2WZy7BiNY0ACuBIXBkcyK3Hx8w0lLbDqx9KlOjTktftGic1qpRZlqSjNczz8x2zEdKTTXeyjdmzRnche2kF2bSXwT-m6itjxVjoZ2Z2ky93pc"/>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="font-title-sm text-body-sm truncate">Moon Gothic</p>
+<p class="text-[10px] text-on-surface-variant truncate">Admin</p>
+</div>
+</div>
+<button class="w-full flex items-center gap-sm px-md py-sm text-error hover:bg-error-container hover:text-on-error-container rounded-lg transition-all font-body-sm text-body-sm">
+<span class="material-symbols-outlined">logout</span> Sign Out
+      </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[260px] min-h-screen">
+<!-- Top Nav Bar -->
+<header class="fixed top-0 right-0 left-[260px] z-30 h-16 bg-surface-bright flex justify-between items-center px-lg border-b border-outline-variant">
+<div class="flex items-center gap-md">
+<div class="px-sm py-xs bg-primary-fixed text-on-primary-fixed font-label-caps text-label-caps rounded">MVP v1.0</div>
+<nav class="hidden md:flex gap-md">
+<a class="text-primary font-bold border-b-2 border-primary py-2 font-title-sm text-title-sm" href="#">Proveedores</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low transition-colors px-xs py-2 font-title-sm text-title-sm" href="#">Documentación</a>
+</nav>
+</div>
+<div class="flex items-center gap-sm">
+<button class="p-xs rounded-full hover:bg-surface-container-low transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-xs rounded-full hover:bg-surface-container-low transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</header>
+<div class="pt-24 pb-xl px-lg max-w-[1440px] mx-auto">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-xl">
+<div>
+<h2 class="font-display-lg text-display-lg text-on-surface">Proveedores</h2>
+<p class="text-on-surface-variant mt-xs font-body-md text-body-md">Homologación de talleres externos, instaladores, transportistas y catálogos de servicios.</p>
+</div>
+<button class="flex items-center gap-xs bg-primary text-on-primary px-lg py-sm rounded-lg font-title-sm text-title-sm shadow-sm hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">add</span> Añadir Proveedor
+        </button>
+</div>
+<!-- Search & Filters Container -->
+<div class="glass-card rounded-xl p-md mb-md flex flex-col md:flex-row gap-md items-center shadow-sm">
+<div class="relative flex-1 w-full">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-xl pr-md py-sm bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all font-body-md text-body-md" placeholder="Buscar proveedor..." type="text"/>
+</div>
+<div class="flex items-center gap-sm w-full md:w-auto">
+<span class="text-on-surface-variant font-label-caps text-label-caps whitespace-nowrap">ESPECIALIDAD:</span>
+<div class="relative w-full md:w-64">
+<select class="w-full appearance-none bg-surface-container-lowest border border-outline-variant rounded-lg px-md py-sm pr-xl focus:ring-2 focus:ring-primary outline-none font-body-md text-body-md">
+<option>Todas las especialidades</option>
+<option>Instalación</option>
+<option>Logística</option>
+<option>Fabricación</option>
+<option>Diseño</option>
+</select>
+<span class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Bento Grid / Empty State or Content -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-md">
+<!-- Stats Summary Section -->
+<div class="md:col-span-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-md mb-sm">
+<div class="bg-white border border-outline-variant p-md rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-xs">
+<span class="text-on-surface-variant font-label-caps text-label-caps">TOTAL ACTIVOS</span>
+<span class="material-symbols-outlined text-primary">groups</span>
+</div>
+<div class="text-display-lg-mobile font-display-lg-mobile text-on-surface">128</div>
+<div class="text-[12px] text-green-600 flex items-center mt-xs"><span class="material-symbols-outlined text-[14px]">trending_up</span> +4% vs mes anterior</div>
+</div>
+<div class="bg-white border border-outline-variant p-md rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-xs">
+<span class="text-on-surface-variant font-label-caps text-label-caps">EN PROCESO</span>
+<span class="material-symbols-outlined text-tertiary">pending_actions</span>
+</div>
+<div class="text-display-lg-mobile font-display-lg-mobile text-on-surface">12</div>
+<div class="text-[12px] text-on-surface-variant mt-xs">Revisiones pendientes</div>
+</div>
+<div class="bg-white border border-outline-variant p-md rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-xs">
+<span class="text-on-surface-variant font-label-caps text-label-caps">GASTO TOTAL</span>
+<span class="material-symbols-outlined text-primary">payments</span>
+</div>
+<div class="text-display-lg-mobile font-display-lg-mobile text-on-surface">$42.5k</div>
+<div class="text-[12px] text-on-surface-variant mt-xs">Facturación proyectada</div>
+</div>
+<div class="bg-white border border-outline-variant p-md rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-xs">
+<span class="text-on-surface-variant font-label-caps text-label-caps">CALIFICACIÓN</span>
+<span class="material-symbols-outlined text-yellow-500">star</span>
+</div>
+<div class="text-display-lg-mobile font-display-lg-mobile text-on-surface">4.8</div>
+<div class="text-[12px] text-on-surface-variant mt-xs">Media de cumplimiento</div>
+</div>
+</div>
+<!-- Main Content Area: Empty State or Illustration Card -->
+<div class="md:col-span-8 flex flex-col gap-md">
+<div class="bg-white border border-outline-variant rounded-xl p-xl flex flex-col items-center justify-center min-h-[400px] text-center shadow-sm relative overflow-hidden">
+<!-- Subtle background decorative element -->
+<div class="absolute -bottom-20 -right-20 w-64 h-64 bg-primary-fixed opacity-10 rounded-full blur-3xl"></div>
+<div class="w-48 h-48 mb-lg relative">
+<div class="absolute inset-0 bg-secondary-container opacity-20 rounded-full animate-pulse"></div>
+<div class="absolute inset-4 bg-primary-fixed opacity-30 rounded-full"></div>
+<div class="relative w-full h-full flex items-center justify-center">
+<span class="material-symbols-outlined text-[80px] text-primary" style="font-variation-settings: 'FILL' 1;">inventory</span>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-sm">No se encontraron proveedores</h3>
+<p class="text-on-surface-variant max-w-md mx-auto font-body-md text-body-md mb-lg">
+              Comienza por añadir un nuevo proveedor externo o carga un catálogo de servicios para gestionar la logística de tus proyectos.
+            </p>
+<div class="flex gap-md">
+<button class="bg-primary text-on-primary px-lg py-sm rounded-lg font-title-sm text-title-sm hover:opacity-90 transition-opacity">
+                Añadir Nuevo
+              </button>
+<button class="border border-outline-variant text-on-surface-variant px-lg py-sm rounded-lg font-title-sm text-title-sm hover:bg-surface-container-low transition-colors">
+                Importar CSV
+              </button>
+</div>
+</div>
+</div>
+<!-- Side Panel: Recent Activity / Quick Actions -->
+<div class="md:col-span-4 flex flex-col gap-md">
+<div class="bg-white border border-outline-variant rounded-xl p-md shadow-sm">
+<h4 class="font-title-sm text-title-sm mb-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary">history</span>
+              Actividad Reciente
+            </h4>
+<div class="space-y-md">
+<div class="flex gap-sm">
+<div class="w-2 h-2 mt-2 rounded-full bg-primary shrink-0"></div>
+<div>
+<p class="font-body-sm text-body-sm font-semibold">Taller Metalúrgico Ortiz</p>
+<p class="text-[12px] text-on-surface-variant">Documentación aprobada por Moon Gothic</p>
+<p class="text-[10px] text-outline mt-1">Hace 2 horas</p>
+</div>
+</div>
+<div class="flex gap-sm">
+<div class="w-2 h-2 mt-2 rounded-full bg-tertiary shrink-0"></div>
+<div>
+<p class="font-body-sm text-body-sm font-semibold">Logística Central SL</p>
+<p class="text-[12px] text-on-surface-variant">Nuevo presupuesto cargado en 'Stand A-12'</p>
+<p class="text-[10px] text-outline mt-1">Hace 5 horas</p>
+</div>
+</div>
+<div class="flex gap-sm">
+<div class="w-2 h-2 mt-2 rounded-full bg-outline-variant shrink-0"></div>
+<div>
+<p class="font-body-sm text-body-sm font-semibold">Instalaciones Rápidas</p>
+<p class="text-[12px] text-on-surface-variant">Información de contacto actualizada</p>
+<p class="text-[10px] text-outline mt-1">Ayer, 18:30</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-lg py-xs text-primary font-title-sm text-body-sm hover:underline">Ver todo el historial</button>
+</div>
+<div class="bg-primary-container text-on-primary-container rounded-xl p-md shadow-lg relative overflow-hidden">
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-white opacity-10 rounded-full"></div>
+<h4 class="font-title-sm text-title-sm mb-xs relative z-10">Titan AI Insights</h4>
+<p class="text-[13px] opacity-90 mb-md relative z-10 leading-relaxed">
+              Hemos detectado una oportunidad de ahorro del 12% optimizando las rutas con transportistas locales en el área de Madrid.
+            </p>
+<button class="bg-white text-primary px-md py-xs rounded-lg font-label-caps text-label-caps hover:bg-opacity-90 transition-colors relative z-10">
+              Analizar con IA
+            </button>
+</div>
+<!-- Featured Partner Card Placeholder -->
+<div class="bg-white border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<div class="h-32 bg-cover bg-center" data-alt="A macro shot of architectural precision tools on a clean white drafting table. Blueprints are visible in the background with shallow depth of field. The scene is bright and professional, following a light-mode color scheme of clean whites, subtle cool grays, and a hint of indigo technical drawings. Modern, technical, and high-clarity." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAOPzXfGx4CPbLWFRNo0V7MYAqbu4h23Wq6C37XOQwNKoKe0aBn7i4AFpz9rgZBI1GMnkHRS-w1sTnUe02jrjxajZgiC9TNaRC-81kRLiNpGlA2rTX7I5FdjAA9NAyuMC8-A6E8GT3nXWOclz7nV2P2D8BlEa17yB5NYo32AEifB7WFSIyRKMCd1zlWztJNhOkbV-kz_doZwGlyXvSG-nzNTrhLCHS3yDzAsFIigE1beXV1LnYBPL88uoY40uaqDLc4KhtTRQ8Si3c')"></div>
+<div class="p-md">
+<h5 class="font-title-sm text-body-sm font-bold mb-xs">Programa de Homologación</h5>
+<p class="text-[12px] text-on-surface-variant mb-md">Asegúrate de que todos tus proveedores cumplan con las normativas ISO 2024 actualizadas.</p>
+<div class="flex items-center gap-xs">
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full border-2 border-white bg-slate-200"></div>
+<div class="w-6 h-6 rounded-full border-2 border-white bg-slate-300"></div>
+<div class="w-6 h-6 rounded-full border-2 border-white bg-slate-400"></div>
+</div>
+<span class="text-[11px] text-outline">+15 proveedores certificados</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+    // Micro-interactions and subtle effects
+    document.addEventListener('DOMContentLoaded', () => {
+      const cards = document.querySelectorAll('.glass-card, .bg-white');
+      cards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          card.classList.add('scale-[1.005]');
+        });
+        card.addEventListener('mouseleave', () => {
+          card.classList.remove('scale-[1.005]');
+        });
+      });
+    });
+  </script>
+</body></html>

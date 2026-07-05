@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Enterprise Hub - Analytics Gerencial</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#e1e0ff",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "secondary-fixed": "#d8e3fb",
+                        "on-surface-variant": "#464554",
+                        "on-secondary-fixed": "#111c2d",
+                        "primary-container": "#6063ee",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "on-primary-container": "#fffbff",
+                        "tertiary-container": "#8455ef",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#bcc7de",
+                        "on-surface": "#191c1e",
+                        "on-primary-fixed": "#07006c",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#e0e3e5",
+                        "outline": "#767586",
+                        "on-tertiary-container": "#fffbff",
+                        "inverse-primary": "#c0c1ff",
+                        "tertiary-fixed": "#e9ddff",
+                        "surface-container-highest": "#e0e3e5",
+                        "secondary": "#545f73",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "on-background": "#191c1e",
+                        "on-secondary-fixed-variant": "#3c475a",
+                        "inverse-on-surface": "#eff1f3",
+                        "surface-dim": "#d8dadc",
+                        "surface-bright": "#f7f9fb",
+                        "on-secondary-container": "#586377",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "error": "#ba1a1a",
+                        "surface": "#f7f9fb",
+                        "primary": "#4648d4",
+                        "on-error": "#ffffff",
+                        "tertiary": "#6b38d4",
+                        "inverse-surface": "#2d3133",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "error-container": "#ffdad6",
+                        "background": "#f7f9fb",
+                        "secondary-container": "#d5e0f8",
+                        "outline-variant": "#c7c4d7",
+                        "on-tertiary-fixed": "#23005c",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#494bd6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "32px",
+                        "container-max": "1440px",
+                        "sm": "16px",
+                        "xl": "48px",
+                        "md": "24px",
+                        "base": "4px",
+                        "xs": "8px",
+                        "sidebar-width": "260px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["JetBrains Mono"],
+                        "display-lg-mobile": ["Hanken Grotesk"],
+                        "body-sm": ["Inter"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "title-sm": ["Hanken Grotesk"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "display-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "display-lg": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "title-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto auto;
+            gap: 24px;
+        }
+        @media (max-width: 1024px) {
+            .bento-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 768px) {
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .sidebar-active {
+            background-color: #d5e0f8;
+            color: #111c2d;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen">
+<!-- TopNavBar Shell -->
+<header class="fixed top-0 right-0 left-0 z-50 flex justify-between items-center px-lg h-16 bg-surface-bright border-b border-outline-variant">
+<div class="flex items-center gap-md">
+<span class="font-headline-md text-headline-md font-bold text-primary">Enterprise Hub</span>
+<div class="hidden md:flex bg-surface-container-low rounded-full px-sm py-base items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm w-64" placeholder="Search analytics..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-xs rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<button class="p-xs rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional business headshot of a corporate executive in a modern, brightly lit office environment. The lighting is soft and natural, emphasizing a high-clarity light-mode aesthetic with cool gray and white tones. The subject is wearing a professional blazer, projecting reliability and modern intelligence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdqxtf-Sc9OWHZYLzKbr1Ohl7YXc9HAWejlMeaXh_g4Q9s2niuxuBTvps7Z7mBR6DkS8SDekXnFKWqYpOWejLWLf3AbKRKXTAAXX_C6kUUDrdL-1pLdjvvcNwOQvqTKd2WR17vS7_fceIvipBcc7dDFoi-afzufIUXf3xIVNFUmSDAxHGy84_0Y358SwGhuKv6RVdH-8hWuBPNnQ6YGVqqHSu9pm3F3tKagKywKrtmFfwEg7SINIio5CXxPZezfaB50jzPxhRjCmE"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full w-[260px] flex flex-col p-md z-40 bg-surface-container-low border-r border-outline-variant mt-16">
+<div class="flex items-center gap-sm mb-xl">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-on-primary font-bold">T</div>
+<div>
+<div class="font-title-sm text-title-sm text-primary leading-tight">Titan Corp</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Admin Console</div>
+</div>
+</div>
+<nav class="flex-1 space-y-base overflow-y-auto">
+<a class="flex items-center gap-sm px-md py-sm rounded-lg hover:bg-surface-container-high transition-all text-on-surface-variant font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg hover:bg-surface-container-high transition-all text-on-surface-variant font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined">view_kanban</span> Kanban Projects
+            </a>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg hover:bg-surface-container-high transition-all text-on-surface-variant font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">psychology</span> Presustand IA
+            </a>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg hover:bg-surface-container-high transition-all text-on-surface-variant font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined">groups</span> CRM Clients
+            </a>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg hover:bg-surface-container-high transition-all text-on-surface-variant font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined">factory</span> Suppliers
+            </a>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg hover:bg-surface-container-high transition-all text-on-surface-variant font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined">payments</span> Finance
+            </a>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg bg-secondary-container text-on-secondary-container font-semibold font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined">analytics</span> Analytics
+            </a>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg hover:bg-surface-container-high transition-all text-on-surface-variant font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined">inventory_2</span> Catalogs
+            </a>
+</nav>
+<div class="mt-auto pt-md border-t border-outline-variant space-y-base">
+<a class="flex items-center gap-sm px-md py-sm rounded-lg hover:bg-surface-container-high transition-all text-on-surface-variant font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined">help</span> Support
+            </a>
+<a class="flex items-center gap-sm px-md py-sm rounded-lg hover:bg-surface-container-high transition-all text-error font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined">logout</span> Sign Out
+            </a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] mt-16 p-lg">
+<div class="max-w-container-max mx-auto">
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-xl">
+<div>
+<h1 class="font-display-lg text-display-lg text-on-surface">Analytics Gerencial</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Métricas financieras y de rentabilidad en tiempo real.</p>
+</div>
+<button class="flex items-center gap-xs px-md py-sm border border-outline-variant rounded-lg font-title-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                    Vista Operativa
+                </button>
+</div>
+<!-- KPI Row (Top Bento) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md mb-md">
+<!-- KPI Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl hover:shadow-lg transition-shadow duration-300">
+<div class="flex justify-between items-start mb-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant">COBRADO REAL</span>
+<span class="material-symbols-outlined text-primary">euro</span>
+</div>
+<div class="font-display-lg text-display-lg mb-xs">24.382 €</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Facturas de clientes efectivamente cobradas</p>
+</div>
+<!-- KPI Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl hover:shadow-lg transition-shadow duration-300">
+<div class="flex justify-between items-start mb-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant">GASTO APROBADO</span>
+<span class="material-symbols-outlined text-error">trending_down</span>
+</div>
+<div class="font-display-lg text-display-lg mb-xs">0 €</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Facturas de proveedores pagadas</p>
+</div>
+<!-- KPI Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl hover:shadow-lg transition-shadow duration-300">
+<div class="flex justify-between items-start mb-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant">RENTABILIDAD MEDIA</span>
+<span class="material-symbols-outlined text-tertiary">show_chart</span>
+</div>
+<div class="font-display-lg text-display-lg mb-xs">—</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Media de margen real en 0 proyectos cerrados</p>
+</div>
+<!-- KPI Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl hover:shadow-lg transition-shadow duration-300">
+<div class="flex justify-between items-start mb-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant">CONVERSIÓN DE VENTAS</span>
+<span class="material-symbols-outlined text-[#F59E0B]">radar</span>
+</div>
+<div class="font-display-lg text-display-lg mb-xs">100.0%</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">1 aceptados de 1 cerrados</p>
+</div>
+</div>
+<!-- Main Analytics Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-md">
+<!-- Top Clients Section (6 Columns) -->
+<div class="lg:col-span-7 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col">
+<div class="p-md border-b border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">groups</span>
+<div>
+<h3 class="font-title-sm text-title-sm">Top 5 Clientes</h3>
+<p class="text-body-sm text-on-surface-variant">Volumen de negocio facturado por cliente</p>
+</div>
+</div>
+</div>
+<div class="p-md flex-1">
+<div class="space-y-lg mt-md">
+<div class="relative">
+<div class="flex justify-between items-end mb-xs">
+<span class="font-body-md text-on-surface"><span class="font-bold mr-xs">1</span> Cliente Test</span>
+<span class="font-title-sm text-on-surface">24.382 €</span>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 100%"></div>
+</div>
+</div>
+<!-- Empty states for other top 4 -->
+<div class="opacity-20 flex items-center justify-center py-xl border-2 border-dashed border-outline-variant rounded-lg">
+<span class="text-body-sm">Awaiting more data...</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Goals & Workshop (5 Columns) -->
+<div class="lg:col-span-5 space-y-md">
+<!-- Progress Card -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-primary">analytics</span>
+<div>
+<h3 class="font-title-sm text-title-sm">Progreso Objetivo Anual</h3>
+<p class="text-body-sm text-on-surface-variant">Facturación emitida vs objetivo de 500.000 €</p>
+</div>
+</div>
+<div class="flex justify-between items-center mb-xs">
+<span class="font-body-md font-bold">Emitido: 24.382 €</span>
+<span class="text-primary font-bold">4.9%</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden mb-xs">
+<div class="h-full bg-primary" style="width: 4.9%"></div>
+</div>
+<div class="flex justify-between text-[11px] text-on-surface-variant font-label-caps">
+<span>0 €</span>
+<span>500.000 €</span>
+</div>
+</div>
+<!-- Workshop Load Card -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-tertiary">construction</span>
+<div>
+<h3 class="font-title-sm text-title-sm">Carga del Taller (30 días)</h3>
+<p class="text-body-sm text-on-surface-variant">Hitos de producción y montaje programados</p>
+</div>
+</div>
+<div class="space-y-sm">
+<!-- Hito 1 -->
+<div class="flex items-center justify-between p-sm hover:bg-surface-container-low rounded-lg transition-colors group">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-[#F59E0B]">schedule</span>
+<div>
+<div class="font-body-md font-semibold">Fabricación <span class="text-primary text-body-sm ml-xs opacity-70">(OP-2026-0837)</span></div>
+<div class="text-body-sm text-on-surface-variant">Cliente Test — Mobile Congress</div>
+</div>
+</div>
+<div class="text-body-sm font-bold text-on-surface-variant group-hover:text-primary">15d</div>
+</div>
+<!-- Hito 2 -->
+<div class="flex items-center justify-between p-sm hover:bg-surface-container-low rounded-lg transition-colors group border-t border-outline-variant/30">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-[#F59E0B]">schedule</span>
+<div>
+<div class="font-body-md font-semibold">Carga <span class="text-primary text-body-sm ml-xs opacity-70">(OP-2026-0837)</span></div>
+<div class="text-body-sm text-on-surface-variant">Cliente Test — Mobile Congress</div>
+</div>
+</div>
+<div class="text-body-sm font-bold text-on-surface-variant group-hover:text-primary">27d</div>
+</div>
+<!-- Hito 3 -->
+<div class="flex items-center justify-between p-sm hover:bg-surface-container-low rounded-lg transition-colors group border-t border-outline-variant/30">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-[#F59E0B]">schedule</span>
+<div>
+<div class="font-body-md font-semibold">Montaje <span class="text-primary text-body-sm ml-xs opacity-70">(OP-2026-0837)</span></div>
+<div class="text-body-sm text-on-surface-variant">Cliente Test — Mobile Congress</div>
+</div>
+</div>
+<div class="text-body-sm font-bold text-on-surface-variant group-hover:text-primary">29d</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer History Section -->
+<div class="mt-md bg-surface-container-lowest border border-outline-variant p-md rounded-xl flex justify-between items-center">
+<div>
+<h3 class="font-title-sm text-title-sm">Historial Económico de Proyectos Cerrados</h3>
+<p class="text-body-sm text-on-surface-variant">Rentabilidad real, valoración del cliente y lecciones aprendidas por obra.</p>
+</div>
+<a class="flex items-center gap-xs text-primary font-semibold hover:underline group" href="#">
+                    Gestionar cierres 
+                    <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">north_east</span>
+</a>
+</div>
+</div>
+</main>
+<!-- FAB Action (Contextual Suppression Logic: Hidden on Analytics per rules) -->
+<script>
+        // Micro-interactions and subtle effects
+        document.querySelectorAll('.rounded-xl').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-2px)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body></html>

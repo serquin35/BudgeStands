@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Titan Hub - CRM Clients</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#07006c",
+                    "surface-container-high": "#e6e8ea",
+                    "inverse-on-surface": "#eff1f3",
+                    "surface": "#f7f9fb",
+                    "on-error": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "tertiary-container": "#8455ef",
+                    "primary-fixed": "#e1e0ff",
+                    "on-error-container": "#93000a",
+                    "on-surface": "#191c1e",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "error": "#ba1a1a",
+                    "background": "#f7f9fb",
+                    "surface-bright": "#f7f9fb",
+                    "secondary-container": "#d5e0f8",
+                    "on-tertiary-fixed-variant": "#5516be",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed-dim": "#d0bcff",
+                    "on-secondary": "#ffffff",
+                    "outline-variant": "#c7c4d7",
+                    "on-secondary-fixed": "#111c2d",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-background": "#191c1e",
+                    "secondary-fixed": "#d8e3fb",
+                    "surface-container": "#eceef0",
+                    "secondary": "#545f73",
+                    "on-secondary-fixed-variant": "#3c475a",
+                    "surface-variant": "#e0e3e5",
+                    "primary-container": "#6063ee",
+                    "primary": "#4648d4",
+                    "inverse-surface": "#2d3133",
+                    "secondary-fixed-dim": "#bcc7de",
+                    "tertiary": "#6b38d4",
+                    "on-secondary-container": "#586377",
+                    "surface-container-low": "#f2f4f6",
+                    "on-tertiary-fixed": "#23005c",
+                    "tertiary-fixed": "#e9ddff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-container": "#fffbff",
+                    "on-surface-variant": "#464554",
+                    "inverse-primary": "#c0c1ff",
+                    "surface-dim": "#d8dadc",
+                    "outline": "#767586",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "surface-tint": "#494bd6",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-container": "#fffbff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-max": "1440px",
+                    "sidebar-width": "260px",
+                    "xl": "48px",
+                    "base": "4px",
+                    "sm": "16px",
+                    "xs": "8px",
+                    "md": "24px",
+                    "lg": "32px"
+            },
+            "fontFamily": {
+                    "title-sm": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "body-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "label-caps": ["JetBrains Mono"],
+                    "display-lg-mobile": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "title-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "display-lg": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "display-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .custom-scroll-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .custom-scroll-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .client-card {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+        }
+        .client-card:active {
+            transform: scale(0.98);
+        }
+
+        .glass-effect {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.85);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- Top AppBar (from JSON) -->
+<header class="fixed top-0 w-full z-50 bg-surface-container-lowest border-b border-outline-variant flex items-center justify-between px-sm h-14 w-full">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A sharp, professional headshot of a corporate manager in a bright, high-key office setting. The lighting is soft and professional, reflecting a modern light-mode interface aesthetic. The background features blurred glass partitions and minimalist furniture in a cool slate and white palette. High-end enterprise photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuguZXwPl09bgmR-SxodcqKfl-kI2nuoUp9mfCzeV22ZKLCTS-en3TtgXrJ8zTBx-XhH19cioleISWtDATUcviLJOm0S2mvLg7wQwjUKr9Q0cCQpcM_4o_lb6Sjy_BKqEvBzPA_iRIxZTgVzqM77t6dMB6EqFCbAMK7_ZXaV-C6PwqIy4KmiRsIQbdU5v7MDqUkEiP1Z6dcH_rWTDpXUUdlQimBZ-FFnpXbuw6yCD-_iSeVeP6plOUsdeWhnJm35iSNPXfqZcPMio"/>
+</div>
+<span class="font-headline-md text-headline-md-mobile font-bold text-on-surface">Titan Hub</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors active:opacity-80">
+<span class="material-symbols-outlined text-primary">search</span>
+</button>
+</header>
+<main class="mt-14 pb-20 flex-grow px-sm">
+<!-- Sticky Search & Filters Area -->
+<div class="sticky top-14 bg-background pt-sm pb-xs z-40">
+<!-- Search Bar -->
+<div class="relative w-full mb-4">
+<div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-[20px]">search</span>
+</div>
+<input class="w-full h-11 pl-10 pr-4 bg-surface-container-lowest border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary-container focus:border-primary outline-none transition-all font-body-sm text-on-surface" placeholder="Search clients..." type="text"/>
+</div>
+<!-- Filter Chips - Sector -->
+<div class="flex gap-xs overflow-x-auto custom-scroll-hide mb-3 pb-1">
+<button class="px-4 py-1.5 rounded-full bg-primary-container text-on-primary-container font-label-caps text-label-caps whitespace-nowrap">All Sectors</button>
+<button class="px-4 py-1.5 rounded-full bg-surface-container-highest text-on-surface-variant border border-outline-variant font-label-caps text-label-caps whitespace-nowrap hover:bg-surface-container-high transition-colors">Logistics</button>
+<button class="px-4 py-1.5 rounded-full bg-surface-container-highest text-on-surface-variant border border-outline-variant font-label-caps text-label-caps whitespace-nowrap hover:bg-surface-container-high transition-colors">Architecture</button>
+<button class="px-4 py-1.5 rounded-full bg-surface-container-highest text-on-surface-variant border border-outline-variant font-label-caps text-label-caps whitespace-nowrap hover:bg-surface-container-high transition-colors">Finance</button>
+<button class="px-4 py-1.5 rounded-full bg-surface-container-highest text-on-surface-variant border border-outline-variant font-label-caps text-label-caps whitespace-nowrap hover:bg-surface-container-high transition-colors">Retail</button>
+</div>
+<!-- Status Filters -->
+<div class="flex gap-xs">
+<button class="flex items-center gap-1.5 px-3 py-1 rounded-lg border border-outline-variant bg-surface-container-lowest font-body-sm text-body-sm text-on-surface-variant active:scale-95 transition-transform">
+<span class="w-2 h-2 rounded-full bg-[#22c55e]"></span>
+                    Active
+                </button>
+<button class="flex items-center gap-1.5 px-3 py-1 rounded-lg border border-outline-variant bg-surface-container-lowest font-body-sm text-body-sm text-on-surface-variant active:scale-95 transition-transform">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+                    Inactive
+                </button>
+</div>
+</div>
+<!-- Clients List -->
+<div class="space-y-3 mt-2">
+<!-- Client Card 1 -->
+<div class="client-card p-md bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-title-sm text-title-sm text-on-surface">Cliente Test</h3>
+<p class="font-label-caps text-label-caps text-outline uppercase tracking-wider">Tech Solutions</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-[#dcfce7] text-[#166534] font-label-caps text-[10px] uppercase font-bold">Active</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">mail</span>
+<span class="font-body-sm text-body-sm">contact@clientetest.com</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">call</span>
+<span class="font-body-sm text-body-sm">+34 912 345 678</span>
+</div>
+</div>
+<div class="mt-4 flex gap-2">
+<button class="flex-1 py-2 rounded-lg bg-secondary-fixed text-on-secondary-fixed font-title-sm text-sm active:opacity-80 transition-opacity">View Profile</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface-variant">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Client Card 2 -->
+<div class="client-card p-md bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-title-sm text-title-sm text-on-surface">Titan Logistics</h3>
+<p class="font-label-caps text-label-caps text-outline uppercase tracking-wider">Freight &amp; Shipping</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-[#dcfce7] text-[#166534] font-label-caps text-[10px] uppercase font-bold">Active</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">mail</span>
+<span class="font-body-sm text-body-sm">ops@titanlogistics.com</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">call</span>
+<span class="font-body-sm text-body-sm">+44 20 7946 0123</span>
+</div>
+</div>
+<div class="mt-4 flex gap-2">
+<button class="flex-1 py-2 rounded-lg bg-secondary-fixed text-on-secondary-fixed font-title-sm text-sm active:opacity-80 transition-opacity">View Profile</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface-variant">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Client Card 3 -->
+<div class="client-card p-md bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm opacity-80">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-title-sm text-title-sm text-on-surface">Archi-Stands Pro</h3>
+<p class="font-label-caps text-label-caps text-outline uppercase tracking-wider">Event Design</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-error-container text-on-error-container font-label-caps text-[10px] uppercase font-bold">Inactive</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">mail</span>
+<span class="font-body-sm text-body-sm">info@archistands.pro</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">call</span>
+<span class="font-body-sm text-body-sm">+1 212 555 0199</span>
+</div>
+</div>
+<div class="mt-4 flex gap-2">
+<button class="flex-1 py-2 rounded-lg bg-secondary-fixed text-on-secondary-fixed font-title-sm text-sm active:opacity-80 transition-opacity">View Profile</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface-variant">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Client Card 4 (Additional for Scroll) -->
+<div class="client-card p-md bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-title-sm text-title-sm text-on-surface">Global Retailers Co.</h3>
+<p class="font-label-caps text-label-caps text-outline uppercase tracking-wider">Commerce</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-[#dcfce7] text-[#166534] font-label-caps text-[10px] uppercase font-bold">Active</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">mail</span>
+<span class="font-body-sm text-body-sm">admin@globalretail.io</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">call</span>
+<span class="font-body-sm text-body-sm">+61 2 9876 5432</span>
+</div>
+</div>
+<div class="mt-4 flex gap-2">
+<button class="flex-1 py-2 rounded-lg bg-secondary-fixed text-on-secondary-fixed font-title-sm text-sm active:opacity-80 transition-opacity">View Profile</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface-variant">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed right-6 bottom-20 w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform z-50">
+<span class="material-symbols-outlined text-[28px]">person_add</span>
+</button>
+<!-- Bottom NavBar (from JSON) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-16 px-xs pb-safe bg-surface-container-lowest border-t border-outline-variant z-50">
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-all active:scale-95 duration-150">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 hover:bg-surface-container-high transition-all active:scale-95 duration-150">
+<span class="material-symbols-outlined">view_kanban</span>
+<span class="font-label-caps text-label-caps">Kanban</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-all active:scale-95 duration-150">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-caps text-label-caps">Finance</span>
+</div>
+</nav>
+<script>
+        // Simple Interaction logic
+        document.querySelectorAll('.client-card').forEach(card => {
+            card.addEventListener('click', () => {
+                // Future detail view logic
+            });
+        });
+
+        // Filter chip toggle logic
+        const chips = document.querySelectorAll('.overflow-x-auto button');
+        chips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                chips.forEach(c => {
+                    c.classList.remove('bg-primary-container', 'text-on-primary-container');
+                    c.classList.add('bg-surface-container-highest', 'text-on-surface-variant');
+                });
+                chip.classList.remove('bg-surface-container-highest', 'text-on-surface-variant');
+                chip.classList.add('bg-primary-container', 'text-on-primary-container');
+            });
+        });
+    </script>
+</body></html>

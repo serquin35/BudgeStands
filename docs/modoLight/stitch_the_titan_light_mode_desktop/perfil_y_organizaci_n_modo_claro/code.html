@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Titan | Mi Cuenta y Organización</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Hanken+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary-container": "#fffbff",
+            "primary": "#4648d4",
+            "secondary-fixed": "#d8e3fb",
+            "surface-dim": "#d8dadc",
+            "tertiary-fixed-dim": "#d0bcff",
+            "on-secondary": "#ffffff",
+            "on-background": "#191c1e",
+            "on-error-container": "#93000a",
+            "surface-container-high": "#e6e8ea",
+            "on-tertiary": "#ffffff",
+            "outline-variant": "#c7c4d7",
+            "primary-fixed-dim": "#c0c1ff",
+            "on-surface-variant": "#464554",
+            "surface-tint": "#494bd6",
+            "on-primary-fixed": "#07006c",
+            "surface-container-highest": "#e0e3e5",
+            "background": "#f7f9fb",
+            "primary-fixed": "#e1e0ff",
+            "error": "#ba1a1a",
+            "inverse-surface": "#2d3133",
+            "inverse-on-surface": "#eff1f3",
+            "on-primary": "#ffffff",
+            "surface": "#f7f9fb",
+            "on-secondary-container": "#586377",
+            "on-surface": "#191c1e",
+            "surface-container-low": "#f2f4f6",
+            "secondary-container": "#d5e0f8",
+            "surface-container": "#eceef0",
+            "on-secondary-fixed-variant": "#3c475a",
+            "tertiary": "#6b38d4",
+            "on-error": "#ffffff",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-fixed-variant": "#2f2ebe",
+            "inverse-primary": "#c0c1ff",
+            "outline": "#767586",
+            "on-tertiary-fixed": "#23005c",
+            "primary-container": "#6063ee",
+            "secondary-fixed-dim": "#bcc7de",
+            "tertiary-container": "#8455ef",
+            "on-tertiary-container": "#fffbff",
+            "tertiary-fixed": "#e9ddff",
+            "secondary": "#545f73",
+            "on-secondary-fixed": "#111c2d",
+            "surface-bright": "#f7f9fb",
+            "error-container": "#ffdad6",
+            "on-tertiary-fixed-variant": "#5516be",
+            "surface-variant": "#e0e3e5"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "xs": "8px",
+            "sidebar-width": "260px",
+            "container-max": "1440px",
+            "md": "24px",
+            "xl": "48px",
+            "sm": "16px",
+            "base": "4px",
+            "lg": "32px"
+          },
+          "fontFamily": {
+            "body-md": ["Inter"],
+            "body-sm": ["Inter"],
+            "label-caps": ["JetBrains Mono"],
+            "title-sm": ["Hanken Grotesk"],
+            "headline-md": ["Hanken Grotesk"],
+            "display-lg": ["Hanken Grotesk"]
+          },
+          "fontSize": {
+            "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+            "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+            "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+            "title-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "600"}],
+            "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "display-lg": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    body {
+      background-color: #f7f9fb;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(8px);
+      border: 1px solid #e2e8f0;
+    }
+    .sidebar-active {
+      background-color: #d5e0f8;
+      color: #1e293b;
+    }
+  </style>
+</head>
+<body class="font-body-md text-on-surface">
+<!-- Side Navigation Bar -->
+<aside class="fixed left-0 top-0 h-screen w-sidebar-width bg-surface-container-low border-r border-outline-variant flex flex-col py-lg z-50">
+<div class="px-md mb-xl">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">rocket_launch</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">The Titan</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Enterprise Hub</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1 px-sm">
+<a class="flex items-center gap-sm px-md py-xs text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="view_kanban">view_kanban</span>
+<span class="font-label-caps text-label-caps">Kanban Projects</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="font-label-caps text-label-caps">Presustand IA</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-caps text-label-caps">CRM Clients</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-caps text-label-caps">Suppliers</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-caps text-label-caps">Finance</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-caps text-label-caps">Analytics</span>
+</a>
+<a class="flex items-center gap-sm px-md py-xs text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+<span class="font-label-caps text-label-caps">Catalogs</span>
+</a>
+</nav>
+<div class="mt-auto px-sm pt-md border-t border-outline-variant">
+<a class="flex items-center gap-sm px-md py-xs bg-secondary-container text-on-secondary-container rounded-lg mb-xs" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+<div class="flex items-center gap-sm px-md py-sm bg-surface-container-highest rounded-xl">
+<div class="w-10 h-10 bg-primary-fixed rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a business executive in light-mode lighting, wearing clean minimalist attire. The background is a soft, blurred corporate office setting with a bright and airy aesthetic, reflecting the modern enterprise environment of The Titan." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBK8XcoJt1iUKQZ1XKLeGRx6XshiaLJUVNct01elb6yG_4Tic4TJsU9XPDG5oy2WiFFegMHo2sA8NRZUMbc1M6TFuC5Z6fxhFGx0QEVdtqb_EtXDcfOGMZ7yjgZTuyt3Blcs8v7h-o0Gu5pGAiEmukaONXrstLiCqNPxTUywQGkJvnCo5azmmVLD3DWd63GFQ4zc9jmNqNlD9UskIuedV3XakH7UvMK9uWIg8-wJFi49ORxh6bMlLRU05aaMarQFlpLaYaLq2knBAg"/>
+</div>
+<div class="overflow-hidden">
+<p class="font-title-sm text-[14px] truncate">Moon Gothic</p>
+<p class="font-body-sm text-[12px] text-on-surface-variant truncate">Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top App Bar -->
+<header class="fixed top-0 right-0 left-sidebar-width h-16 bg-surface border-b border-outline-variant flex justify-between items-center px-lg z-40">
+<div class="flex items-center gap-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-sm w-64 focus:ring-2 focus:ring-primary focus:border-primary outline-none" placeholder="Buscar..." type="text"/>
+</div>
+<nav class="hidden md:flex gap-md">
+<a class="font-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Home</a>
+<a class="font-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Projects</a>
+</nav>
+</div>
+<div class="flex items-center gap-sm">
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full">
+<span class="material-symbols-outlined">history</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-sidebar-width pt-16 min-h-screen">
+<div class="max-w-[1440px] mx-auto p-lg">
+<!-- Header Section -->
+<section class="mb-lg">
+<h2 class="font-display-lg text-display-lg text-on-surface mb-xs">Mi Cuenta y Organización</h2>
+<p class="font-body-md text-on-surface-variant max-w-2xl">Configura tus datos personales, las credenciales comerciales de tu empresa y el estado de la suscripción de forma centralizada.</p>
+</section>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-md items-start">
+<!-- Column 1: User Profile & SaaS Subscription -->
+<div class="col-span-12 lg:col-span-5 space-y-md">
+<!-- User Profile Card -->
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant shadow-sm transition-all hover:shadow-md">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-primary" data-icon="person">person</span>
+<h3 class="font-title-sm text-title-sm">Perfil de Usuario</h3>
+</div>
+<p class="text-body-sm text-on-surface-variant mb-md">Tus datos de acceso y tu rol asignado dentro de la plataforma.</p>
+<form class="space-y-sm">
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-base">Nombre Completo</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg px-md py-sm font-body-sm focus:ring-primary focus:border-primary" type="text" value="Moon Gothic"/>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-base">Email (Acceso)</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-md py-sm font-body-sm text-on-surface-variant cursor-not-allowed" readonly="" type="email" value="serquin16@gmail.com"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant scale-75">lock</span>
+</div>
+</div>
+<div class="pt-base">
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-base">Rol en la Organización</label>
+<span class="inline-flex items-center px-sm py-1 bg-primary-container text-on-primary-container rounded-lg text-body-sm font-medium">Admin</span>
+</div>
+<div class="pt-md flex justify-end">
+<button class="bg-primary hover:bg-primary-container text-white px-lg py-sm rounded-lg font-body-md transition-all active:scale-95" type="button">Guardar Perfil</button>
+</div>
+</form>
+</div>
+<!-- SaaS Subscription Card -->
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant shadow-sm">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-tertiary" data-icon="card_membership">card_membership</span>
+<h3 class="font-title-sm text-title-sm">Suscripción SaaS</h3>
+</div>
+<!-- Plan Status Banner -->
+<div class="bg-inverse-surface text-inverse-on-surface p-md rounded-xl mb-lg relative overflow-hidden group">
+<div class="relative z-10">
+<p class="font-label-caps text-[10px] uppercase opacity-70 mb-base">Plan Activo</p>
+<div class="flex items-center justify-between">
+<h4 class="font-headline-md text-headline-md font-extrabold tracking-tight">PLAN STARTER</h4>
+<span class="bg-tertiary px-sm py-1 rounded-full text-xs font-bold uppercase">Activo</span>
+</div>
+</div>
+<!-- Decorative graphic -->
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-tertiary-container opacity-20 rounded-full blur-2xl group-hover:scale-125 transition-transform"></div>
+</div>
+<!-- Usage Progress Bars -->
+<div class="space-y-md">
+<div>
+<div class="flex justify-between text-body-sm mb-base">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-[16px]">bolt</span>
+<span>Créditos Jarvis AI (Mes)</span>
+</div>
+<span class="font-medium text-primary">1 / 10</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[10%] rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-body-sm mb-base">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-[16px]">description</span>
+<span>Presupuestos (Mes)</span>
+</div>
+<span class="font-medium text-primary">1 / 20</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[5%] rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-body-sm mb-base">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-[16px]">folder</span>
+<span>Proyectos Activos</span>
+</div>
+<span class="font-medium text-primary">1 / 5</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[20%] rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-body-sm mb-base">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-[16px]">group</span>
+<span>Usuarios del Equipo</span>
+</div>
+<span class="font-medium text-primary">1 / 1</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-full rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 2: Company Configuration -->
+<div class="col-span-12 lg:col-span-7">
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant shadow-sm h-full">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-primary" data-icon="business">business</span>
+<h3 class="font-title-sm text-title-sm">Configuración de la Empresa</h3>
+</div>
+<p class="text-body-sm text-on-surface-variant mb-lg">Información fiscal y comercial corporativa que aparecerá en los presupuestos oficiales generados por el sistema.</p>
+<form class="space-y-lg">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-base">Nombre de Empresa / Razón Social *</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg px-md py-sm font-body-sm focus:ring-primary focus:border-primary" type="text" value="Moon Gothic - Stands"/>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-base">CIF / NIF Identificación *</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg px-md py-sm font-body-sm focus:ring-primary focus:border-primary" type="text" value="PENDIENTE-f1e50071"/>
+</div>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-base">Domicilio Fiscal (Dirección completa)</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant scale-90">location_on</span>
+<input class="w-full bg-surface border border-outline-variant rounded-lg pl-10 pr-md py-sm font-body-sm focus:ring-primary focus:border-primary" placeholder="Dirección, código postal, provincia, país" type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-base">Email Principal de Contacto</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant scale-90">mail</span>
+<input class="w-full bg-surface border border-outline-variant rounded-lg pl-10 pr-md py-sm font-body-sm focus:ring-primary focus:border-primary" type="email" value="serquin16@gmail.com"/>
+</div>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-base">Teléfono Corporativo</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant scale-90">call</span>
+<input class="w-full bg-surface border border-outline-variant rounded-lg pl-10 pr-md py-sm font-body-sm focus:ring-primary focus:border-primary" type="tel" value="+34 900 000 000"/>
+</div>
+</div>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-base">URL del Logotipo Corporativo</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant scale-90">link</span>
+<input class="w-full bg-surface border border-outline-variant rounded-lg pl-10 pr-md py-sm font-body-sm focus:ring-primary focus:border-primary" placeholder="https://miempresa.com/logo.png" type="url"/>
+</div>
+</div>
+<!-- Logo Preview Area -->
+<div class="bg-surface-container-low border-2 border-dashed border-outline-variant rounded-xl p-xl flex flex-col items-center justify-center text-center">
+<div class="w-20 h-20 bg-surface-container-lowest rounded-lg border border-outline-variant flex items-center justify-center mb-sm">
+<span class="material-symbols-outlined text-outline text-4xl">add_photo_alternate</span>
+</div>
+<p class="font-body-sm text-on-surface-variant">Vista previa del logotipo corporativo</p>
+<p class="text-[12px] text-outline mt-base">PNG, SVG o WebP (Max 2MB)</p>
+</div>
+<div class="pt-md flex justify-end">
+<button class="bg-primary hover:bg-primary-container text-white px-xl py-md rounded-lg font-title-sm transition-all active:scale-95 shadow-lg shadow-primary/20" type="button">Guardar Configuración</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+<!-- Quick Action Footer (Floating FAB Style) -->
+<button class="fixed bottom-lg right-lg w-16 h-16 bg-tertiary-container text-on-tertiary-container rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-all active:scale-95 group z-50">
+<span class="material-symbols-outlined text-3xl">auto_awesome</span>
+<div class="absolute right-20 bg-surface-container-lowest border border-outline-variant px-md py-sm rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity whitespace-nowrap shadow-sm">
+<p class="font-title-sm text-primary">¿Necesitas ayuda con la configuración?</p>
+</div>
+</button>
+</div>
+</main>
+<script>
+    // Micro-interactions and focus states
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('focus', () => {
+        input.parentElement.closest('.bg-surface-container-lowest')?.classList.add('ring-1', 'ring-primary/10');
+      });
+      input.addEventListener('blur', () => {
+        input.parentElement.closest('.bg-surface-container-lowest')?.classList.remove('ring-1', 'ring-primary/10');
+      });
+    });
+
+    // Handle Active Nav State Logic
+    const currentPath = window.location.pathname;
+    const navItems = document.querySelectorAll('nav a');
+    navItems.forEach(item => {
+      // Logic for active state based on the current context (Settings/Profile)
+      if (item.innerText.includes('Settings') || item.innerText.includes('Dashboard')) {
+        // Just as an example, normally this would match the current URL
+      }
+    });
+  </script>
+</body></html>

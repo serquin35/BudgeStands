@@ -1,0 +1,272 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "support-form",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "23472ab1-6028-46e5-adba-8e447172b0a8",
+      "name": "Webhook Support Form",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-400, 260],
+      "webhookId": "support-form-v1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || {};\n\nconst requeridos = ['nombre', 'email', 'mensaje'];\nconst faltantes = requeridos.filter(c => !body[c] || body[c].trim() === '');\n\nif (faltantes.length > 0) {\n  return [{ json: { valido: false, error: `Campos obligatorios faltantes: ${faltantes.join(', ')}` } }];\n}\n\nconst emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\nif (!emailRegex.test(body.email)) {\n  return [{ json: { valido: false, error: `Email inválido: ${body.email}` } }];\n}\n\nconst modulosMap = {\n  'presupuestos': 'Presupuestos IA (Jarvis)',\n  'proyectos': 'Proyectos y Kanban',\n  'hitos': 'Hitos de Producción',\n  'finanzas': 'Módulo Financiero',\n  'canal_b2b': 'Canal B2B',\n  'catalogos': 'Catálogos (Base A/B/C)',\n  'clientes': 'CRM Clientes',\n  'proveedores': 'Proveedores',\n  'configuracion': 'Configuración y Perfil',\n  'soporte': 'Soporte / Centro de Ayuda',\n  'otro': 'Otro'\n};\n\nconst moduloNombre = modulosMap[body.modulo] || body.modulo || 'No especificado';\n\nconst modulosPrioridad = {\n  'finanzas': 'Alta',\n  'presupuestos': 'Alta',\n  'canal_b2b': 'Media',\n  'proyectos': 'Media'\n};\nconst prioridad = modulosPrioridad[body.modulo] || 'Normal';\n\nconst ticketId = 'TIT-' + Date.now().toString(36).toUpperCase().slice(-6);\nconst emoji = prioridad === 'Alta' ? '🔴' : prioridad === 'Media' ? '🟡' : '⚪';\n\nconst htmlAdmin = `\n<div style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background: #f8f9fa; border-radius: 8px;\">\n  <div style=\"background: #4648D4; color: white; padding: 16px 24px; border-radius: 8px 8px 0 0;\">\n    <h1 style=\"margin: 0; font-size: 18px;\">${emoji} Nuevo Ticket de Soporte — ${ticketId}</h1>\n  </div>\n  <div style=\"background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;\">\n    <table style=\"width: 100%; border-collapse: collapse; font-size: 14px;\">\n      <tr><td style=\"padding: 8px 0; color: #6b7280; font-weight: 600; width: 140px;\">Ticket</td><td style=\"padding: 8px 0; color: #111827;\">${ticketId}</td></tr>\n      <tr><td style=\"padding: 8px 0; color: #6b7280; font-weight: 600;\">Prioridad</td><td style=\"padding: 8px 0; color: #111827;\">${emoji} ${prioridad}</td></tr>\n      <tr><td style=\"padding: 8px 0; color: #6b7280; font-weight: 600;\">Nombre</td><td style=\"padding: 8px 0; color: #111827;\">${body.nombre}</td></tr>\n      <tr><td style=\"padding: 8px 0; color: #6b7280; font-weight: 600;\">Email</td><td style=\"padding: 8px 0; color: #111827;\"><a href=\"mailto:${body.email}\">${body.email}</a></td></tr>\n      <tr><td style=\"padding: 8px 0; color: #6b7280; font-weight: 600;\">Módulo</td><td style=\"padding: 8px 0; color: #111827;\">${moduloNombre}</td></tr>\n      <tr><td style=\"padding: 8px 0; color: #6b7280; font-weight: 600;\">Asunto</td><td style=\"padding: 8px 0; color: #111827;\">${body.asunto || 'Sin asunto'}</td></tr>\n    </table>\n    <hr style=\"border: none; border-top: 1px solid #e5e7eb; margin: 16px 0;\">\n    <p style=\"margin: 0 0 8px; color: #6b7280; font-weight: 600; font-size: 13px;\">Mensaje:</p>\n    <div style=\"background: #f3f4f6; padding: 16px; border-radius: 6px; font-size: 14px; color: #374151; line-height: 1.6;\">${body.mensaje.replace(/\\n/g, '<br>')}</div>\n    <p style=\"margin: 16px 0 0; font-size: 12px; color: #9ca3af;\">Enviado desde The Titan — MVP v1.0</p>\n  </div>\n</div>`;\n\nconst htmlUsuario = `\n<div style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background: #f8f9fa; border-radius: 8px;\">\n  <div style=\"background: #4648D4; color: white; padding: 16px 24px; border-radius: 8px 8px 0 0;\">\n    <h1 style=\"margin: 0; font-size: 18px;\">✦ Ticket recibido — ${ticketId}</h1>\n  </div>\n  <div style=\"background: white; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;\">\n    <p style=\"margin: 0; font-size: 14px; color: #374151;\">Hola <strong>${body.nombre}</strong>,</p>\n    <p style=\"margin: 16px 0; font-size: 14px; color: #374151; line-height: 1.6;\">Hemos recibido tu consulta y te responderemos lo antes posible.</p>\n    <div style=\"background: #f3f4f6; padding: 16px; border-radius: 6px; margin: 16px 0;\">\n      <p style=\"margin: 0; font-size: 13px; color: #6b7280;\">Tu ticket: <strong style=\"color: #4648D4;\">${ticketId}</strong></p>\n      <p style=\"margin: 8px 0 0; font-size: 13px; color: #6b7280;\">Módulo: ${moduloNombre}</p>\n    </div>\n    <p style=\"margin: 16px 0 0; font-size: 14px; color: #374151; line-height: 1.6;\">Si tienes información adicional que quieras añadir, simplemente responde a este email.</p>\n    <p style=\"margin: 24px 0 0; font-size: 13px; color: #9ca3af;\">Equipo de The Titan</p>\n  </div>\n</div>`;\n\nreturn [{\n  json: {\n    valido: true,\n    ticketId,\n    nombre: body.nombre.trim(),\n    email: body.email.trim().toLowerCase(),\n    modulo: body.modulo || 'otro',\n    moduloNombre,\n    asunto: body.asunto?.trim() || 'Sin asunto',\n    mensaje: body.mensaje.trim(),\n    empresa_nombre: body.empresa_nombre || 'Sin especificar',\n    usuario_rol: body.usuario_rol || 'usuario',\n    prioridad,\n    htmlAdmin,\n    htmlUsuario,\n    fecha: new Date().toLocaleDateString('es-ES', {\n      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',\n      hour: '2-digit', minute: '2-digit'\n    })\n  }\n}];"
+      },
+      "id": "64303e87-0b55-4400-8572-73fa1630f1ec",
+      "name": "Validar y Enriquecer Datos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-180, 260]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-valido",
+              "leftValue": "={{ $json.valido }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "Valido?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [40, 260]
+    },
+    {
+      "parameters": {
+        "from": "emailejemplo@gmail.com",
+        "to": "presustand@gmail.com",
+        "subject": "=[{{ $json.prioridad === 'Alta' ? '🔴' : $json.prioridad === 'Media' ? '🟡' : '⚪' }}] Ticket {{ $json.ticketId }} — {{ $json.asunto }}",
+        "html": "={{ $json.htmlAdmin }}",
+        "additionalOptions": {}
+      },
+      "id": "ff1247e0-8c27-408d-815a-195f931d915b",
+      "name": "Email Admin — Nuevo Ticket",
+      "type": "n8n-nodes-resend.resend",
+      "typeVersion": 1,
+      "position": [240, 140],
+      "credentials": {
+        "resendApi": {
+          "id": "KlCWE2beyn3UfY4b",
+          "name": "Resend presustand"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "from": "emailejemplo@gmail.com",
+        "to": "={{ $json.email }}",
+        "subject": "=Hemos recibido tu consulta — Ticket {{ $json.ticketId }}",
+        "html": "={{ $json.htmlUsuario }}",
+        "additionalOptions": {}
+      },
+      "id": "96780595-6f95-431d-a828-0e6b148ab76b",
+      "name": "Email Usuario — Confirmación",
+      "type": "n8n-nodes-resend.resend",
+      "typeVersion": 1,
+      "position": [240, 380],
+      "credentials": {
+        "resendApi": {
+          "id": "KlCWE2beyn3UfY4b",
+          "name": "Resend presustand"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "mergeByFields": {
+          "values": []
+        },
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+      "name": "Wait for both",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [480, 260]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst datos = $('Validar y Enriquecer Datos').first().json;\n\nconst adminResult = items[0]?.json || {};\nconst usuarioResult = items[1]?.json || {};\n\nconst adminOk = !adminResult.message && !adminResult.error;\nconst usuarioOk = !usuarioResult.message && !usuarioResult.error;\n\nconst emailsOk = adminOk && usuarioOk;\nconst detalle = [];\nif (!adminOk) detalle.push(`Admin: ${adminResult.message || adminResult.error || 'fallo desconocido'}`);\nif (!usuarioOk) detalle.push(`Usuario: ${usuarioResult.message || usuarioResult.error || 'fallo desconocido'}`);\n\nreturn [{\n  json: {\n    success: emailsOk,\n    ticketId: datos.ticketId,\n    mensaje: emailsOk\n      ? `Ticket ${datos.ticketId} creado. Confirmación enviada a ${datos.email}`\n      : `Ticket ${datos.ticketId} registrado pero hubo problemas con emails: ${detalle.join('; ')}`,\n    emails_enviados: (adminOk ? 1 : 0) + (usuarioOk ? 1 : 0),\n    email_admin_ok: adminOk,\n    email_usuario_ok: usuarioOk\n  }\n}];"
+      },
+      "id": "440c1f6d-68ed-4320-bf4b-f123b6e3abd6",
+      "name": "Preparar Respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 260]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "243b0e45-7b91-4430-acec-b052d260367a",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [880, 260]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: false, error: $json.error || 'Error procesando la solicitud' }) }}",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "71465f68-4763-4dce-860f-4741d36de6f3",
+      "name": "Respond Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [240, 520]
+    }
+  ],
+  "connections": {
+    "Webhook Support Form": {
+      "main": [
+        [
+          {
+            "node": "Validar y Enriquecer Datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar y Enriquecer Datos": {
+      "main": [
+        [
+          {
+            "node": "Valido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valido?": {
+      "main": [
+        [
+          {
+            "node": "Email Admin — Nuevo Ticket",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Email Usuario — Confirmación",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Admin — Nuevo Ticket": {
+      "main": [
+        [
+          {
+            "node": "Wait for both",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Usuario — Confirmación": {
+      "main": [
+        [
+          {
+            "node": "Wait for both",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Wait for both": {
+      "main": [
+        [
+          {
+            "node": "Preparar Respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Respuesta": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "13031a7f8278819f0885fdb5e98e31adeb0766c6b92c822b393433419b9dbfcd"
+  }
+}

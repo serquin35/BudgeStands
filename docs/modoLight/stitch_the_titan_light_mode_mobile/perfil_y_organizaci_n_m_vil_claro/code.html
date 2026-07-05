@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Titan Hub - Profile &amp; Organization</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#07006c",
+                    "surface-container-high": "#e6e8ea",
+                    "inverse-on-surface": "#eff1f3",
+                    "surface": "#f7f9fb",
+                    "on-error": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "tertiary-container": "#8455ef",
+                    "primary-fixed": "#e1e0ff",
+                    "on-error-container": "#93000a",
+                    "on-surface": "#191c1e",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "error": "#ba1a1a",
+                    "background": "#f7f9fb",
+                    "surface-bright": "#f7f9fb",
+                    "secondary-container": "#d5e0f8",
+                    "on-tertiary-fixed-variant": "#5516be",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed-dim": "#d0bcff",
+                    "on-secondary": "#ffffff",
+                    "outline-variant": "#c7c4d7",
+                    "on-secondary-fixed": "#111c2d",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-background": "#191c1e",
+                    "secondary-fixed": "#d8e3fb",
+                    "surface-container": "#eceef0",
+                    "secondary": "#545f73",
+                    "on-secondary-fixed-variant": "#3c475a",
+                    "surface-variant": "#e0e3e5",
+                    "primary-container": "#6063ee",
+                    "primary": "#4648d4",
+                    "inverse-surface": "#2d3133",
+                    "secondary-fixed-dim": "#bcc7de",
+                    "tertiary": "#6b38d4",
+                    "on-secondary-container": "#586377",
+                    "surface-container-low": "#f2f4f6",
+                    "on-tertiary-fixed": "#23005c",
+                    "tertiary-fixed": "#e9ddff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-container": "#fffbff",
+                    "on-surface-variant": "#464554",
+                    "inverse-primary": "#c0c1ff",
+                    "surface-dim": "#d8dadc",
+                    "outline": "#767586",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "surface-tint": "#494bd6",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-container": "#fffbff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-max": "1440px",
+                    "sidebar-width": "260px",
+                    "xl": "48px",
+                    "base": "4px",
+                    "sm": "16px",
+                    "xs": "8px",
+                    "md": "24px",
+                    "lg": "32px"
+            },
+            "fontFamily": {
+                    "title-sm": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "body-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "label-caps": ["JetBrains Mono"],
+                    "display-lg-mobile": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "title-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "display-lg": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "display-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .collapse-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .collapse-open .collapse-content {
+            max-height: 1000px;
+        }
+        .collapse-open .collapse-chevron {
+            transform: rotate(180deg);
+        }
+        body {
+            background-color: #f7f9fb;
+            color: #191c1e;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-body-md pb-24">
+<!-- Top AppBar (from JSON) -->
+<header class="fixed top-0 w-full z-50 bg-surface-container-lowest border-b border-outline-variant flex items-center justify-between px-sm h-14 w-full">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a smiling business executive, high-key studio lighting with a clean off-white background, minimalist corporate aesthetic, sharp focus and natural skin tones, wearing a modern charcoal blazer, professional and approachable atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAE3any5K4XcE_1BUFzJGp7E_-NnKmCTN15g2LB5WsJL99ZSXUikEVOPXjgQ8fIu1KzAH4AxSK6DLdSFN4q_HDygEccMsQ74b_niVjWDk_DSLJYpo7dN0DxU81Y7umGgldUboawVbvkvvsuVCJ4mNf_04dYQO7X1CgdxcXXSI7i0eF1fuaUerIaadCoSqdvJIEyUFdv4QZJ88InFcZ7Hs9HokPx-3q2c2WL1kkO5TqRAZfmP46-5_xrSkAwZcskiV1cRzwjSd1Az3M"/>
+</div>
+<h1 class="font-headline-md text-headline-md-mobile font-bold text-on-surface">Titan Hub</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors active:opacity-80">
+<span class="material-symbols-outlined text-primary">search</span>
+</button>
+</header>
+<main class="mt-14 px-sm py-md max-w-md mx-auto space-y-md">
+<!-- Welcome Hero Area -->
+<div class="space-y-base">
+<h2 class="font-headline-md text-headline-md-mobile text-on-surface">Profile &amp; Settings</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Manage your personal identity and organization configurations.</p>
+</div>
+<!-- Section 1: User Profile -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden collapse-container" id="profileSection">
+<button class="w-full flex items-center justify-between p-sm hover:bg-surface-container-low transition-all" onclick="toggleSection('profileSection')">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">person</span>
+<span class="font-title-sm text-title-sm text-on-surface">User Profile</span>
+</div>
+<span class="material-symbols-outlined collapse-chevron transition-transform duration-300">expand_more</span>
+</button>
+<div class="collapse-content border-t border-outline-variant">
+<div class="p-sm space-y-md">
+<div class="space-y-xs">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Full Name</label>
+<p class="font-body-md text-body-md text-on-surface font-medium">Alexander Titan</p>
+</div>
+<div class="space-y-xs">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Email Address</label>
+<p class="font-body-md text-body-md text-on-surface font-medium">a.titan@organization.com</p>
+</div>
+<div class="space-y-xs">
+<label class="font-label-caps text-label-caps text-on-surface-variant">System Role</label>
+<div class="inline-flex items-center px-3 py-1 rounded-full bg-primary-container/10 border border-primary-container text-primary text-xs font-semibold">
+                            Global Administrator
+                        </div>
+</div>
+<button class="w-full py-2 border border-outline-variant rounded-lg font-title-sm text-on-surface hover:bg-surface-container-high transition-colors">
+                        Edit Profile Details
+                    </button>
+</div>
+</div>
+</section>
+<!-- Section 2: Company Configuration -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden collapse-container collapse-open" id="orgSection">
+<button class="w-full flex items-center justify-between p-sm hover:bg-surface-container-low transition-all" onclick="toggleSection('orgSection')">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">corporate_fare</span>
+<span class="font-title-sm text-title-sm text-on-surface">Company Configuration</span>
+</div>
+<span class="material-symbols-outlined collapse-chevron transition-transform duration-300">expand_more</span>
+</button>
+<div class="collapse-content border-t border-outline-variant">
+<div class="p-sm space-y-md">
+<div class="space-y-xs">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Business Name</label>
+<p class="font-body-md text-body-md text-on-surface font-medium">Titan Systems Global Ltd.</p>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div class="space-y-xs">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Tax ID</label>
+<p class="font-body-md text-body-md text-on-surface font-medium">VAT-8829104</p>
+</div>
+<div class="space-y-xs">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Entity Type</label>
+<p class="font-body-md text-body-md text-on-surface font-medium">Corporation</p>
+</div>
+</div>
+<div class="space-y-xs">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Registered Address</label>
+<p class="font-body-md text-body-md text-on-surface font-medium leading-relaxed">
+                            128 Tech Plaza, Floor 14<br/>
+                            San Francisco, CA 94105<br/>
+                            United States
+                        </p>
+</div>
+<div class="h-[120px] rounded-lg overflow-hidden border border-outline-variant relative">
+<div class="w-full h-full bg-cover bg-center" data-location="San Francisco" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAUU2ajqy8DqJeLSe0oWoBEODaYLiCQjWRLIGItZzUC3BQcO-sGzhgXRgs-5c7sZg1hxXYBOnLLdlOv4qQHYTgueE8SaXwIZxhRL5Krw1OE1Kfbl-9fNTNE4lhzemydZqWmv5K5JgIxwFsOPwbUS9ZUhb_n0WypC6lW-aJgNLdtZ8eG5yezSYRw_C8NvNs9tDmiohalcMnUMsTdfHpI8ecKuW4UTxy0Q244xWEuzqfStc7Ke4qrkb1b9LwX2uivkX1m07az2oP56v8')"></div>
+<div class="absolute inset-0 bg-primary/10 pointer-events-none"></div>
+</div>
+<button class="w-full py-2 bg-primary text-on-primary rounded-lg font-title-sm hover:opacity-90 transition-all active:scale-95">
+                        Update Organization
+                    </button>
+</div>
+</div>
+</section>
+<!-- Section 3: SaaS Subscription -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden collapse-container" id="subSection">
+<button class="w-full flex items-center justify-between p-sm hover:bg-surface-container-low transition-all" onclick="toggleSection('subSection')">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">payments</span>
+<span class="font-title-sm text-title-sm text-on-surface">SaaS Subscription</span>
+</div>
+<span class="material-symbols-outlined collapse-chevron transition-transform duration-300">expand_more</span>
+</button>
+<div class="collapse-content border-t border-outline-variant">
+<div class="p-sm space-y-lg">
+<!-- Current Plan Badge -->
+<div class="bg-secondary-fixed text-on-secondary-fixed p-sm rounded-lg flex items-center justify-between">
+<div class="space-y-base">
+<span class="font-label-caps text-label-caps">Current Active Plan</span>
+<h3 class="font-headline-md text-headline-md-mobile">Plan Starter</h3>
+</div>
+<div class="w-12 h-12 bg-surface-container-lowest/30 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">rocket_launch</span>
+</div>
+</div>
+<!-- Metrics Grid -->
+<div class="grid grid-cols-1 gap-sm">
+<div class="p-sm bg-surface-container rounded-lg border border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">token</span>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant">Credits</p>
+<p class="font-title-sm text-title-sm">4,250 / 5,000</p>
+</div>
+</div>
+<div class="w-16 h-1 bg-outline-variant rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[85%]"></div>
+</div>
+</div>
+<div class="p-sm bg-surface-container rounded-lg border border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">workspaces</span>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant">Projects</p>
+<p class="font-title-sm text-title-sm">12 / 15</p>
+</div>
+</div>
+<div class="w-16 h-1 bg-outline-variant rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[80%]"></div>
+</div>
+</div>
+<div class="p-sm bg-surface-container rounded-lg border border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">group</span>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant">Team Users</p>
+<p class="font-title-sm text-title-sm">3 / 5</p>
+</div>
+</div>
+<div class="w-16 h-1 bg-outline-variant rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[60%]"></div>
+</div>
+</div>
+</div>
+<div class="space-y-sm">
+<button class="w-full py-3 bg-tertiary-container text-on-tertiary-container rounded-lg font-title-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">upgrade</span>
+                            Upgrade to Pro
+                        </button>
+<p class="text-center font-body-sm text-body-sm text-on-surface-variant">Next billing date: Oct 24, 2024</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Danger Zone -->
+<section class="py-md">
+<h4 class="font-label-caps text-label-caps text-error mb-sm">Critical Actions</h4>
+<div class="bg-error-container/20 border border-error/20 rounded-xl p-sm flex items-center justify-between">
+<div>
+<p class="font-title-sm text-title-sm text-on-error-container">Close Account</p>
+<p class="font-body-sm text-body-sm text-on-error-container/70">Permanently delete organization data</p>
+</div>
+<button class="w-10 h-10 bg-error/10 text-error rounded-full flex items-center justify-center transition-colors active:scale-90">
+<span class="material-symbols-outlined">delete_forever</span>
+</button>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar (from JSON) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-16 px-xs pb-safe bg-surface-container-lowest border-t border-outline-variant z-50">
+<!-- Dashboard -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-all active:scale-95 duration-150">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps mt-1">Dashboard</span>
+</button>
+<!-- Kanban -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-all active:scale-95 duration-150">
+<span class="material-symbols-outlined">view_kanban</span>
+<span class="font-label-caps text-label-caps mt-1">Kanban</span>
+</button>
+<!-- Finance (Active State - Profile often lives near Finance/Settings context) -->
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 transition-all active:scale-95 duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="font-label-caps text-label-caps mt-1">Finance</span>
+</button>
+</nav>
+<script>
+        function toggleSection(id) {
+            const el = document.getElementById(id);
+            el.classList.toggle('collapse-open');
+            
+            // Close other sections for better mobile UX
+            document.querySelectorAll('.collapse-container').forEach(container => {
+                if(container.id !== id) {
+                    container.classList.remove('collapse-open');
+                }
+            });
+        }
+
+        // Interaction for buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('touchstart', function() {
+                this.classList.add('opacity-80');
+            });
+            btn.addEventListener('touchend', function() {
+                this.classList.remove('opacity-80');
+            });
+        });
+    </script>
+</body></html>

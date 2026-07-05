@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Titan Hub - Kanban Projects</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-fixed": "#07006c",
+                      "surface-container-high": "#e6e8ea",
+                      "inverse-on-surface": "#eff1f3",
+                      "surface": "#f7f9fb",
+                      "on-error": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "tertiary-container": "#8455ef",
+                      "primary-fixed": "#e1e0ff",
+                      "on-error-container": "#93000a",
+                      "on-surface": "#191c1e",
+                      "primary-fixed-dim": "#c0c1ff",
+                      "error": "#ba1a1a",
+                      "background": "#f7f9fb",
+                      "surface-bright": "#f7f9fb",
+                      "secondary-container": "#d5e0f8",
+                      "on-tertiary-fixed-variant": "#5516be",
+                      "on-primary": "#ffffff",
+                      "tertiary-fixed-dim": "#d0bcff",
+                      "on-secondary": "#ffffff",
+                      "outline-variant": "#c7c4d7",
+                      "on-secondary-fixed": "#111c2d",
+                      "surface-container-highest": "#e0e3e5",
+                      "on-background": "#191c1e",
+                      "secondary-fixed": "#d8e3fb",
+                      "surface-container": "#eceef0",
+                      "secondary": "#545f73",
+                      "on-secondary-fixed-variant": "#3c475a",
+                      "surface-variant": "#e0e3e5",
+                      "primary-container": "#6063ee",
+                      "primary": "#4648d4",
+                      "inverse-surface": "#2d3133",
+                      "secondary-fixed-dim": "#bcc7de",
+                      "tertiary": "#6b38d4",
+                      "on-secondary-container": "#586377",
+                      "surface-container-low": "#f2f4f6",
+                      "on-tertiary-fixed": "#23005c",
+                      "tertiary-fixed": "#e9ddff",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-container": "#fffbff",
+                      "on-surface-variant": "#464554",
+                      "inverse-primary": "#c0c1ff",
+                      "surface-dim": "#d8dadc",
+                      "outline": "#767586",
+                      "on-primary-fixed-variant": "#2f2ebe",
+                      "surface-tint": "#494bd6",
+                      "on-tertiary": "#ffffff",
+                      "on-tertiary-container": "#fffbff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-max": "1440px",
+                      "sidebar-width": "260px",
+                      "xl": "48px",
+                      "base": "4px",
+                      "sm": "16px",
+                      "xs": "8px",
+                      "md": "24px",
+                      "lg": "32px"
+              },
+              "fontFamily": {
+                      "title-sm": ["Hanken Grotesk"],
+                      "display-lg": ["Hanken Grotesk"],
+                      "body-sm": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-md": ["Hanken Grotesk"],
+                      "label-caps": ["JetBrains Mono"],
+                      "display-lg-mobile": ["Hanken Grotesk"]
+              },
+              "fontSize": {
+                      "title-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "display-lg": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "display-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-surface font-body-md text-on-surface">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface-container-lowest flex items-center justify-between px-sm h-14 border-b border-outline-variant">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a corporate manager in a bright light-mode setting. The person has a friendly but authoritative expression, lit by soft, natural light against a neutral architectural background. The overall aesthetic is clean, professional, and high-clarity, fitting the Titan Hub brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4-kWi7SRbpl3KND5QL4H6HBCgNFWHaqmjMj_rnYbvGj8MK6Jeh-c5cTqxpz0gmjfoxXMbe-gyovvsSkkkMKcvrvoFO5CC4lC1jb0WiGXwnyXy02butHfSD1BqcSjTvODCngN6ic_qyX2g8gbQviarL7G6Gceme8nMxgL4Ep0Buj_iVGqelqw5CTuZduabfVkHKVmJ-e_xtKL2QaNJntRCLjyIxhS2s7ZJC7uztaKbPEzErhQ77wM43f1OLvg9i_BA_nfQnX1zR1Y"/>
+</div>
+<h1 class="font-headline-md text-headline-md-mobile font-bold text-on-surface">Titan Hub</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors active:opacity-80">
+<span class="material-symbols-outlined text-primary">search</span>
+</button>
+</header>
+<main class="pt-20 pb-32 px-sm">
+<!-- Status Chips - Horizontal Scroll -->
+<div class="flex overflow-x-auto gap-xs no-scrollbar mb-lg">
+<button class="flex-none px-sm py-xs rounded-full bg-primary-container text-on-primary-container font-label-caps text-label-caps active:scale-95 transition-transform">
+                ALL PROJECTS
+            </button>
+<button class="flex-none px-sm py-xs rounded-full bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps active:scale-95 transition-transform">
+                BACKLOG
+            </button>
+<button class="flex-none px-sm py-xs rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-label-caps active:scale-95 transition-transform">
+                DESIGN
+            </button>
+<button class="flex-none px-sm py-xs rounded-full bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps active:scale-95 transition-transform">
+                DEVELOPMENT
+            </button>
+<button class="flex-none px-sm py-xs rounded-full bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps active:scale-95 transition-transform">
+                QA
+            </button>
+</div>
+<!-- Section Title -->
+<div class="flex items-center justify-between mb-sm">
+<h2 class="font-title-sm text-title-sm text-on-surface">Active Boards</h2>
+<span class="text-label-caps font-label-caps text-primary bg-primary-fixed px-xs py-1 rounded">3 ACTIVE</span>
+</div>
+<!-- Project Cards Stack -->
+<div class="space-y-sm">
+<!-- Focused Project Card: Mobile Congress -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<div class="h-40 relative">
+<img alt="Mobile Congress Kanban View" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBe1Rsyz8kTL5S3-k5K30FeZ-nRXN3wuCX2uY-DatQOaSWiCibjzmW7vFuA9SdYbjBt5aRKAF6BtNBT4nQuFfP5WU6SBCrfLG_oTWJO6BT8X7JwRtZrx2HiZVFhrQzCAzlfbu2TxJ0YF-6t1Cueg2EXCj97R_QefB4gMKb5plRMBQRLHzhGzUdM_K9Tqd6lRC2BdcZg3AzmJRB3ppx5q6OdKObbUjERcLa7gOWNCgPVxLBhSb_2tcZODVaBUK7V81qbII2hAWNwi-g"/>
+<div class="absolute top-sm right-sm bg-tertiary-container text-on-tertiary-container px-xs py-1 rounded font-label-caps text-label-caps">
+                        DESIGN PHASE
+                    </div>
+</div>
+<div class="p-sm">
+<div class="flex justify-between items-start mb-xs">
+<h3 class="font-title-sm text-title-sm text-on-surface">Mobile Congress</h3>
+<span class="material-symbols-outlined text-outline">more_vert</span>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant mb-sm">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span class="font-body-sm text-body-sm" data-location="Barcelona">Barcelona, Spain</span>
+</div>
+<div class="flex items-center justify-between pt-sm border-t border-outline-variant">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-outline">BUDGET</span>
+<span class="font-title-sm text-title-sm text-primary">48.763 €</span>
+</div>
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-lowest bg-primary-fixed flex items-center justify-center">
+<span class="text-[10px] font-bold">JD</span>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-lowest bg-secondary-fixed flex items-center justify-center">
+<span class="text-[10px] font-bold">AS</span>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-lowest bg-tertiary-fixed flex items-center justify-center">
+<span class="text-[10px] font-bold">+3</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Secondary Project Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-sm shadow-sm">
+<div class="flex justify-between items-start mb-sm">
+<div>
+<div class="flex items-center gap-xs mb-1">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Development</span>
+</div>
+<h3 class="font-title-sm text-title-sm text-on-surface">Titan Fintech API</h3>
+</div>
+<span class="material-symbols-outlined text-outline">view_kanban</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full mb-sm">
+<div class="bg-primary w-3/4 h-full rounded-full"></div>
+</div>
+<div class="flex justify-between items-center text-body-sm text-on-surface-variant">
+<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-[16px]">schedule</span> 2 days left</span>
+<span class="font-label-caps text-label-caps">75% DONE</span>
+</div>
+</div>
+<!-- Tertiary Project Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-sm shadow-sm opacity-80">
+<div class="flex justify-between items-start">
+<div>
+<div class="flex items-center gap-xs mb-1">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Backlog</span>
+</div>
+<h3 class="font-title-sm text-title-sm text-on-surface">Eco-Audit Q4</h3>
+</div>
+<span class="material-symbols-outlined text-outline">lock</span>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB (Floating Action Button) -->
+<button class="fixed bottom-24 right-sm w-14 h-14 bg-primary text-on-primary rounded-xl shadow-lg flex items-center justify-center active:scale-95 transition-transform z-40">
+<span class="material-symbols-outlined text-[32px]">add</span>
+<!-- Tooltip/Label for Accessibility or Visual Context -->
+<span class="sr-only">New Project</span>
+</button>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-16 px-xs pb-safe bg-surface-container-lowest border-t border-outline-variant z-50">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-6 py-1 transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">view_kanban</span>
+<span class="font-label-caps text-label-caps mt-1">Kanban</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-caps text-label-caps mt-1">Finance</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for active states and haptic-like feel
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('click', (e) => {
+                // Potential for adding ripple effects or sound if needed
+            });
+        });
+
+        // Intersection observer for card entrance animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-4');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.shadow-sm').forEach(card => {
+            card.classList.add('transition-all', 'duration-500', 'opacity-0', 'translate-y-4');
+            observer.observe(card);
+        });
+    </script>
+</body></html>
