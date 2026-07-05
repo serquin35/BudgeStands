@@ -86,7 +86,7 @@ const FAQ_SECTIONS = [
 
 export default function SupportPage() {
   const [openFaq, setOpenFaq] = useState<string | null>(null)
-  const [form, setForm] = useState({ nombre: "", email: "", asunto: "", mensaje: "" })
+  const [form, setForm] = useState({ nombre: "", email: "", modulo: "soporte", asunto: "", mensaje: "" })
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -115,7 +115,7 @@ export default function SupportPage() {
       if (!res.ok) throw new Error("Error al enviar el formulario")
 
       setSent(true)
-      setForm({ nombre: "", email: "", asunto: "", mensaje: "" })
+      setForm({ nombre: "", email: "", modulo: "soporte", asunto: "", mensaje: "" })
     } catch (err: any) {
       setError(err?.message || "No se pudo enviar el mensaje. Inténtalo de nuevo.")
     } finally {
@@ -264,6 +264,26 @@ export default function SupportPage() {
                       onChange={(e) => setForm(p => ({ ...p, email: e.target.value }))}
                     />
                   </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="modulo">Módulo afectado</Label>
+                  <select
+                    id="modulo"
+                    value={form.modulo}
+                    onChange={(e) => setForm(p => ({ ...p, modulo: e.target.value }))}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:ring-1 focus:ring-primary/30 outline-none"
+                  >
+                    <option value="presupuestos">Presupuestos IA (Jarvis)</option>
+                    <option value="proyectos">Proyectos y Kanban</option>
+                    <option value="finanzas">Módulo Financiero</option>
+                    <option value="clientes">CRM Clientes</option>
+                    <option value="proveedores">Proveedores</option>
+                    <option value="catalogos">Catálogos</option>
+                    <option value="canal_b2b">Canal B2B</option>
+                    <option value="configuracion">Configuración y Perfil</option>
+                    <option value="soporte">Soporte / Centro de Ayuda</option>
+                    <option value="otro">Otro</option>
+                  </select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="asunto">Asunto</Label>
