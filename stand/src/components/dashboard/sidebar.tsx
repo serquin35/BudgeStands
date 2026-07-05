@@ -175,13 +175,14 @@ export default function Sidebar({ user, empresa, onSignOut }: SidebarProps) {
               <Settings className="h-3.5 w-3.5" />
               <span>Settings</span>
             </Link>
-            <a
-              href="mailto:support@thetitan.com"
+            <Link
+              href="/dashboard/support"
+              onClick={() => setIsOpen(false)}
               className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/40 transition-all duration-200"
             >
               <HelpCircle className="h-3.5 w-3.5" />
               <span>Support</span>
-            </a>
+            </Link>
           </div>
 
           {/* User Info Card & SignOut */}
