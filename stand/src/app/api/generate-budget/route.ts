@@ -135,11 +135,17 @@ export async function POST(request: NextRequest) {
     try {
       aiResult = JSON.parse(rawBody)
     } catch (parseErr) {
-      console.warn("n8n devolvió respuesta no-JSON, continuando con valores por defecto:", rawBody.substring(0, 200))
-      // Si n8n devuelve texto plano (ej: "Agent stopped due to max iterations") 
-      // continuamos con un resultado vacío y guardamos el presupuesto igualmente
-      aiResult = { output: rawBody }
+      throw new Error(`La respuesta de n8n no es un JSON válido: ${rawBody.substring(0, 200)}`)
     }
+
+    if (aiResult.errorMessage) {
+      throw new Error(`Error de ejecución en n8n: ${aiResult.errorMessage}`)
+    }
+
+    if (!aiResult.output) {
+      throw new Error(`El servicio de IA no retornó un presupuesto válido (output vacío).`)
+    }
+
     console.log("Respuesta de n8n recibida exitosamente:", aiResult)
 
     let parsedOutput: JarvisOutput | string = aiResult.output;

@@ -1,5 +1,5 @@
 # THE TITAN — Documento Maestro de Arquitectura
-## Versión 2.0 | Documento de Referencia para Desarrollo con IA
+## Versión 2.1 | Documento de Referencia para Desarrollo con IA
 
 > **Instrucción para el modelo de IA:** Este documento es la fuente de verdad absoluta del proyecto. Antes de generar cualquier código, componente, query o flujo, consulta este documento. Respeta los nombres de tablas, campos, enums y convenciones exactamente como están definidos aquí. Cuando un requerimiento no esté cubierto, pregunta antes de inventar.
 
@@ -72,7 +72,7 @@ CAPA                TECNOLOGÍA              JUSTIFICACIÓN
 ────────────────    ──────────────────      ──────────────────────────────────────
 IDE de desarrollo   Google Antigravity      IDE agéntico con contexto de proyecto
 Frontend            Next.js 14 (App Router) SSR, Server Components, Supabase compat.
-Estilos             Tailwind CSS + shadcn/ui Velocidad de desarrollo, consistencia
+Estilos             Tailwind CSS + shadcn/ui + CSS Variables (Titan Lumina light/dark mode)
 Base de datos       Supabase (PostgreSQL)   Auth, Realtime, Storage, REST API, RLS
 Base vectorial      Qdrant                  Búsqueda semántica, filtros avanzados
 Automatización/IA   n8n (self-hosted)       Orquestación de flujos, sin lock-in
@@ -1111,6 +1111,7 @@ Porcentaje:  valor.toFixed(2) + '%'
 | `/dashboard/proveedores` | Gestión Proveedores | ✅ Completo | CRUD de proveedores con categorías matriz |
 | `/dashboard/finanzas` | Módulo Financiero | ✅ Completo | Facturas clientes (auto F26-NNNN, validación ≤100%, bloqueo deudores), facturas proveedores (cabecera+líneas, imputación analítica), Cash Flow previsional 30/60/90d + gráfico 6 meses + alertas 14d, Cierre Económico con rentabilidad real, estrellas, lecciones y webhook n8n |
 | `/dashboard/perfil` | Perfil y Suscripción | ✅ Completo | Edición de datos de usuario y empresa, card Suscripción SaaS con plan activo y 4 barras de uso (IA calls, presupuestos/mes, proyectos activos, usuarios). Llama a `get_plan_usage()` RPC. |
+| `/dashboard/support` | Sección de Soporte | ✅ Completo | FAQ interactivo de módulos + Formulario de contacto vía webhook n8n y Resend. |
 | `/print/factura/[id]` | Template de factura imprimible | ✅ Completo | Página de impresión con datos fiscales |
 | `/print/presupuesto/[id]` | Template de presupuesto imprimible | ✅ Completo | Vista imprimible (A4 y PDF) con despiece y render IA |
 | `/api/send-invoice` | Envío email de factura | ✅ Completo | API route para envío de facturas por email |
@@ -1137,11 +1138,13 @@ Porcentaje:  valor.toFixed(2) + '%'
 | Función RPC `get_plan_usage()` | ✅ Activa | Devuelve uso actual vs límites por plan (ia_calls, presupuestos, proyectos, usuarios) |
 | Función RPC `generar_numero_factura()` | ✅ Activa | Genera secuencial F26-NNNN para facturas de clientes |
 | Trigger SQL auto-proyecto+hitos | ✅ Activo | `Fix_Sqls/fix_crear_proyecto_desde_presupuesto.sql` — al aceptar presupuesto crea proyecto + 8 hitos |
-| API route `/api/generate-budget` | ✅ Implementada | Proxy al webhook n8n con límites de plan |
+| API route `/api/generate-budget` | ✅ Implementada | Proxy al webhook n8n con límites de plan y soporte para despiece de partidas granular (Jarvis v2) |
 | API route `/api/upload` | ✅ Implementada | Subida de archivos a Supabase Storage (máx 10MB) |
-| Tipos compartidos (`/types/index.ts`) | ✅ Creado | Interfaces: Cliente, Proveedor, Presupuesto, Tarifas, FacturaProyecto, CierreProyecto, etc. |
+| Tipos compartidos (`/types/index.ts`) | ✅ Creado | Interfaces: Cliente, Proveedor, Presupuesto, Tarifas, FacturaProyecto, CierreProyecto, PartidaPresupuesto, JarvisOutput |
 | Constantes (`/constants/index.ts`) | ✅ Creado | ESTADO_PRESUPUESTO, TIPO_STAND, ROL_USUARIO (incluye `cliente_externo`), KANBAN_COLUMNAS, ESTADO_COBRO, TIPO_FACTURA |
 | StatusBadge componente compartido | ✅ Creado | `components/shared/status-badge.tsx` |
+| Sincronización Qdrant e Iconos de Ayuda | ✅ Configurado | Tooltips explicativos en Catálogos y validación de datos vacíos en n8n |
+| Workflow Formulario Soporte n8n | ✅ Activo | Recibe el formulario de soporte e incluye plantillas HTML para enviar correos vía Resend (`n8n-support-form.json`) |
 
 ---
 
@@ -1156,7 +1159,7 @@ Porcentaje:  valor.toFixed(2) + '%'
 
 ### ⏳ PENDIENTE — Fase 4 (SaaS y Escala)
 
-> La infraestructura multi-tenant (RLS, `id_empresa`, `plan_saas`) ya está en la BD. Lo que falta es la lógica de negocio de escala.
+> La infraestructura multi-tenant (RLS, `id_empresa`, `plan_saas`) ya está en la BD. Lo que falta es la lógica de negocio de escala y optimizaciones del core de IA.
 
 ```
 - [x] Analytics avanzado para gerente
@@ -1168,8 +1171,23 @@ Porcentaje:  valor.toFixed(2) + '%'
 - [x] Widget de hitos próximos en dashboard principal
       → Implementado con carga dinámica desde Supabase en tiempo real (vencidos o programados para ≤7 días) y enlaces directos al proyecto. (Completado: 30-Jun-2026)
 
-- [x] Canal B2B básico
-      → Mensajería + adjuntos por proyecto (taller ↔ oficina técnica). Integración de subidas de archivos técnicos (DWG, DXF, PDF, ZIP), previsualización de imágenes, RLS de inmutabilidad y notificaciones n8n activadas por disparador de base de datos. (Completado: 01-Jul-2026)
+- [x] Canal B2B básico y responsive
+      → Mensajería + adjuntos por proyecto (taller ↔ oficina técnica) optimizado para dispositivos móviles. (Completado: 01-Jul-2026)
+
+- [x] Modo Claro de Interfaz (Titan Lumina)
+      → Migración completa de todos los módulos del frontend a variables CSS semánticas para soporte nativo Light/Dark e integración del ThemeToggle. (Completado: 04-Jul-2026)
+
+- [x] Módulo de Soporte y FAQ
+      → FAQ dinámico interactivo por módulos y formulario de contacto vía webhook n8n y Resend. (Completado: 05-Jul-2026)
+
+- [x] Integración de Partidas de Jarvis v2
+      → Adaptación de la API route y base de datos para guardar de forma granular las partidas individuales generadas por la IA. (Completado: 03-Jul-2026)
+
+- [ ] Lógica Completa de Auto-Aprendizaje de Conceptos (Bidireccionalidad Activa)
+      → Crear panel administrativo para gestionar e integrar la cola de conceptos marcados con `es_concepto_nuevo = true` a catálogos y Qdrant.
+
+- [ ] Calibración y Refinamiento del Prompt de Jarvis
+      → Ajustar las instrucciones del sistema en n8n para asegurar que el mapeo y desglose de las partidas por IA se asocie con exactitud a las categorías correctas de la base de datos.
 
 - [ ] API pública documentada (baja prioridad)
       → REST endpoints + API Key + Swagger. Solo si hay clientes que lo pidan.
@@ -1186,6 +1204,9 @@ Porcentaje:  valor.toFixed(2) + '%'
 budgeStands/
 ├── Plan-Maestro.md          ← Este documento (fuente de verdad)
 ├── DatosImportantes.txt     ← Credenciales locales (NO COMMITEAR)
+├── docs/                    ← Documentación del proyecto
+│   ├── modoLight/           ← Sistema de diseño Titan Lumina (light mode)
+│   └── HISTORIAL-DETALLES-TECNICOS.md  ← Archivo unificado de detalles e implementaciones previas
 ├── stand/                   ← App Next.js 14 (frontend principal)
 │   └── src/
 │       ├── app/
@@ -1222,7 +1243,7 @@ budgeStands/
 | **Fase 2** | Gestión de Proyectos (kanban, hitos, timeline, trigger SQL) | ✅ **Completada** |
 | **Fase 2.5** | Infraestructura n8n/Qdrant (workflows activos, Tool Base C, DB Webhooks) | ✅ **Completada** |
 | **Fase 3** | Módulo Financiero (facturas, cash flow, cierre) | ✅ **Completada** |
-| **Fase 4** | SaaS multi-tenant y escala | ⏳ En desarrollo (Canal B2B completado) |
+| **Fase 4** | SaaS multi-tenant y escala | ⏳ En desarrollo (Canal B2B, Modo Claro Titan Lumina, Soporte e Integración de Partidas de Jarvis v2 completados) |
 
 ---
 
@@ -1274,6 +1295,6 @@ ANTHROPIC_API_KEY=sk-ant-api03-...
 
 ---
 
-*Versión 1.6 — Actualizado 30-Jun-2026. Eliminados documentos obsoletos: INSTRUCCIONES_PENDIENTES.md, TAREAS-PENDIENTES.md, ANALISIS-FASES-3-4.md.*
+*Versión 2.1 — Actualizado 06-Jul-2026. Unificada la documentación de sprints anteriores en HISTORIAL-DETALLES-TECNICOS.md e incorporado el rediseño Titan Lumina y Soporte.*
 *Actualizar la sección §10 ante cualquier cambio de estado de los módulos.*
 *El modelo de IA debe consultar este documento antes de generar cualquier código.*

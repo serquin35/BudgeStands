@@ -1,0 +1,829 @@
+{
+  "name": "🏛️ Stands Feriales — Agente Jarvis (Backup 6-Jul-2026)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "stand-budget-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "93ea4fc4-636a-4d36-9803-dccc64ce44b4",
+      "name": "Webhook Entrada",
+      "position": [
+        -496,
+        16
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "webhookId": "stand-agent-v1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "48187a24-fe65-4b51-8c80-a2fcfc7ee3d1",
+                    "leftValue": "={{ $json.body.type }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "imagen"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                }
+              },
+              "renameOutput": true,
+              "outputKey": "image"
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "f41bf2bc-bd5b-4cc2-894c-d3fe4c7f95d9",
+                    "leftValue": "={{ $json.body.type }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "audio"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                }
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "55ef6335-892e-4296-8623-9559134ec474",
+                    "leftValue": "={{ $json.body.type }}",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "texto"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                }
+              },
+              "renameOutput": true,
+              "outputKey": "Texto"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c54bd666-f4e4-4fe9-b4fb-0056f87d0e8f",
+      "name": "Switch Tipo Input",
+      "position": [
+        -304,
+        96
+      ],
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  model: 'gpt-4o',\n  max_tokens: 1200,\n  messages: [\n    {\n      role: 'system',\n      content: 'Eres un experto en analisis de stands feriales y construccion de presupuestos. Analiza la imagen de un stand y extrae la siguiente informacion en formato JSON. Responde UNICAMENTE JSON valido, sin markdown, sin explicaciones. Si un campo no es detectable, usa null. Para m2_estimado: si ves elementos de escala conocida (personas, puertas, paneles modulares de 1x2.5m), estima. Si no, usa null.\\n\\nJSON esperado:\\n{\\n  \\\"tipo_stand\\\": \\\"modular|carpinteria_diseno|hibrido|doble_planta|retail\\\",\\n  \\\"estilo\\\": \\\"moderno|industrial|corporativo|tecnologico|rustico|elegante\\\",\\n  \\\"materiales_visibles\\\": [\\\"madera\\\", \\\"metal\\\", \\\"cristal\\\", \\\"metacrilato\\\", \\\"moqueta\\\", \\\"laminado\\\", \\\"tela\\\"],\\n  \\\"elementos_destacados\\\": [\\\"mostrador\\\", \\\"vitrina\\\", \\\"almacen\\\", \\\"pantallas\\\", \\\"zona_reunion\\\", \\\"barra\\\", \\\"lobby\\\"],\\n  \\\"m2_estimado\\\": null,\\n  \\\"altura_estimada\\\": null,\\n  \\\"numero_frentes\\\": 1,\\n  \\\"densidad\\\": \\\"baja|media|alta\\\",\\n  \\\"tiene_grafica\\\": true,\\n  \\\"tipo_iluminacion\\\": \\\"focos|tiras_led|retroiluminado|mixto\\\",\\n  \\\"colores\\\": [\\\"#hex\\\"],\\n  \\\"descripcion\\\": \\\"Descripcion breve del stand en español\\\"\\n}'\n    },\n    {\n      role: 'user',\n      content: [\n        { type: 'image_url', image_url: { url: $(\"Webhook Entrada\").first().json.body.content } },\n        { type: 'text', text: 'Feria: ' + ($(\"Webhook Entrada\").first().json.body.feria || 'No especificada') + '\\nInstrucciones del cliente: ' + ($(\"Webhook Entrada\").first().json.body.promptText || 'Sin instrucciones adicionales') }\n      ]\n    }\n  ]\n}) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "7b64b171-470d-47db-a8ec-481960b99d24",
+      "name": "GPT-4 Vision",
+      "position": [
+        -64,
+        -64
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "KzFxOuQEjV23LyRC",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/audio/transcriptions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": []
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "audio"
+            },
+            {
+              "name": "model",
+              "value": "whisper-1"
+            },
+            {
+              "name": "language",
+              "value": "es"
+            },
+            {
+              "name": "response_format",
+              "value": "json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "61fc8377-403a-4907-b9a0-34a522cf873c",
+      "name": "Whisper",
+      "position": [
+        144,
+        112
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "KzFxOuQEjV23LyRC",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// $input ya viene de \"Code in JavaScript\" — datos limpios y listos\nconst data = $input.first().json;\nconst webhook = $(\"Webhook Entrada\").first().json.body;\n\nreturn [{ json: {\n  chatInput: [\n    'SOLICITUD DE PRESUPUESTO (desde imagen)',\n    '---',\n    'Cliente: ' + (webhook.cliente || 'Sin especificar'),\n    'Feria: ' + (data.feria || 'IFEMA Madrid'),\n    'Superficie: ' + (data.m2_real || data.m2_estimado || 20) + ' m²',\n    'Altura estimada: ' + (data.altura_estimada || 2.5) + ' m',\n    'Tipo de stand: ' + data.tipo_stand,\n    'Estilo: ' + data.estilo,\n    'Densidad estimada: ' + data.densidad,\n    'Materiales detectados: ' + (data.materiales_visibles || []).join(', '),\n    'Elementos detectados: ' + (data.elementos_destacados || []).join(', '),\n    'Iluminación: ' + data.tipo_iluminacion,\n    'Gráfica presente: ' + (data.tiene_grafica ? 'Sí' : 'No detectada'),\n    'Número de frentes: ' + data.numero_frentes,\n    'Presupuesto máximo: ' + (webhook.presupuesto_max ? webhook.presupuesto_max + '€' : 'No indicado'),\n    'Descripción del stand: ' + data.descripcion,\n    'Instrucciones adicionales: ' + (data.promptText || 'Sin instrucciones'),\n    '---',\n    'Analiza todos los datos anteriores. Usa consultar_tarifa_base_a primero para calcular el subtotal de construcción. Luego genera el presupuesto completo con todas las partidas.'\n  ].join('\\n')\n}}];"
+      },
+      "id": "132634f5-cdb5-4770-9e49-89466ab7794a",
+      "name": "Formatear Mensaje - Imagen",
+      "position": [
+        368,
+        -64
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "jsCode": "const whisper = $input.first().json;\nconst webhook = $(\"Webhook Entrada\").first().json.body;\n\nconst t = whisper.text || '';\nconst m2 = webhook.m2 || 20;\nconst feria = webhook.feria || 'No detectada';\nconst cliente = webhook.cliente || 'Sin especificar';\n\nreturn [{ json: {\n  chatInput: [\n    'SOLICITUD DE PRESUPUESTO (desde audio/voz)',\n    '---',\n    'Cliente: ' + cliente,\n    'Feria: ' + feria,\n    'Superficie: ' + m2 + ' m²',\n    'Presupuesto máximo: ' + (webhook.presupuesto_max ? webhook.presupuesto_max + '€' : 'No indicado'),\n    'Transcripción completa: ' + t,\n    '---',\n    'Usa consultar_tarifa_base_a primero, luego genera el presupuesto completo.'\n  ].join('\\n')\n}}];"
+      },
+      "id": "d902646a-cc2d-4e98-9c24-290e0df31827",
+      "name": "Formatear Mensaje - Audio",
+      "position": [
+        352,
+        112
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "editfield-001",
+              "name": "chatInput",
+              "type": "string",
+              "value": "={{ [\n  'SOLICITUD DE PRESUPUESTO (texto directo)',\n  '---',\n  'Cliente: ' + ($json.body.cliente || 'Sin especificar'),\n  'Feria: ' + ($json.body.feria || 'IFEMA Madrid'),\n  'Superficie: ' + ($json.body.m2 || 20) + ' m²',\n  'Altura: ' + ($json.body.altura || 2.5) + ' m',\n  'Estilo: ' + ($json.body.estilo || 'moderno'),\n  'Presupuesto máximo: ' + ($json.body.presupuesto_max ? $json.body.presupuesto_max + '€' : 'No indicado'),\n  'Descripción: ' + ($json.body.content || $json.body.descripcion || ''),\n  '---',\n  'Usa consultar_tarifa_base_a primero, luego genera el presupuesto completo con todas las partidas.'\n].join('\\n') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "193d8ce9-b6b2-445a-938e-edd5c19ac304",
+      "name": "Edit Fields - Formatear Texto",
+      "position": [
+        144,
+        304
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=Eres Jarvis, experto presupuestador de stands feriales con 20 años de experiencia en España y Europa (IFEMA, Fira Barcelona, Hannover Messe, CES, Mobile World).\n\nPROCESO OBLIGATORIO - sigue este orden exacto sin saltarte pasos ni adelantarte:\n\n\n## PASO 1 **buscar_stands_qdrant**: Busca proyectos similares y materiales relevantes usando búsqueda semántica. Usa los datos del stand como query.\n\n## PASO 2: think\nRazona brevemente: tipo de stand, m², nivel densidad. Si el usuario no indica densidad usa 'media_estandar'. Estima mentalmente cuántos días de montaje necesita (1 día por cada 20m², mínimo 1 día).\n\n## PASO 3: consultar_tarifa_base_a (OBLIGATORIO, SIEMPRE PRIMERO)\nLlama UNA SOLA VEZ. Devuelve array con 15 tarifas. Busca la fila que coincide con tipo_proyecto y nivel_densidad. Anota el precio_venta_m2. Multiplica por m² para obtener el subtotal base de construcción. Usa también la descripcion_incluido de esa fila como base del mensaje_cliente.\n\n## PASO 4: consultar_materiales_supabase\nLlama UNA SOLA VEZ. Devuelve el catálogo completo de elementos. Con estos datos debes construir MÍNIMO 8 partidas individuales y realistas. Sigue estas reglas por categoría:\n\n### PARTIDA 1 — Estructura y Tarima\n- Busca elementos con \"tarima\" o \"estructura\" o \"panel\" en nombre_elemento\n- Cantidad: los m² del stand\n- Precio: precio_venta_unidad del elemento elegido × m²\n- Si es stand modular: usa tarima DM o estructura tubular aluminio\n- Si es carpintería diseño: usa pared carpintería lacada (precio por m²)\n\n### PARTIDA 2 — Suelos y Revestimientos\n- Para stands económicos: moqueta ferial bucle (SUE-MOQ-001 o similar)\n- Para stands medios: moqueta velour o vinílico\n- Para stands premium: vinílico diseño o porcelánico\n- Cantidad: m² del stand\n- Precio: precio_venta_unidad × m²\n\n### PARTIDA 3 — Iluminación\n- Calcula focos necesarios: 1 foco LED por cada 3m² del stand (mínimo 4)\n- Añade carriles electrificados: 1 carril por cada 4 focos\n- Si hay elementos especiales (backlit, tiras LED): añadir como sublínea\n- Precio: suma de (focos × precio_foco) + (carriles × precio_carril)\n\n### PARTIDA 4 — Mobiliario\n- Incluye SIEMPRE al menos: 1 mostrador de recepción\n- Para stands > 20m²: añadir mesa reuniones + 4 sillas mínimo\n- Para stands > 40m²: añadir almacén cerrado\n- Para stands premium: añadir sofá lounge, vitrinas, taburetes\n- Suma los precios individuales de cada pieza de mobiliario\n\n### PARTIDA 5 — Gráfica e Impresión\n- Calcula m² de gráfica: perímetro del stand × 0.6 (no toda la pared lleva gráfica)\n- Para stands modulares: lona frontlit impresa\n- Para stands de diseño: vinilo adhesivo o tela tensada frameless\n- Añadir siempre: letras corpóreas o rótulo de cabecera (1 ud)\n- Precio: (m² gráfica × precio_m2) + precio_rótulo\n\n### PARTIDA 6 — Servicios de Feria\nNUNCA uses porcentajes ni estimaciones. Calcula con precios REALES del catálogo:\n- Electricidad: busca SER-ELE-001 (3kW base) o SER-ELE-002 (6kW para > 30m²)\n  → Para stands > 50m² con audiovisual: SER-ELE-002 + kW adicionales\n- Limpieza diaria: SER-LIM-001 × número de días de feria (usa 3 días si no se indica)\n- Seguro RC: SER-SEG-001 × m² del stand\n- WiFi: SER-INT-001 si el stand tiene pantallas o demos online\n- Suma todos los servicios para el subtotal_servicios\n\n### PARTIDA 7 — Transporte\n- Busca TRA-NAC-001: precio por m² para transporte peninsular\n- Cantidad: m² del stand\n- Precio: precio_venta_unidad × m²\n- Para ferias internacionales (Hannover, CES, MWC): usa TRA-INT-001\n\n### PARTIDA 8 — Montaje y Desmontaje\n- Días de montaje: ceil(m² / 20), mínimo 1 día\n- Equipo: MON-EQU-001 (2 oficiales + ayudante) × días_montaje\n- Desmontaje: MON-EQU-003 × ceil(días_montaje / 2)\n- Director de obra: MON-COO-001 × días_montaje (SIEMPRE incluir)\n- Para stands > 40m²: añadir 1 oficial extra (MON-EQU-002 × 8 horas × días)\n\n### PARTIDA 9 — Diseño, Proyecto y Dirección\n- Incluir SIEMPRE para carpintería_diseno e hibrido:\n  → DIS-3D-001 (proyecto 3D con renders): precio fijo\n  → DIS-PLA-001 (planos técnicos AutoCAD): precio fijo\n- Para modular simple: solo DIS-PLA-001 si el stand > 20m²\n- Para doble planta: añadir DIS-GES-001 (gestión permisos)\n\n## PASO 6: Calcula los subtotales\nCon las partidas construidas en PASO 3:\n- subtotal_construccion = SUMA partidas 1 + 2 + 3 + 4 + 5\n- subtotal_servicios = SUMA partida 6\n- subtotal_transporte_mo = SUMA partidas 7 + 8\n- subtotal_diseno = SUMA partida 9\n- base_imponible = subtotal_construccion + subtotal_servicios + subtotal_transporte_mo + subtotal_diseno\n- iva = base_imponible × 0.21\n- total = base_imponible + iva\n\nSolo usa Calculator si alguno de estos cálculos es complejo. NUNCA más de 3 veces.\n\n## PASO 7: Genera el JSON final\nCon todos los datos calculados, genera el JSON del Structured Output Parser.\n\nEl campo mensaje_cliente debe incluir:\n- Descripción del stand basada en descripcion_incluido de la Base A\n- Mención de los elementos más destacados (mobiliario, gráfica, audiovisual)\n- Plazo estimado de fabricación y montaje\n- Condiciones de pago estándar (50% anticipo, 50% al finalizar)\n\n---\n\nREGLAS CRÍTICAS DE SALIDA:\n- El campo \"partidas\" debe contener MÍNIMO 8 objetos individuales, uno por cada concepto\n- NUNCA agrupes en 4 partidas genéricas — cada elemento del catálogo es una partida separada\n- \"categoria\" en cada partida debe ser: \"construccion\" | \"servicios\" | \"diseno\" | \"transporte_mo\"\n- Los subtotales se calculan sumando las partidas de cada categoría\n- Todos los valores numéricos deben ser números, NO strings con formato\n- CORRECTO: 21000 | INCORRECTO: \"21.000 €\"\n- imagen_url: string vacío \"\" si no hay imagen\n- NO incluyas texto, markdown ni explicaciones fuera del JSON\n\nEJEMPLOS DE CÁLCULOS CORRECTOS para stand 70m² carpintería diseño media:\n- Electricidad 6kW: 480€ (no 364€)\n- Limpieza 3 días: 144€ (48€ × 3)\n- Seguro RC: 26.60€ (0.38€ × 70m²)\n- Transporte: 364€ (5.20€ × 70m²) ← este SÍ es correcto\n- Montaje 4 días (MON-EQU-001): 2.380€ (595€ × 4)\n- Director obra 4 días: 1.180€ (295€ × 4)\n- Desmontaje 2 días (MON-EQU-003): 960€ (480€ × 2)",
+          "maxIterations": 25
+        }
+      },
+      "id": "d24b8158-3ead-4e52-8ea7-58cbe0ee27aa",
+      "name": "AI Agent Jarvis",
+      "position": [
+        672,
+        112
+      ],
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, output: $json.output }) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "908f3f22-ddeb-4c07-8feb-94e0f1d5ec0a",
+      "name": "Respond to Webhook",
+      "position": [
+        960,
+        112
+      ],
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $execution.id }}",
+        "contextWindowLength": 10
+      },
+      "id": "03d2dd14-0346-411d-a010-c218fe84e22f",
+      "name": "Window Buffer Memory",
+      "position": [
+        560,
+        312
+      ],
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {},
+      "id": "8357f29b-848c-4cf5-a1e4-76b60bcbbd13",
+      "name": "Tool: Think",
+      "position": [
+        1200,
+        496
+      ],
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "9fae50f8-3cea-49d5-b0be-a6ff163623cd",
+      "name": "Tool: Calculator",
+      "position": [
+        1328,
+        496
+      ],
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "name": "data",
+        "description": "Busca proyectos de stands feriales similares y materiales relevantes mediante búsqueda semántica en Qdrant.",
+        "topK": 8
+      },
+      "id": "c1bc4cf8-34d5-4dc3-b7ff-a1ea27557d1c",
+      "name": "Tool: Buscar Stands Qdrant",
+      "position": [
+        672,
+        400
+      ],
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "stands_materiales",
+          "mode": "list",
+          "cachedResultName": "stands_materiales"
+        },
+        "options": {}
+      },
+      "id": "0f06e675-1f1f-4c61-b864-c5a506a0e4bf",
+      "name": "Qdrant Vector Store",
+      "position": [
+        624,
+        576
+      ],
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1,
+      "credentials": {
+        "qdrantApi": {
+          "id": "td8SN9eZP0Os48rh",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Consulta el catálogo oficial de elementos y materiales disponibles en The Titan para construir stands feriales. Devuelve lista de elementos con nombre, descripción, precio de venta por unidad y unidad de medida.",
+        "url": "=https://iqrwhycmgprkfbhuxlnn.supabase.co/rest/v1/catalogo_elementos?select=nombre_elemento,descripcion_comercial,precio_venta_unidad,unidad_medida_bloque,codigo_sku&estado_elemento=eq.true&order=id_categoria_matriz.asc,nombre_elemento.asc&limit=100",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "id": "fabcd32e-8ca3-4835-ab4b-9ec1f54b7725",
+      "name": "Tool: Consultar Materiales",
+      "position": [
+        1072,
+        480
+      ],
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "credentials": {
+        "supabaseApi": {
+          "id": "av5OrE4cZ9VGfbFz",
+          "name": "Supabase Stands"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "dimensions": 1536
+        }
+      },
+      "id": "24656955-ff27-497c-89ca-86f22005d9f3",
+      "name": "Embeddings OpenAI1",
+      "position": [
+        592,
+        736
+      ],
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "KzFxOuQEjV23LyRC",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "id": "aa249f8a-924d-4db7-b16d-72e643f2c6f2",
+      "name": "OpenAI Chat Model",
+      "position": [
+        432,
+        496
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "credentials": {
+        "openAiApi": {
+          "id": "KzFxOuQEjV23LyRC",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "8cb1e57e-ede6-4aef-94cb-4345213e2de7",
+      "name": "Telegram Trigger",
+      "position": [
+        -512,
+        224
+      ],
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "webhookId": "f920be08-99af-423d-a52a-efeaefbb4f0f",
+      "credentials": {
+        "telegramApi": {
+          "id": "DSnFOsZx1qn9LxEF",
+          "name": "Tempora LS"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"mensaje_cliente\": {\n      \"type\": \"string\"\n    },\n    \"partidas\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"numero\": { \"type\": \"number\" },\n          \"concepto\": { \"type\": \"string\" },\n          \"cantidad\": { \"type\": \"number\" },\n          \"unidad\": { \"type\": \"string\" },\n          \"precio_unitario\": { \"type\": \"number\" },\n          \"total\": { \"type\": \"number\" },\n          \"categoria\": { \"type\": \"string\" }\n        },\n        \"required\": [\"numero\", \"concepto\", \"cantidad\", \"unidad\", \"precio_unitario\", \"total\", \"categoria\"]\n      }\n    },\n    \"subtotal_construccion\": {\n      \"type\": \"number\"\n    },\n    \"subtotal_servicios\": {\n      \"type\": \"number\"\n    },\n    \"subtotal_diseno\": {\n      \"type\": \"number\"\n    },\n    \"subtotal_transporte_mo\": {\n      \"type\": \"number\"\n    },\n    \"imagen_url\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"mensaje_cliente\",\n    \"partidas\",\n    \"subtotal_construccion\",\n    \"subtotal_servicios\",\n    \"subtotal_diseno\",\n    \"subtotal_transporte_mo\",\n    \"imagen_url\"\n  ]\n}"
+      },
+      "id": "20609b2c-512c-4d56-b69a-0eba40e6cf43",
+      "name": "Structured Output Parser",
+      "position": [
+        1488,
+        496
+      ],
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "toolDescription": "Devuelve la tabla completa de tarifas oficiales por m² (Base A) de la empresa — 15 filas con los precios para cada combinación de tipo_proyecto y nivel_densidad. Úsala SIEMPRE como PRIMER paso antes de calcular ningún precio.\n\nEl resultado es un array JSON. Busca la fila donde tipo_proyecto y nivel_densidad coincidan con el stand solicitado y usa ese precio_venta_m2. Multiplica por los m² del stand para obtener el subtotal_construccion.\n\ntipos válidos: modular | carpinteria_diseno | hibrido | retail_comercial | doble_planta\nniveles válidos: baja_minimalista | media_estandar | alta_espectacular\n\nEjemplo: hibrido + media_estandar = 350€/m². Si son 36m² → subtotal_construccion = 12600",
+        "url": "https://iqrwhycmgprkfbhuxlnn.supabase.co/rest/v1/tarifas_macros_m2?select=tipo_proyecto,nivel_densidad,precio_venta_m2,margen_beneficio_sugerido,descripcion_incluido&estado_ratio=eq.true&order=tipo_proyecto.asc,nivel_densidad.asc",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "Tool: Tarifa Base A",
+      "position": [
+        912,
+        496
+      ],
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "credentials": {
+        "supabaseApi": {
+          "id": "av5OrE4cZ9VGfbFz",
+          "name": "Supabase Stands"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Devuelve la tabla completa de servicios técnicos (Base C) de la empresa. Úsala para calcular desgloses precisos de mano de obra y servicios (ej. horas de montador, precios de materiales por m2 o ml). El resultado es un array JSON con todas las tarifas de servicios.",
+        "url": "https://iqrwhycmgprkfbhuxlnn.supabase.co/rest/v1/tarifas_servicios?select=nombre_tecnico,descripcion_compra,id_categoria_matriz,unidad_medida,precio_coste_unidad_medida,unidad_tiempo,precio_unidad_tiempo,aplica_coeficiente_desperdicio,coeficiente_desperdicio,requiere_homologacion_previa,incremento_urgencia_porcentaje&estado_tarifa=eq.activa&order=id_categoria_matriz.asc",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi"
+      },
+      "id": "new-base-c-tool-id",
+      "name": "consultar_despiece_taller",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1664,
+        480
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "av5OrE4cZ9VGfbFz",
+          "name": "Supabase Stands"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.body.content }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "audio"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -80,
+        112
+      ],
+      "id": "0f56e59e-57e6-4de1-afdb-e5b7b2aab6b1",
+      "name": "Normalize Data"
+    },
+    {
+      "parameters": {
+        "jsCode": "const vision = $input.first().json;\nconst webhook = $(\"Webhook Entrada\").first().json.body;\n\nlet p = {};\ntry {\n  const raw = vision.choices[0].message.content;\n  p = JSON.parse(raw.replace(/```json|```/g, '').trim());\n} catch(e) {\n  p = {};\n}\n\nconst output = {\n  tipo_stand: p.tipo_stand || webhook.tipo_stand || \"modular\",\n  estilo: p.estilo || webhook.estilo || \"moderno\",\n  materiales_visibles: p.materiales_visibles || [],\n  elementos_destacados: p.elementos_destacados || [],\n  m2_estimado: p.m2_estimado || null,\n  altura_estimada: p.altura_estimada || null,\n  numero_frentes: p.numero_frentes || 1,\n  densidad: p.densidad || \"media\",\n  tiene_grafica: p.tiene_grafica ?? false,\n  tipo_iluminacion: p.tipo_iluminacion || \"no_detectado\",\n  colores: p.colores || [],\n  descripcion: p.descripcion || \"\",\n  // Datos del formulario (siempre fiables)\n  m2_real: webhook.m2 || null,\n  feria: webhook.feria || \"No especificada\",\n  cliente: webhook.cliente || \"Sin especificar\",\n  promptText: webhook.promptText || \"\",\n};\n\nreturn [{ json: output }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        144,
+        -64
+      ],
+      "id": "72199469-18bb-41f6-a429-9e723ba643a2",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "connections": {
+    "AI Agent Jarvis": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Respond to Webhook",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Edit Fields - Formatear Texto": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent Jarvis",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "index": 0,
+            "node": "Qdrant Vector Store",
+            "type": "ai_embedding"
+          }
+        ]
+      ]
+    },
+    "Formatear Mensaje - Audio": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent Jarvis",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Formatear Mensaje - Imagen": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent Jarvis",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "GPT-4 Vision": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent Jarvis",
+            "type": "ai_languageModel"
+          },
+          {
+            "index": 0,
+            "node": "Tool: Buscar Stands Qdrant",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Qdrant Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "index": 0,
+            "node": "Tool: Buscar Stands Qdrant",
+            "type": "ai_vectorStore"
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent Jarvis",
+            "type": "ai_outputParser"
+          }
+        ]
+      ]
+    },
+    "Switch Tipo Input": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "GPT-4 Vision",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "node": "Normalize Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Edit Fields - Formatear Texto",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Switch Tipo Input",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Tool: Buscar Stands Qdrant": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent Jarvis",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "Tool: Calculator": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent Jarvis",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "Tool: Consultar Materiales": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent Jarvis",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "Tool: Tarifa Base A": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent Jarvis",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "Tool: Think": {
+      "ai_tool": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent Jarvis",
+            "type": "ai_tool"
+          }
+        ]
+      ]
+    },
+    "Webhook Entrada": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Switch Tipo Input",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Whisper": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Formatear Mensaje - Audio",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "index": 0,
+            "node": "AI Agent Jarvis",
+            "type": "ai_memory"
+          }
+        ]
+      ]
+    },
+    "consultar_despiece_taller": {
+      "main": [
+        []
+      ],
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent Jarvis",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Data": {
+      "main": [
+        [
+          {
+            "node": "Whisper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Formatear Mensaje - Imagen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  }
+}
