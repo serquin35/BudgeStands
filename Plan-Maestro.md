@@ -1112,6 +1112,7 @@ Porcentaje:  valor.toFixed(2) + '%'
 | `/dashboard/finanzas` | Módulo Financiero | ✅ Completo | Facturas clientes (auto F26-NNNN, validación ≤100%, bloqueo deudores), facturas proveedores (cabecera+líneas, imputación analítica), Cash Flow previsional 30/60/90d + gráfico 6 meses + alertas 14d, Cierre Económico con rentabilidad real, estrellas, lecciones y webhook n8n |
 | `/dashboard/perfil` | Perfil y Suscripción | ✅ Completo | Edición de datos de usuario y empresa, card Suscripción SaaS con plan activo y 4 barras de uso (IA calls, presupuestos/mes, proyectos activos, usuarios). Llama a `get_plan_usage()` RPC. |
 | `/dashboard/support` | Sección de Soporte | ✅ Completo | FAQ interactivo de módulos + Formulario de contacto vía webhook n8n y Resend. |
+| `/dashboard/configurar` | Configurar Empresa | ✅ Completo | Panel de gastos estructurales en 8 categorías (grid 4×2). CRUD inline con guardado automático al perder el foco. KPIs: total mes/año, personal ejecutor y media ponderable €/hora. Tablas Supabase: `gastos_estructura_empresa` y `gastos_estructura_config`. |
 | `/print/factura/[id]` | Template de factura imprimible | ✅ Completo | Página de impresión con datos fiscales |
 | `/print/presupuesto/[id]` | Template de presupuesto imprimible | ✅ Completo | Vista imprimible (A4 y PDF) con despiece y render IA |
 | `/api/send-invoice` | Envío email de factura | ✅ Completo | API route para envío de facturas por email |
@@ -1145,6 +1146,7 @@ Porcentaje:  valor.toFixed(2) + '%'
 | StatusBadge componente compartido | ✅ Creado | `components/shared/status-badge.tsx` |
 | Sincronización Qdrant e Iconos de Ayuda | ✅ Configurado | Tooltips explicativos en Catálogos y validación de datos vacíos en n8n |
 | Workflow Formulario Soporte n8n | ✅ Activo | Recibe el formulario de soporte e incluye plantillas HTML para enviar correos vía Resend (`n8n-support-form.json`) |
+| Sidebar — Navegación acordeón "Configurar" | ✅ Implementado | `components/dashboard/sidebar.tsx`: el ítem "Configurar" es un toggle accordion (no link directo). "Empresa" es el subitem real que navega a `/dashboard/configurar`. Se auto-expande al acceder a rutas `/configurar/*`. Preparado para futuros subitems (Facturación, Usuarios, etc.). |
 
 ---
 
@@ -1295,6 +1297,6 @@ ANTHROPIC_API_KEY=sk-ant-api03-...
 
 ---
 
-*Versión 2.1 — Actualizado 06-Jul-2026. Unificada la documentación de sprints anteriores en HISTORIAL-DETALLES-TECNICOS.md e incorporado el rediseño Titan Lumina y Soporte.*
+*Versión 2.2 — Actualizado 10-Jul-2026. Añadido módulo `/dashboard/configurar` (Gastos Estructurales Empresa) y refactor sidebar acordeón "Configurar > Empresa".*
 *Actualizar la sección §10 ante cualquier cambio de estado de los módulos.*
 *El modelo de IA debe consultar este documento antes de generar cualquier código.*

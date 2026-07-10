@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { 
@@ -18,7 +18,10 @@ import {
   BarChart3,
   Settings,
   HelpCircle,
-  Plus
+  Plus,
+  Building2,
+  ChevronDown,
+  ChevronRight
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -37,6 +40,16 @@ interface SidebarProps {
 export default function Sidebar({ user, empresa, onSignOut }: SidebarProps) {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
+  const [configurarOpen, setConfigurarOpen] = useState(() =>
+    typeof window !== "undefined" && window.location.pathname.startsWith("/dashboard/configurar")
+  )
+
+  // Auto-expand when navigating directly to a /configurar route
+  useEffect(() => {
+    if (pathname.startsWith("/dashboard/configurar")) {
+      setConfigurarOpen(true)
+    }
+  }, [pathname])
 
   const navItems = [
     {
@@ -162,6 +175,51 @@ export default function Sidebar({ user, empresa, onSignOut }: SidebarProps) {
 
           {/* Settings & Support Sub-navigation */}
           <div className="space-y-1">
+            {/* Configurar — accordion toggle */}
+            <div>
+              <button
+                onClick={() => setConfigurarOpen((v) => !v)}
+                className={cn(
+                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200",
+                  pathname.startsWith("/dashboard/configurar")
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/40"
+                )}
+              >
+                <Settings className="h-3.5 w-3.5 shrink-0" />
+                <span className="flex-1 text-left">Configurar</span>
+                {configurarOpen
+                  ? <ChevronDown className="h-3 w-3 shrink-0 transition-transform duration-200" />
+                  : <ChevronRight className="h-3 w-3 shrink-0 transition-transform duration-200" />
+                }
+              </button>
+
+              {/* Subitems animados */}
+              <div
+                className={cn(
+                  "overflow-hidden transition-all duration-200 ease-in-out",
+                  configurarOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                )}
+              >
+                <div className="ml-5 mt-0.5 border-l border-sidebar-border/50 pl-2 space-y-0.5">
+                  {/* Empresa */}
+                  <Link
+                    href="/dashboard/configurar"
+                    onClick={() => setIsOpen(false)}
+                    className={cn(
+                      "flex items-center gap-2 px-2 py-1.5 rounded-lg text-[11px] font-medium transition-all duration-200",
+                      pathname === "/dashboard/configurar"
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/40"
+                    )}
+                  >
+                    <Building2 className="h-3 w-3 shrink-0" />
+                    <span>Empresa</span>
+                  </Link>
+                  {/* Aquí irán futuros subitems: Facturación, Usuarios, etc. */}
+                </div>
+              </div>
+            </div>
             <Link
               href="/dashboard/perfil"
               onClick={() => setIsOpen(false)}
@@ -172,8 +230,8 @@ export default function Sidebar({ user, empresa, onSignOut }: SidebarProps) {
                   : "text-muted-foreground hover:text-foreground hover:bg-secondary/40"
               )}
             >
-              <Settings className="h-3.5 w-3.5" />
-              <span>Settings</span>
+              <User className="h-3.5 w-3.5" />
+              <span>Perfil</span>
             </Link>
             <Link
               href="/dashboard/support"
