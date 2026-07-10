@@ -79,7 +79,7 @@ interface TarjetaProps {
   categoria: CategoriaGasto
   gastos: GastoEstructura[]
   onUpdate: (id: string, nuevoImporte: number) => Promise<void>
-  onAdd: (categoria: CategoriaGasto) => Promise<void>
+  onAdd: (categoria: CategoriaGasto, nombre: string) => Promise<void>
   onDelete: (id: string) => Promise<void>
 }
 
@@ -102,9 +102,10 @@ function TarjetaCategoria({ categoria, gastos, onUpdate, onAdd, onDelete }: Tarj
 
   const handleAddConfirm = async () => {
     if (!newName.trim()) return
+    const nombre = newName.trim()
     setAddingNew(false)
-    await onAdd(categoria)
     setNewName("")
+    await onAdd(categoria, nombre)
   }
 
   return (
@@ -310,10 +311,8 @@ export default function ConfigurarEmpresaPage() {
     )
   }, [])
 
-  const añadirConcepto = useCallback(async (categoria: CategoriaGasto) => {
-    if (!empresaId) return
-    const nombre = window.prompt("Nombre del nuevo concepto:")
-    if (!nombre?.trim()) return
+  const añadirConcepto = useCallback(async (categoria: CategoriaGasto, nombre: string) => {
+    if (!empresaId || !nombre.trim()) return
 
     const maxOrden = gastos
       .filter((g) => g.categoria === categoria)
